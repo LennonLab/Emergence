@@ -12,9 +12,9 @@ from scipy import stats
 
 
 mydir = os.path.expanduser("~/GitHub")
-sys.path.append(mydir + "/HYDRO-BIDE/tools/LBM")
+sys.path.append(mydir + "/hydrobide/tools/LBM")
 import LBM
-sys.path.append(mydir + "/HYDRO-BIDE/tools/bide")
+sys.path.append(mydir + "/hydrobide/tools/bide")
 import bide
 
 
@@ -302,4 +302,4 @@ txt = fig.suptitle(' '.join(T), x=0.5, y=0.95, fontsize = 22)
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=2000, interval=40, blit=False) # 20000 frames is a long movie
 plt.show()
-#ani.save(mydir+'HYDRO-BIDE/results/movies/HydrobideVideo.avi', metadata={'artist':'Guido'}, bitrate=15000)
+#ani.save(mydir+'hydrobide/results/movies/HydrobideVideo.avi', metadata={'artist':'Guido'}, bitrate=15000)
