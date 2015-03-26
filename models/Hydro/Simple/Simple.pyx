@@ -8,9 +8,9 @@ import os
 
 
 mydir = os.path.expanduser("~/GitHub")
-sys.path.append(mydir + "/HYDRO-BIDE/tools/LBM")
+sys.path.append(mydir + "/hydrobide/tools/LBM")
 import LBM
-sys.path.append(mydir + "/HYDRO-BIDE/tools/bide")
+sys.path.append(mydir + "/hydrobide/tools/bide")
 import bide
 
 
@@ -317,4 +317,4 @@ txt = fig.suptitle(' '.join(T), fontsize = 12)
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=5000, interval=50, blit=False) # 20000 frames is a long movie
 plt.show()
-#ani.save(mydir+'/Hydro-bide/results/movies/HydrobideVideoTest.avi', metadata={'artist':'Guido'}, bitrate=5000)
+#ani.save(mydir+'/hydrobide/results/movies/HydrobideVideoTest.avi', metadata={'artist':'Guido'}, bitrate=5000)
