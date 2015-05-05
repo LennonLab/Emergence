@@ -129,7 +129,7 @@ def TaxaFig(fig1):
         plt.ylabel("Richness",fontsize=fs)
         plt.xlabel("Total abundance", fontsize=fs)
 
-        ###################### plot 3: Evenness vs. Average Abundance  #####
+    ###################### plot 3: Evenness vs. Average Abundance  #####
     fig.add_subplot(2, 2, 3)
 
     if u0 == min(Rates):
@@ -172,6 +172,7 @@ def TaxaFig(fig1):
     return fig1
 
 
+
 def TraitsFig(fig2):
     global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
     global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
@@ -180,12 +181,11 @@ def TraitsFig(fig2):
     global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW
     global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight
 
-
     return fig2
 
 
 
-#def FxnFig(fig3):
+def FunctionFig(fig3):
     global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
     global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
     global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage, fluidImage
@@ -195,121 +195,6 @@ def TraitsFig(fig2):
 
     return fig3
 
-
-
-def newTaxaFig(fig1):
-
-    global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
-    global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
-    global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage, fluidImage
-    global ResXcoords, ResYcoords, ResID, ResIDs, RES, DataColor, LogSeriesAlpha, omega, MUs, VarMUs, Maints, VarMaints
-    global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW
-    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight
-
-    fig1.add_subplot(1, 1, 1)  # Plot 1: plot of the system
-
-        plt.tick_params(\
-        axis='both',       # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom='off',      # ticks along the bottom edge are off
-        top='off',         # ticks along the top edge are off
-        left='off',
-        right='off',
-        labelbottom='off',
-        labelleft='off')   # labels along the bottom edge are off
-
-        #T = ['Microbes consume resources, grow, reproduce, and die\nas they flow through a fluid environment.']
-        #'\nCurrent speed on the x-axis is '+str(round(u0,3)), 'units per time step.']
-
-	#T = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment.',
-        #    '\nAverage speed on the x-axis is '+str(u0)+' units per time step. Residence time is estimated from',
-        #    'inert tracers (red stars).\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
-
-        #txt.set_text(' '.join(T))
-        #plt.draw()
-        #plt.title('Microbes consume resources, grow, reproduce, and die\nas they flow through a complex fluid environment.', fontsize =1)
-
-        plt.ylim(0,height)
-        plt.xlim(0,width)
-
-    return fig1
-
-
-
-def newTraitsFig(fig2):
-    global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
-    global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
-    global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage, fluidImage
-    global ResXcoords, ResYcoords, ResID, ResIDs, RES, DataColor, LogSeriesAlpha, omega, MUs, VarMUs, Maints, VarMaints
-    global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW
-    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight
-
-    fig1.add_subplot(1, 1, 1)  # Plot 1: plot of the system
-
-        plt.tick_params(\
-        axis='both',       # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom='off',      # ticks along the bottom edge are off
-        top='off',         # ticks along the top edge are off
-        left='off',
-        right='off',
-        labelbottom='off',
-        labelleft='off')   # labels along the bottom edge are off
-
-        #T = ['Microbes consume resources, grow, reproduce, and die\nas they flow through a fluid environment.']
-        #'\nCurrent speed on the x-axis is '+str(round(u0,3)), 'units per time step.']
-
-	#T = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment.',
-        #    '\nAverage speed on the x-axis is '+str(u0)+' units per time step. Residence time is estimated from',
-        #    'inert tracers (red stars).\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
-
-        #txt.set_text(' '.join(T))
-        #plt.draw()
-        #plt.title('Microbes consume resources, grow, reproduce, and die\nas they flow through a complex fluid environment.', fontsize =1)
-
-        plt.ylim(0,height)
-        plt.xlim(0,width)
-
-    return fig2
-
-
-
-def newFxnFig(fig3):
-
-    global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
-    global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
-    global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage, fluidImage
-    global ResXcoords, ResYcoords, ResID, ResIDs, RES, DataColor, LogSeriesAlpha, omega, MUs, VarMUs, Maints, VarMaints
-    global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW
-    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight
-
-        fig1.add_subplot(1, 1, 1)  # Plot 1: plot of the system
-
-        plt.tick_params(\
-        axis='both',       # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom='off',      # ticks along the bottom edge are off
-        top='off',         # ticks along the top edge are off
-        left='off',
-        right='off',
-        labelbottom='off',
-        labelleft='off')   # labels along the bottom edge are off
-
-        #T = ['Microbes consume resources, grow, reproduce, and die\nas they flow through a fluid environment.']
-        #'\nCurrent speed on the x-axis is '+str(round(u0,3)), 'units per time step.']
-
-	#T = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment.',
-        #    '\nAverage speed on the x-axis is '+str(u0)+' units per time step. Residence time is estimated from',
-        #    'inert tracers (red stars).\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
-
-        #txt.set_text(' '.join(T))
-        #plt.draw()
-        #plt.title('Microbes consume resources, grow, reproduce, and die\nas they flow through a complex fluid environment.', fontsize =1)
-
-        plt.ylim(0,height)
-        plt.xlim(0,width)
-
-    return fig3
 
 
 
@@ -469,7 +354,7 @@ def nextFrame(arg):		                       # arg is the frame number
         COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = args
 
         ########## GENERATE FIGURES ############################################
-        fig1 = newTaxaFig(fig1)
+        fig1 = fig1.add_subplot(1,1,1)
 
         fig2 = newTraitsFig(fig2)
 
