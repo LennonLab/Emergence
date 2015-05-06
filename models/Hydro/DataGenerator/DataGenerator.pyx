@@ -154,9 +154,11 @@ while sims < 1000: # adjust number of steps for smooth animation
     # maintenance
     COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.maintenance(COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs)
 
-    if len(TracerExitAge) >= 10: # Many if/else statements, but it should ultimately save time
+
+    if len(TracerExitAge) >= 20:
+        # Many if/else statements, but it should ultimately save time
         RAD, splist = bide.GetRAD(COM)
-        RAD, splist = zip(*sorted(zip(RAD, splist)))
+        RAD, splist = zip(*sorted(zip(RAD, splist), reverse=True))
 
         S = len(RAD)
         N = sum(RAD)
@@ -167,7 +169,7 @@ while sims < 1000: # adjust number of steps for smooth animation
                 ct += 1
 
                 # Physical and general community parameters
-                OutList = [ct1, u0, width, height, viscosity, m, N, S]
+                OutList = [ct1, u0, width, height, viscosity, N, S]
                 ct1 += 1
 
                 # Residence times for tracers and microbes
@@ -202,8 +204,8 @@ while sims < 1000: # adjust number of steps for smooth animation
 
                 OutList.extend([Mu, Maint, m, ResDens, ResDiv, ResRich])
                 OutString = str(OutList).strip('[]')
-                SString = str(splist).strip('[]')
-                RADString = str(RAD).strip('[]')
+                SString = str(splist).strip('()')
+                RADString = str(RAD).strip('()')
 
                 OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
                 OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
@@ -221,7 +223,7 @@ while sims < 1000: # adjust number of steps for smooth animation
                 TracerExitAge = []
                 MicExitAge = []
 
-                if ct >= 10:
+                if ct >= 20:
 
                     width = int(choice([5,6,7,8,9,10]))
                     height = int(choice([5,6,7,8,9,10]))
