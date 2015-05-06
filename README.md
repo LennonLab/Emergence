@@ -15,4 +15,13 @@ Python code authored by Ken Locey for a project using individual based models to
 	* Turnover: Also referred to as beta-diversity; a measure of heterogeneity in the taxa found among samples
 	* Evenness: Similarity in abundance among taxa
 
+## Using simulated data in R
+The output of models from hydrobide can be imported into Python and R environments.
+While data in SimData.csv can be imported as an R data.frame object, the corresponding files for rank-abundance distributions and their species-lists can, e.g., be imported and used as follows:
+
+> rad.list <- readLines("~/GitHub/hydrobide/results/simulated_data/RADs.csv")  
+> rad1 <- rad.list[1]  
+> rad2 <- unlist(strsplit(rad1, split = ","))  
+> rad3 <- as.numeric(rad2)  
+> sum(rad3)
 
