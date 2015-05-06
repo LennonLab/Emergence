@@ -77,9 +77,9 @@ def immigration(m, COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, heigh
                 MaintDict[prop] = np.random.uniform(0.01, 0.1) # species maintenance
 
             if prop not in DispParamDict:
-                DispParamDict[prop] = np.random.uniform(0.05, 0.5) # species active dispersal rate
+                DispParamDict[prop] = np.random.uniform(0.09, 0.9) # species active dispersal rate
             if prop not in ResUseDict:
-                ResUseDict[prop] = np.random.uniform(0, 1, nr) # species attachment probability
+                ResUseDict[prop] = np.random.uniform(0.0, 1.0, nr) # species attachment probability
 
 
     return [COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict]

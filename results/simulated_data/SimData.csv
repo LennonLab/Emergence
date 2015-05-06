@@ -1,0 +1,2 @@
+RowID, FlowRate, Width, Height, Viscosity, TotalAbundance, SpeciesRichness, TracerParticle_ResTime, MicrobeCell_ResTime, Simpsons_Evenness, Evar, BergerParker, InvSimpDiversity, Nmax, Skew, AvgPerCapita_GrowthRate, AvgPerCapita_Maintenance, Immigration_Rate, Resource_Concentration, Shannons_ResourceDiversity, ResourceRichness
+0, 0.025, 7, 6, 0.25, 1, 1562, 7, 260.0, 321.62830114308235, 0.2481949781655835, 0.077158442720057896, 0.6978233034571063, 0.4246875463953719, 1090, 1.4901931402782784, 167.3712769048353, 13.756864483030759, 1, 60.953627193737745, 1.6499886811375826, 6

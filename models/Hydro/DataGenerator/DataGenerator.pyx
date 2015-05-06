@@ -24,7 +24,7 @@ def get_mrrmax():
     m = int(choice(range(1, 10))) # number of individuals immigrating per time step
     r = int(choice(range(1, 10))) # number of resource particles flowing in per time step
     nr = int(choice(range(1, 10))) # max number of resources types
-    rmax = int(choice(range(1, 100))) # max value of resource particle sizes
+    rmax = int(choice(range(10, 1000))) # max value of resource particle sizes
     return [m, r, nr, rmax]
 
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
@@ -69,7 +69,7 @@ BarrierXcoords1 = []
 BarrierYcoords1 = []
 BarrierXcoords2 = []
 BarrierYcoords2 = []
-Rates = np.array([1.0, 0.5, 0.25, 0.1, 0.075, 0.05])  # inflow speeds
+Rates = np.array([1.0, 0.5, 0.25, 0.1, 0.05, 0.025])  # inflow speeds
 u0 = float(choice(Rates))  # initial in-flow speed
 
 #######################  Inert tracer particles  ###############################
@@ -116,15 +116,18 @@ barrierSW = np.roll(barrierS, -1, axis=1)
 
 
 ############## OPEN OUTPUT DATA FILE AND RUN SIMULATIONS  ######################
-OUT = open(mydir + '/GitHub/hydrobide/results/simulated_data/DataGenerator.csv','w+')
-
-print>>OUT, 'RowID, FlowRate, Width, Height, Viscosity, N, S, TracerParticle_ResTime, MicrobeCell_ResTime, Sp_Evenness, BergerParker, InvSimpDiversity, Nmax, Skew, AvgPerCapita_GrowthRate, AvgPerCapita_Maintenance, Immigration_Rate, Resource_Concentration, Shannons_ResourceDiversity, ResourceRichness'
-
+OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
+OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
+OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
+print>>OUT1, 'RowID, FlowRate, Width, Height, Viscosity, TotalAbundance, SpeciesRichness, TracerParticle_ResTime, MicrobeCell_ResTime, Simpsons_Evenness, Evar, BergerParker, InvSimpDiversity, Nmax, Skew, AvgPerCapita_GrowthRate, AvgPerCapita_Maintenance, Immigration_Rate, Resource_Concentration, Shannons_ResourceDiversity, ResourceRichness'
+OUT1.close()
+OUT2.close()
+OUT3.close()
 
 ct = 0
 ct1 = 0
 sims = 0
-while sims < 10: # adjust number of steps for smooth animation
+while sims < 1000: # adjust number of steps for smooth animation
 
     # immigration
     COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr)
@@ -151,16 +154,17 @@ while sims < 10: # adjust number of steps for smooth animation
     # maintenance
     COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.maintenance(COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs)
 
-
     if len(TracerExitAge) >= 10: # Many if/else statements, but it should ultimately save time
-        S = len(COM)
+        RAD, splist = bide.GetRAD(COM)
+        RAD, splist = zip(*sorted(zip(RAD, splist)))
+
+        S = len(RAD)
+        N = sum(RAD)
 
         if S > 3:
-            RAD, splist = bide.GetRAD(COM)
 
             if max(RAD) > 1:
                 ct += 1
-                N = sum(COM)
 
                 # Physical and general community parameters
                 OutList = [ct1, u0, width, height, viscosity, m, N, S]
@@ -172,21 +176,14 @@ while sims < 10: # adjust number of steps for smooth animation
                 OutList.extend([TracerTau, MicrobeTau])
 
                 # Evenness, Dominance, and Rarity measures
-                #Ev = metrics.e_var(RAD)
+                Ev = metrics.e_var(RAD)
                 ES = float(metrics.e_simpson(RAD))
-                #EQ = metrics.EQ(RAD)
-                #O = metrics.OE(RAD)
-                #EN = metrics.NHC(RAD)
-                #EP = metrics.e_pielou(RAD)
-                #EH = metrics.e_heip(RAD)
                 Nm = max(RAD)
                 BP = float(Nm/N)
                 SD = float(metrics.simpsons_dom(RAD))
-                #Mc = metrics.McNaughton(RAD)
                 sk = float(stats.skew(RAD))
-                #lsk = metrics.Rlogskew(RAD)
 
-                OutList.extend([ES, BP, SD, Nm, sk])
+                OutList.extend([ES, Ev, BP, SD, Nm, sk])
 
                 # Specific Growth rate and Maintenance
                 Mu, Maint = 0, 0
@@ -205,23 +202,33 @@ while sims < 10: # adjust number of steps for smooth animation
 
                 OutList.extend([Mu, Maint, m, ResDens, ResDiv, ResRich])
                 OutString = str(OutList).strip('[]')
+                SString = str(splist).strip('[]')
+                RADString = str(RAD).strip('[]')
 
-                print>>OUT, OutString
-                print 'N:', sum(COM), 'S:',len(COM), '  V:', round(height*width,1),'Q:', u0, ' m:',m,' r:',r,' : ', sims, ct
+                OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
+                OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
+                OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
+                print>>OUT1, OutString
+                print>>OUT2, RADString
+                print>>OUT3, SString
+                OUT1.close()
+                OUT2.close()
+                OUT3.close()
+
+                print 'N:', N, 'S:', S, 'Q:', u0,' : ', sims, ct
 
                 Xs = []
                 TracerExitAge = []
                 MicExitAge = []
 
-                if ct >= 4:
+                if ct >= 10:
 
                     width = int(choice([5,6,7,8,9,10]))
                     height = int(choice([5,6,7,8,9,10]))
 
                     m, r, nr, rmax = get_mrrmax()
 
-                    Rates = np.roll(Rates, -1, axis=0)
-                    u0 = Rates[0]  # initial in-flow speed
+                    u0 = float(choice(Rates))  # initial in-flow speed
                     viscosity =  u0*10  # fluid viscosity
                     omega = 1 / (3 * viscosity + 0.5) # relaxation parameter
 
@@ -238,5 +245,3 @@ while sims < 10: # adjust number of steps for smooth animation
 
                     sims += 1
                     ct = 0
-
-OUT.close()
