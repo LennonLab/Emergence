@@ -2,12 +2,7 @@ from __future__ import division
 import numpy as np
 
 
-def SetLattice(args1, args2, args3): # Lattice Boltzmann PARAMETERS
-
-    n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, one9th, four9ths, one36th, rho, u0, width = args1
-    ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, height = args2
-    BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight = args3
-
+def SetLattice(n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, one9th, four9ths, one36th, rho, u0, width, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, height, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight): # Lattice Boltzmann PARAMETERS
 
     ############## particle densities along 9 directions
     n0 = four9ths * (np.ones((height,width)) - 1.5*u0**2)
@@ -45,9 +40,7 @@ def SetLattice(args1, args2, args3): # Lattice Boltzmann PARAMETERS
     barrierSE = np.roll(barrierS,  1, axis=1)
     barrierSW = np.roll(barrierS, -1, axis=1)
 
-    return [[n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, one9th, four9ths, one36th, rho, u0, width],
-        [ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, height],
-        [BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight]]
+    return [n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, one9th, four9ths, one36th, rho, u0, width, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, height, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight]
 
 
 
