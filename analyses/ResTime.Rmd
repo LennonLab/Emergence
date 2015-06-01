@@ -11,7 +11,7 @@ geometry: margin=2.54cm
 ```{r, results = 'hide'}
 rm(list=ls()) 
 getwd() 
-setwd("~/GitHub/QuantitativeBiodiversity/Assignments/Alpha") 
+setwd("~/GitHub/hydrobide") 
 ```
 
 ## INTRODUCTION
@@ -29,7 +29,7 @@ require("vegan")
 ## 2) LOADING DATA
 
 ```{r}
-sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/SimData.csv")  
+sim.data <- read.csv("./results/simulated_data/SimData.csv")  
 ```
 
 
