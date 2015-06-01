@@ -168,3 +168,12 @@ rad.list[is.na(rad.list)] <- 0
 ```
 
 
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+species <- list()
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/Species.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+
+species.list[is.na(species.list)] <- -1
+```
+
