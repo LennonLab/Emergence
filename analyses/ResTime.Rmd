@@ -58,19 +58,19 @@ S <- log(sim.data$SpeciesRichness)
 
 plot(t.tau, N, xlab="Particle Residence Time", 
      ylab="Total Abundance", 
-     main = "N vs. Tau", col='SteelBlue')
+     main = "N vs. Tau", col='cornsilk4')
 
 plot(m.tau, N, xlab="Cell Residence Time", 
      ylab="Total Abundance", 
-     main = "N vs. Tau", col='darkorchid4')
+     main = "N vs. Tau", col='cornsilk4')
 
 plot(t.tau, S, xlab="Particle Residence Time", 
      ylab="Species Richness", 
-     main = "S vs. Tau", col='SteelBlue')
+     main = "S vs. Tau", col='darkseagreen')
 
 plot(m.tau, S, xlab="Cell Residence Time", 
      ylab="Species Richness", 
-     main = "S vs. Tau", col='darkorchid4')
+     main = "S vs. Tau", col='darkseagreen')
 
 ```
 
@@ -82,25 +82,25 @@ N <- sim.data$TotalAbundance
 plot(m.tau, log(N), xlab="Cell Residence Time", 
      ylab="Total Abundance", 
      main = "N vs. Tau",
-     col='SteelBlue')
+     col='cornsilk4')
 
 S <- sim.data$SpeciesRichness
 plot(m.tau, log(S), xlab="Cell Residence Time", 
      ylab="Species Richness", 
      main = "S vs. Tau",
-     col='darkorchid4')
+     col='darkseagreen')
 
 E <- sim.data$Evar
 plot(m.tau, E, xlab="Cell Residence Time", 
      ylab="Species Evenness", 
      main = "Evenness vs. Tau",
-     col='SteelBlue')
+     col='skyblue')
 
 avg.ab <- N/S
 plot(m.tau, log(avg.ab), xlab="Cell Residence Time", 
      ylab="Average Abundance",
      main = "N/S vs. Tau",
-     col='darkorchid4')
+     col='coral')
 ```
 
 
@@ -110,26 +110,26 @@ par(mfrow=c(2, 2))
 BP <- sim.data$BergerParker
 plot(m.tau, BP, xlab="Cell Residence Time", 
      ylab="Berger-Parker", 
-     main = "Relative Dominance",
-     col='SteelBlue')
+     main = "Relative Dominance vs. Tau",
+     col='firebrick')
 
 SimpD <- sim.data$InvSimpDiversity
 plot(m.tau, SimpD, xlab="Cell Residence Time", 
      ylab="Simpsons, 1/D", 
-     main = "Diversity",
-     col='darkorchid4')
+     main = "Diversity vs. Tau",
+     col='gold')
 
 Skew <- sim.data$Skew
 plot(m.tau, Skew, xlab="Cell Residence Time", 
      ylab="Skewness", 
-     main = "Rarity",
-     col='SteelBlue')
+     main = "Rarity vs. Tau",
+     col='limegreen')
 
 Nmax <- sim.data$Nmax
 plot(m.tau, log(Nmax), xlab="Cell Residence Time", 
      ylab="Nmax",
-     main = "Absolute Dominance",
-     col='darkorchid4')
+     main = "Absolute Dominance vs. Tau",
+     col='sandybrown')
 ```
 
 
@@ -139,22 +139,70 @@ par(mfrow=c(2, 2))
 plot(log(N), log(S), xlab="Total abundance",
      ylab="Species Richness", 
      main = "S vs. N",
-     col='SteelBlue')
+     col='indianred')
 
 plot(log(N), log(Nmax), xlab="Total abundance", 
      ylab="Nmax", 
      main = "Nmax vs. N",
-     col='darkorchid4')
+     col='darkorange')
 
-plot(log(N), log(E), xlab="Total abundance", 
+plot(log(N), E, xlab="Total abundance", 
      ylab="Species Evenness", 
      main = "Evenness vs. N",
-     col='SteelBlue')
+     col='lightseagreen')
 
-plot(log(N), log(Skew), xlab="Total abundance", 
+plot(log(N), Skew, xlab="Total abundance", 
      ylab="Skewness",
      main = "Rarity vs. N",
-     col='darkorchid4')
+     col='plum')
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+growth <- sim.data$AvgPerCapita_GrowthRate
+plot(m.tau, log(growth), xlab="Cell Residence Time", 
+     ylab="growth", 
+     main = "Per capita growth vs. Tau",
+     col='dodgerblue')
+
+maint <- sim.data$AvgPerCapita_Maintenance
+plot(m.tau, SimpD, xlab="Cell Residence Time", 
+     ylab="maintenance", 
+     main = "Per capita maintenance vs. Tau",
+     col='darkolivegreen')
+
+immigration <- sim.data$Immigration_Rate
+plot(m.tau, immigration, xlab="Cell Residence Time", 
+     ylab="immigration", 
+     main = "Immigration vs. Tau",
+     col='mediumorchid')
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+res.conc <- sim.data$Resource_Concentration
+plot(m.tau, log(res.conc), xlab="Cell Residence Time", 
+     ylab="density", 
+     main = "Resource density vs. Tau",
+     col='peru')
+
+res.div <- sim.data$Shannons_ResourceDiversity
+plot(m.tau, res.div, xlab="Cell Residence Time", 
+     ylab="Shannon's H", 
+     main = "Resource diversity vs. Tau",
+     col='palegreen')
+
+res.rich <- sim.data$ResourceRichness
+plot(m.tau, res.rich, xlab="Cell Residence Time", 
+     ylab="Number of resource types", 
+     main = "Resource richness vs. Tau",
+     col='slateblue')
 ```
 
 
@@ -176,4 +224,6 @@ species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/Species.cs
 
 species.list[is.na(species.list)] <- -1
 ```
+
+
 
