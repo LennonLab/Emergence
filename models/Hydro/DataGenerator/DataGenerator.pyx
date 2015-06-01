@@ -21,10 +21,10 @@ import metrics
 
 
 def get_mrrmax():
-    m = int(choice(range(1, 2))) # number of individuals immigrating per time step
-    r = int(choice(range(1, 2))) # number of resource particles flowing in per time step
+    m = int(choice(range(1, 10))) # number of individuals immigrating per time step
+    r = int(choice(range(1, 10))) # number of resource particles flowing in per time step
     nr = int(choice(range(1, 10))) # max number of resources types
-    rmax = int(choice(range(10, 20))) # max value of resource particle sizes
+    rmax = int(choice(range(10, 100))) # max value of resource particle sizes
     return [m, r, nr, rmax]
 
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
