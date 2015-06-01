@@ -1,0 +1,72 @@
+---
+title: "How residence time constrains diversity"
+author: "Ken Locey, Jay Lennon"
+date: "May 31, 2015"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+```{r, results = 'hide'}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/QuantitativeBiodiversity/Assignments/Alpha") 
+```
+
+## INTRODUCTION
+
+Here, we explore the constraining influence of ...  alpha ($\alpha$) diversity. 
+We will quantify general components of $\alpha$-diversity: **richness** and **evenness**.
+From there, we ...  **species-abundance distributions (SAD)**.
+
+```{r, results = 'hide', message=FALSE}
+#install.packages("vegan") 
+#instead, use try("vegan")
+require("vegan") 
+```
+
+## 2) LOADING DATA
+
+```{r}
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/SimData.csv")  
+```
+
+
+```{r}
+par(mfrow=c(2, 2))
+x <- log(sim.data$TracerParticle_ResTime)
+N <- log(sim.data$TotalAbundance)
+plot(x, N, xlab="Particle Residence Time", 
+     ylab="Total Abundance", 
+     main = "N vs. Tau", col='SteelBlue')
+
+x <- log(sim.data$MicrobeCell_ResTime)
+plot(x, N, xlab="Cell Residence Time", 
+     ylab="Total Abundance", 
+     main = "N vs. Tau", col='darkorchid4')
+
+
+x <- log(sim.data$TracerParticle_ResTime)
+S <- log(sim.data$SpeciesRichness)
+plot(x, S, xlab="Particle Residence Time", 
+     ylab="Total Abundance", 
+     main = "S vs. Tau", col='SteelBlue')
+
+x <- log(sim.data$MicrobeCell_ResTime)
+plot(x, S, xlab="Cell Residence Time", 
+     ylab="Total Abundance", 
+     main = "S vs. Tau", col='darkorchid4')
+```
+
+
+
+```{r}
+rads <- c()
+rad.list <- readLines("~/GitHub/hydrobide/results/simulated_data/RADs.csv")  
+for (rad in rad.list) {
+  rad <- unlist(strsplit(rad, split = ","))  
+  rad <- as.numeric(rad)
+  rads <- c(rads, rad)
+  }
+```
