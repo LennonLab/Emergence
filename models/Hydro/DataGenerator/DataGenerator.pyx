@@ -21,43 +21,24 @@ import metrics
 
 
 def get_mrrmax():
-    m = int(choice(range(1, 10))) # number of individuals immigrating per time step
-    r = int(choice(range(1, 10))) # number of resource particles flowing in per time step
+    m = int(choice(range(1, 2))) # number of individuals immigrating per time step
+    r = int(choice(range(1, 2))) # number of resource particles flowing in per time step
     nr = int(choice(range(1, 10))) # max number of resources types
-    rmax = int(choice(range(10, 1000))) # max value of resource particle sizes
+    rmax = int(choice(range(10, 20))) # max value of resource particle sizes
     return [m, r, nr, rmax]
 
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
-COM = []
-Xs = []
-MicXcoords = []
-MicYcoords = []
-MicIDs = []
-MicQs = []
-MicExitAge = []
+COM, Xs, MicXcoords, MicYcoords, AvgTaus = [[], [], [], [], []]
+MicIDs, MicQs, MicExitAge, MicTimeIn = [[], [], [], []]
+ResYcoords, RES, ResIDs, ResType, ResXcoords = [[], [], [], [], []]
 
-MicID = 0
-MicTimeIn = []
-
-microbe_color_dict = {}
-GrowthDict = {}
-MaintDict = {}
-ResUseDict = {}
-ResColorDict = {}
-DispParamsDict = {}
+microbe_color_dict, GrowthDict, MaintDict = [{}, {}, {}]
+ResUseDict, ResColorDict, DispParamsDict = [{}, {}, {}]
 
 m, r, nr, rmax = get_mrrmax()
-
-AvgTaus = []
+MicID = 0
 avgTau = str()
-
-########################################## RESOURCE PARAMETERS #################
-RES = []
-ResIDs = []
-ResType = []
 ResID = 0
-ResYcoords = []
-ResXcoords = []
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
 width = int(choice([5,6,7,8,9,10]))
@@ -65,18 +46,13 @@ height = int(choice([5,6,7,8,9,10]))
 shift = 0.0
 sign = 0.1
 
-BarrierXcoords1 = []
-BarrierYcoords1 = []
-BarrierXcoords2 = []
-BarrierYcoords2 = []
+BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [[],[],[],[]]
+
 Rates = np.array([1.0, 0.5, 0.25, 0.1, 0.05, 0.025])  # inflow speeds
 u0 = float(choice(Rates))  # initial in-flow speed
 
 #######################  Inert tracer particles  ###############################
-TracerXcoords = []
-TracerYcoords = []
-TracerIDs = []
-TracerExitAge = []
+TracerXcoords, TracerYcoords, TracerIDs, TracerExitAge = [[], [], [], []]
 TracerIDs, TracerXcoords, TracerYcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0)
 
 #####################  Lattice Boltzmann PARAMETERS  ###########################
@@ -127,7 +103,7 @@ OUT3.close()
 ct = 0
 ct1 = 0
 sims = 0
-while sims < 1000: # adjust number of steps for smooth animation
+while sims < 10:
 
     # immigration
     COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr)
@@ -217,7 +193,7 @@ while sims < 1000: # adjust number of steps for smooth animation
                 OUT2.close()
                 OUT3.close()
 
-                print 'N:', N, 'S:', S, 'Q:', u0,' : ', sims, ct
+                print sims, '  N:', N, 'S:', S, 'Q:', u0,' : ', sims, ct
 
                 Xs = []
                 TracerExitAge = []
@@ -234,12 +210,8 @@ while sims < 1000: # adjust number of steps for smooth animation
                     viscosity =  u0*10  # fluid viscosity
                     omega = 1 / (3 * viscosity + 0.5) # relaxation parameter
 
-                    microbe_color_dict = {}
-                    GrowthDict = {}
-                    MaintDict = {}
-                    ResUseDict = {}
-                    ResColorDict = {}
-                    DispParamsDict = {}
+                    microbe_color_dict, GrowthDict, MaintDict = [{}, {}, {}]
+                    ResUseDict, ResColorDict, DispParamsDict = [{}, {}, {}]
 
                     MicTimeIn, COM, MicXcoords, MicYcoords, TracerXcoords, TracerYcoords, RES, ResXcoords, ResYcoords, ResIDs, ResType, MicIDs, MicQs, MicExitAge, TracerExitAge, TracerIDs = [list([]) for _ in xrange(16)]
                     args = LBM.SetLattice(n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, one9th, four9ths, one36th, rho, u0, width, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, height, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight)

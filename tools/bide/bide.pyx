@@ -6,36 +6,28 @@ import sys
 import os
 import math
 
-
 mydir = os.path.expanduser("~/Desktop/Repos/HYDRO-BIDE/results/movies")
-
 limit = 0.5
 
-
 def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0):
-
     x = np.random.binomial(1, u0/4)
     if x == 1:
         TracerYcoords.append(float(np.random.uniform(0.2*height, 0.8*height)))
-        TracerXcoords.append(float(np.random.uniform(0.01, 0.02)))
+        TracerXcoords.append(0.01)
         TracerIDs.append(0)
 
     return [TracerIDs, TracerXcoords, TracerYcoords]
 
 
 def GetRAD(COM):
-
     RAD = []
     tList = list(set(COM))
-
-    for i, sp in enumerate(tList):
-        RAD.append(COM.count(sp))
+    for i, sp in enumerate(tList): RAD.append(COM.count(sp))
 
     return RAD, tList
 
 
 def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO MICROBE SPECIES
-
     r1 = lambda: randint(0,255)
     r2 = lambda: randint(0,255)
     r3 = lambda: randint(0,255)
@@ -47,7 +39,6 @@ def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO MICROBE SPECIES
 
 
 def immigration(m, COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, MaintDict, u0, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr):
-
     ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
 
@@ -61,7 +52,7 @@ def immigration(m, COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, heigh
 
             COM.append(prop)
             MicYcoords.append(float(np.random.uniform(0.2*height, 0.8*height)))
-            MicXcoords.append(float(np.random.uniform(0.1, 2))) # width - limit
+            MicXcoords.append(float(np.random.uniform(0.01, 0.5))) # width - limit
             MicIDs.append(MicID)
             MicTimeIn.append(0)
             MicID += 1
