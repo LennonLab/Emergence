@@ -159,11 +159,21 @@ plot(log(N), log(Skew), xlab="Total abundance",
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-rads <- c()
-rad.list <- readLines("~/GitHub/hydrobide/results/simulated_data/RADs.csv")  
-for (rad in rad.list) {
-  rad <- unlist(strsplit(rad, split = ","))  
-  rad <- as.numeric(rad)
-  rads <- c(rads, rad)
-  }
+rads <- list()
+rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/RADs.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+
+rad.list[is.na(rad.list)] <- 0
 ```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+species <- list()
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/Species.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+
+species.list[is.na(species.list)] <- -1
+```
+
