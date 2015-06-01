@@ -22,7 +22,6 @@ From there, we ...  **species-abundance distributions (SAD)**.
 
 ```{r, results = 'hide', message=FALSE}
 #install.packages("vegan") 
-#instead, use try("vegan")
 require("vegan") 
 ```
 
@@ -35,28 +34,80 @@ sim.data <- read.csv("./results/simulated_data/SimData.csv")
 
 ```{r}
 par(mfrow=c(2, 2))
-x <- log(sim.data$TracerParticle_ResTime)
+tau <- log(sim.data$TracerParticle_ResTime)
 N <- log(sim.data$TotalAbundance)
-plot(x, N, xlab="Particle Residence Time", 
+plot(tau, N, xlab="Particle Residence Time", 
      ylab="Total Abundance", 
      main = "N vs. Tau", col='SteelBlue')
 
-x <- log(sim.data$MicrobeCell_ResTime)
-plot(x, N, xlab="Cell Residence Time", 
+tau <- log(sim.data$MicrobeCell_ResTime)
+plot(tau, N, xlab="Cell Residence Time", 
      ylab="Total Abundance", 
      main = "N vs. Tau", col='darkorchid4')
 
 
-x <- log(sim.data$TracerParticle_ResTime)
+tau <- log(sim.data$TracerParticle_ResTime)
 S <- log(sim.data$SpeciesRichness)
-plot(x, S, xlab="Particle Residence Time", 
-     ylab="Total Abundance", 
+plot(tau, S, xlab="Particle Residence Time", 
+     ylab="Species Richness", 
      main = "S vs. Tau", col='SteelBlue')
 
-x <- log(sim.data$MicrobeCell_ResTime)
-plot(x, S, xlab="Cell Residence Time", 
-     ylab="Total Abundance", 
+tau <- log(sim.data$MicrobeCell_ResTime)
+plot(tau, S, xlab="Cell Residence Time", 
+     ylab="Species Richness", 
      main = "S vs. Tau", col='darkorchid4')
+```
+
+
+
+```{r}
+par(mfrow=c(2, 2))
+tau <- log(sim.data$MicrobeCell_ResTime)
+N <- sim.data$TotalAbundance
+plot(tau, log(N), xlab="Cell Residence Time", 
+     ylab="Total Abundance", 
+     col='SteelBlue')
+
+S <- sim.data$SpeciesRichness
+plot(tau, log(S), xlab="Cell Residence Time", 
+     ylab="Species Richness", 
+     col='darkorchid4')
+
+E <- sim.data$Evar
+plot(tau, E, xlab="Cell Residence Time", 
+     ylab="Species Evenness", 
+     col='SteelBlue')
+
+avg.ab <- N/S
+plot(tau, avg.ab, xlab="Cell Residence Time", 
+     ylab="Average Abundance", 
+     col='darkorchid4')
+```
+
+
+
+```{r}
+par(mfrow=c(2, 2))
+tau <- log(sim.data$MicrobeCell_ResTime)
+BP <- sim.data$BergerParker
+plot(tau, BP, xlab="Cell Residence Time", 
+     ylab="Berger-Parker", 
+     col='SteelBlue')
+
+SimpD <- sim.data$InvSimpDiversity
+plot(tau, SimpD, xlab="Cell Residence Time", 
+     ylab="Simpsons Diversity (1/D)", 
+     col='darkorchid4')
+
+Skew <- sim.data$Skew
+plot(tau, Skew, xlab="Cell Residence Time", 
+     ylab="Skewness", 
+     col='SteelBlue')
+
+Nmax <- sim.data$Nmax
+plot(tau, log(Nmax), xlab="Cell Residence Time", 
+     ylab="Nmax", 
+     col='darkorchid4')
 ```
 
 
