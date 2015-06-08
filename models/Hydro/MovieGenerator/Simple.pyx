@@ -264,8 +264,8 @@ OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
 OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
 OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, FlowRate, Width, Height, Viscosity, N, S, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
-#             ct1,   sim,   u0,     width, height, viscosity, N, S, m,                  TracerTau,  MicrobeTau, ResDens,                ResDiv,                    ResRich,            ES,        Ev,    BP,            SD,         Nm,    sk,         Mu,               Maint
+print>>OUT1, 'RowID, sim, FlowRate, Width, Height, Viscosity, N, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
+#              ct1,  sim, u0,       width, height, viscosity, N, m,                TracerTau,    MicrobeTau, ResDens,              ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
 OUT1.close()
 OUT2.close()
 OUT3.close()
