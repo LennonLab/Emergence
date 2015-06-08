@@ -36,7 +36,7 @@ def ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, widt
             ResType.append(res_types[i])
             ResID += 1
             ResYcoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-            x = xcoord(0.2, 5)
+            x = xcoord()
             ResXcoords.append(x) # width-limit
 
     return [RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType]

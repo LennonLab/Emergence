@@ -28,13 +28,12 @@ require("vegan")
 ## Load Data
 
 ```{r, results = 'hide', message = FALSE, warning = FALSE}
-sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/SimData.csv")  
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015June/June7/SimData.csv")  
 ```
 
 ## Univariate relationships
 
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=5, fig.height=5}
-par(mfrow=c(2, 2))
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 
 simulation <- sim.data$sim
 height <- sim.data$Height
@@ -44,6 +43,20 @@ flow.rate <- sim.data$FlowRate
 h.tau <- log((height * width)/flow.rate)
 m.tau <- log(sim.data$cell.tau)
 t.tau <- log(sim.data$particle.tau)
+
+N <- sim.data$N
+S <- sim.data$S
+e.var <- sim.data$e.var
+e.simp <- sim.data$simpson.e
+avg.ab <- N/S
+Skew <-sim.data$skew
+Nmax <- sim.data$N.max
+SimpD <- sim.data$SD
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=5, fig.height=5}
+par(mfrow=c(2, 2))
 
 plot(h.tau, m.tau, xlab="Hydraulic Residence Time", 
      ylab="Cell Residence Time", 
@@ -63,8 +76,6 @@ plot(t.tau, m.tau, xlab="Particle Residence Time",
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
 par(mfrow=c(2, 2))
 
-N <- log(sim.data$N)
-S <- log(sim.data$S)
 
 plot(t.tau, N, xlab="Particle Residence Time", 
      ylab="Total Abundance", 
@@ -88,69 +99,10 @@ plot(m.tau, S, xlab="Cell Residence Time",
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
 par(mfrow=c(2, 2))
 
-N <- sim.data$N
-plot(m.tau, log(N), xlab="Cell Residence Time", 
-     ylab="Total Abundance", 
-     main = "N vs. Tau",
-     col='cornsilk4')
-
-S <- sim.data$S
-plot(m.tau, log(S), xlab="Cell Residence Time", 
-     ylab="Species Richness", 
-     main = "S vs. Tau",
-     col='darkseagreen')
-
-e.var <- sim.data$e.var
-e.simp <- sim.data$simpson.e
-plot(m.tau, e.var, xlab="Cell Residence Time", 
-     ylab="Species Evenness", 
-     main = "Evenness vs. Tau",
-     col='skyblue')
-
-avg.ab <- N/S
-plot(m.tau, log(avg.ab), xlab="Cell Residence Time", 
-     ylab="Average Abundance",
-     main = "N/S vs. Tau",
-     col='coral')
-```
-
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-par(mfrow=c(2, 2))
-
-BP <- sim.data$berger.parker
-plot(m.tau, BP, xlab="Cell Residence Time", 
-     ylab="Berger-Parker", 
-     main = "Relative Dominance vs. Tau",
-     col='firebrick')
-
-SimpD <- sim.data$inv.simp.D
-plot(m.tau, SimpD, xlab="Cell Residence Time", 
-     ylab="Simpsons, 1/D", 
-     main = "Diversity vs. Tau",
-     col='gold')
-
-Skew <- sim.data$skew
-plot(m.tau, Skew, xlab="Cell Residence Time", 
-     ylab="Skewness", 
-     main = "Rarity vs. Tau",
-     col='limegreen')
-
-Nmax <- sim.data$N.max
-plot(m.tau, log(Nmax), xlab="Cell Residence Time", 
-     ylab="Nmax",
-     main = "Absolute Dominance vs. Tau",
-     col='sandybrown')
-```
-
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-par(mfrow=c(2, 2))
-
-plot(log(N), log(S), xlab="Total abundance",
-     ylab="Species Richness", 
-     main = "S vs. N",
-     col='indianred')
+plot(log(N), Skew, xlab="Total abundance", 
+     ylab="Skewness",
+     main = "Rarity vs. N",
+     col='plum')
 
 plot(log(N), log(Nmax), xlab="Total abundance", 
      ylab="Nmax", 
@@ -162,10 +114,11 @@ plot(log(N), e.var, xlab="Total abundance",
      main = "Evenness vs. N",
      col='lightseagreen')
 
-plot(log(N), Skew, xlab="Total abundance", 
-     ylab="Skewness",
-     main = "Rarity vs. N",
-     col='plum')
+plot(log(N), log(S), xlab="Total abundance",
+     ylab="Species Richness", 
+     main = "S vs. N",
+     col='indianred')
+
 ```
 
 
@@ -174,12 +127,25 @@ plot(log(N), Skew, xlab="Total abundance",
 par(mfrow=c(2, 2))
 
 growth <- sim.data$avg.per.capita.growth
-plot(m.tau, log(growth), xlab="Cell Residence Time", 
+growth <- (S*growth)/N
+x <- c()
+y <- c()
+
+ct <- 1
+for (val in growth){
+  if(is.nan(val) == FALSE && val > 0.1){
+    y <- c(y, val)
+    x <- c(x, m.tau[ct])
+    }
+  ct <- ct+1
+  }
+
+plot(x, y, xlab="Cell Residence Time", 
      ylab="growth", 
      main = "Per capita growth vs. Tau",
      col='dodgerblue')
 
-maint <- sim.data$avg.per.capita.maint
+maint <- (S*sim.data$avg.per.capita.maint)/N
 plot(m.tau, SimpD, xlab="Cell Residence Time", 
      ylab="maintenance", 
      main = "Per capita maintenance vs. Tau",
@@ -219,7 +185,7 @@ plot(m.tau, res.rich, xlab="Cell Residence Time",
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 rads <- list()
-rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/RADs.csv",
+rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015June/June7/RADs.csv",
             header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
             as.is = TRUE, skipNul = TRUE, fill = TRUE)
 
@@ -229,7 +195,7 @@ rad.list[is.na(rad.list)] <- 0
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 species <- list()
-species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/Species.csv",
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015June/June7/Species.csv",
             header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
             as.is = TRUE, skipNul = TRUE, fill = TRUE)
 
