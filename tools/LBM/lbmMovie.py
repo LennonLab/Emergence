@@ -2,7 +2,7 @@ from __future__ import division
 import numpy as np
 
 
-def SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight): # Lattice Boltzmann PARAMETERS
+def SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2): # Lattice Boltzmann PARAMETERS
 
     four9ths = 4.0/9.0    # abbreviations for lattice-Boltzmann weight factors
     one9th   = 1.0/9.0
@@ -26,8 +26,15 @@ def SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight): # Lat
     barrier = np.zeros((height, width), bool)  # Initialize barriers
                                                # True wherever there's a barrier
 
-    barrier[0.3*height: BarrierHeight*height+(0.3*height), 0.2*width: (0.2+BarrierWidth)*width] = True
+    barrier[0: BarrierHeight*height, 0.2*width: (0.2+BarrierWidth)*width] = True
     barrier[height*(1-BarrierHeight): height, 0.7*width: (0.7+BarrierWidth)*width] = True
+
+    BarrierXcoords1 = [0.2*width, (0.2+BarrierWidth)*width]
+    BarrierYcoords1 = [0, BarrierHeight*height]
+
+    BarrierXcoords2 = [0.7*width, (0.7+BarrierWidth)*width]
+    BarrierYcoords2 = [(1-BarrierHeight)*height, height]
+
 
     barrierN = np.roll(barrier,  1, axis=0)       # sites just north of barriers
     barrierS = np.roll(barrier, -1, axis=0)       # sites just south of barriers
@@ -38,7 +45,7 @@ def SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight): # Lat
     barrierSE = np.roll(barrierS,  1, axis=1)
     barrierSW = np.roll(barrierS, -1, axis=1)
 
-    return [n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW]
+    return [n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2]
 
 
 
