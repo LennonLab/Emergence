@@ -18,16 +18,62 @@ import bide
 
 
 
-def get_mrrmax():
+def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    seed = choice([1000])
-    m = choice([0]) # individuals immigrating per time step
-    r = choice([200]) # resource particles flowing in per time step
-    nr = choice([10]) # maximum number of resources types
-    rmax = choice([5000]) # maximum value of resource particle size
+    motion = ['fluid', 'conveyor', 'random_walk', 'uncorrelated']
+    reproduction = ['clonal', 'sexual']
+    mutation = ['yes', 'no']
+    predators = ['yes', 'no']
+    parasites = ['yes', 'no']
+    symbionts = ['yes', 'no']
+    env_gradient = ['no', 'yes']
 
-    return [seed, m, r, nr, rmax]
+    # richness of the metacommunity
+    J = choice([100, 1000, 10000])
+
+    # size of starting community
+    seed = choice([0, 10, 100, 1000])
+
+    # individuals immigrating per time step
+    m = choice([0, 2, 4, 8])
+
+    # resource particles flowing in per time step
+    r = choice([0, 10, 50, 100])
+
+    # maximum number of resources types
+    nr = choice([1, 2, 4, 8, 16, 32])
+
+    # maximum resource particle size
+    rmax = choice([500, 1000, 2000, 4000, 8000])
+
+    ## normally distributed trait values and ecological parameters
+
+    # mean and standard deviation for number of prey
+    avg_prey = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for number of symbionts
+    avg_symb = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for number of parasites
+    avg_parasite = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for specific growth rate
+    avg_growth = [np.random.uniform(0.1, 1.0), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for propagule cell quota
+    avg_Q = [np.random.uniform(0.1, 1.0), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for specific maintenance
+    avg_maint = [np.random.uniform(0.01, 0.1), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for specific active dispersal
+    avg_disp = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
+
+    # mean and standard deviation for specific resource use efficiency
+    avg_res = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
+
+    return [motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
 
 
 ######### Function called for each successive animation frame ##################
@@ -180,7 +226,7 @@ def nextFrame(arg):	# arg is the frame number
         OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
         OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
         OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
-        print>>OUT1, ct1, sim, prod_i, prod_q, r, nr, rmax, BarrierWidth, BarrierHeight, alpha, seed, stop, u0, width, height, viscosity, N, m, TracerTau, MicrobeTau,ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint
+        print>>OUT1, ct1,',', sim,',', prod_i,',', prod_q,',', r,',', nr,',', rmax,',', BarrierWidth,',', BarrierHeight,',', alpha,',', seed,',', stop,',', u0,',', width,',', height,',', viscosity,',', N,',', m,',', TracerTau,',', MicrobeTau,',', ResDens,',', ResDiv,',', ResRich,',', S,',', ES,',', Ev,',', BP,',', SD,',', Nm,',', sk,',', Mu,',', Maint
         print>>OUT2, RADString
         print>>OUT3, SString
         OUT1.close()
@@ -191,7 +237,7 @@ def nextFrame(arg):	# arg is the frame number
         if u0 == min(Rates):
             microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
             ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
-            seed, m, r, nr, rmax = get_mrrmax()
+            motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
             sim += 1
             alpha = np.random.uniform(0.9, 0.999)
             print '\n'
@@ -202,8 +248,13 @@ def nextFrame(arg):	# arg is the frame number
         TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
         MicTimeIn, COM, MicXcoords, MicYcoords, TracerXcoords, TracerYcoords, RES, ResXcoords, ResYcoords, ResIDs, ResType, MicIDs, MicQs, MicExitAge, TracerExitAge, TracerIDs = [list([]) for _ in xrange(16)]
-        # Lattice Boltzmann PARAMETERS
-        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+
+        if motion == 'fluid' or motion == 'conveyor':
+            #####################  Lattice Boltzmann PARAMETERS  ###########################
+            viscosity =  1 # unitless but required by an LBM model
+            n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+
+        elif motion == 'random_walk' or motion == 'uncorrelated':
 
 
         # Seed or do not seed the community ############################################
@@ -251,7 +302,7 @@ OUT2.close()
 OUT3.close()
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-seed, m, r, nr, rmax = get_mrrmax()
+motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
 MicID, ResID, N, S, ct1, Mu, Maint, T, R = 0, 0, 0, 0, 0, 0, 0, 0, 0
 prod_i, prod_q = 0, 0
@@ -278,9 +329,11 @@ BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [[],[],[],[
 width, height = 10, 10
 alpha = 0.99
 
-#####################  Lattice Boltzmann PARAMETERS  ###########################
-viscosity =  1
-n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+
+if motion == 'fluid' or motion == 'conveyor':
+    #####################  Lattice Boltzmann PARAMETERS  ###########################
+    viscosity =  1 # unitless but required by an LBM model
+    n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
 
 ###############  GRAPHICS AND ANIMATION ########################################
