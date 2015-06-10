@@ -2,20 +2,33 @@ from __future__ import division
 from random import randint, choice
 import numpy as np
 import sys
+from scipy import stats
+import os
+
+mydir = os.path.expanduser("~/")
+sys.path.append(mydir + "tools/metrics")
+import metrics
+
 
 limit = 0.5
 
-def xcoord(mini=0.2, maxi=1):
-    return float(np.random.uniform(mini, maxi))
+def xcoord(low=0.2, high=8):
+    return float(np.random.uniform(low, high))
+
+def ycoord(low=1.5, high=8.5):
+    return float(np.random.uniform(low, high))
+
 
 
 def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0):
 
     x = np.random.binomial(1, u0)
+
     if x == 1:
-        TracerYcoords.append(float(np.random.uniform(0.2*height, 0.8*height)))
+        y = ycoord(4,5)
+        TracerYcoords.append(y)
         x = xcoord()
-        TracerXcoords.append(x) # very near the upstream edge
+        TracerXcoords.append(x)
         TracerIDs.append(0) # used to track the age of the tracer
 
     return [TracerIDs, TracerXcoords, TracerYcoords]
@@ -24,7 +37,9 @@ def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0):
 
 def ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0):
 
+    R = len(RES)
     x = np.random.binomial(1, u0)
+
     if x == 1:
         res_in = np.random.random_integers(1, rmax, r)
         res_types = np.random.random_integers(0, nr-1, r)
@@ -35,9 +50,14 @@ def ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, widt
             ResIDs.append(ResID)
             ResType.append(res_types[i])
             ResID += 1
-            ResYcoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-            x = xcoord()
-            ResXcoords.append(x) # width-limit
+
+            y = ycoord()
+            ResYcoords.append(y)
+            if R == 0:
+                x = xcoord()
+            else:
+                x = xcoord()
+            ResXcoords.append(x)
 
     return [RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType]
 
@@ -47,23 +67,31 @@ def immigration(m, COM, MicXcoords, MicYcoords, width,
         height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict,
         MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, LogSeriesAlpha):
 
-    # immigration
+    N = len(COM)
     x = np.random.binomial(1, u0)
-    if x == 1:
 
+    if x == 1:
         props = np.random.logseries(LogSeriesAlpha, m)
+        #props = list(np.random.randint(1, 1000, m))
 
         for i, prop in enumerate(props):
 
             if prop <= 1000:
                 COM.append(prop)
-                MicYcoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                x = xcoord()
-                MicXcoords.append(x) # very near the upstream edge
+
+                y = ycoord()
+                MicYcoords.append(y)
+
+                if N == 0:
+                    x = xcoord()
+                else: x = xcoord()
+
+                MicXcoords.append(x)
+
                 MicIDs.append(MicID)
                 MicTimeIn.append(0)
                 MicID += 1
-                Q = float(np.random.uniform(10, 100))
+                Q = float(np.random.uniform(50, 100))
                 MicQs.append(Q)
 
                 if prop not in microbe_color_dict:
@@ -71,18 +99,19 @@ def immigration(m, COM, MicXcoords, MicYcoords, width,
                     microbe_color_dict = get_color(prop, microbe_color_dict)
 
                     # species growth rate
-                    GrowthDict[prop] = np.random.uniform(0.05, .5)
+                    GrowthDict[prop] = np.random.uniform(0.5, 1)
 
                     # species maintenance
-                    MaintDict[prop] = np.random.uniform(.5, 5)
+                    MaintDict[prop] = np.random.uniform(5, 15)
 
                     # species active dispersal rate
-                    DispParamDict[prop] = np.random.uniform(0.09, 0.9)
+                    DispParamDict[prop] = 0.0 # np.random.uniform(0.09, 0.9)
 
                     # species resource use efficiency
-                    ResUseDict[prop] = np.random.uniform(0.09, 0.9, nr)
+                    ResUseDict[prop] = np.random.uniform(0.1, 0.99, nr)
 
     return [COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict]
+
 
 
 def GetRAD(COM):
@@ -303,7 +332,7 @@ def ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID,
 
             else: RES[j] = food
 
-            if Q > 1000: # reproduction
+            if Q > 500: # reproduction
 
                 spID = COM[index]
                 X = MicXcoords[index]
@@ -334,7 +363,10 @@ def ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID,
 
 
 
-def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy):
+def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width,
+        height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,
+        MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,
+        Ev, ES, Nm , BP , SD , sk):
 
     ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
@@ -361,9 +393,7 @@ def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, h
             TracerYcoords.pop(i)
             TracerIDs.pop(i)
 
-            continue
-
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    return [TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords]
+    return [TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk]

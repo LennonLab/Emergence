@@ -6,28 +6,28 @@ from scipy import stats
 import numpy as np
 import sys
 import os
-import time
 import psutil
 
 mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "tools/metrics")
 import metrics
-sys.path.append(mydir + "/GitHub/hydrobide/tools/LBM")
+sys.path.append(mydir + "/GitHub/hydrobide/tools/LBM/lbmMovie")
 import lbmMovie as LBM
 sys.path.append(mydir + "/GitHub/hydrobide/tools/bide/bideMovie")
-import bideMovie as bide
+import bide
 
 
 
 def get_mrrmax():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    m = int(choice(range(1, 10))) # individuals immigrating per time step
-    r = int(choice(range(10, 100))) # resource particles flowing in per time step
-    nr = int(choice(range(1, 10))) # maximum number of resources types
-    rmax = int(choice(range(100, 1000))) # maximum value of resource particle size
+    seed = choice([1000])
+    m = choice([0]) # individuals immigrating per time step
+    r = choice([200]) # resource particles flowing in per time step
+    nr = choice([10]) # maximum number of resources types
+    rmax = choice([5000]) # maximum value of resource particle size
 
-    return [m, r, nr, rmax]
+    return [seed, m, r, nr, rmax]
 
 
 ######### Function called for each successive animation frame ##################
@@ -38,10 +38,12 @@ def nextFrame(arg):	# arg is the frame number
     global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
 
     global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage
-    global ResXcoords, ResYcoords, ResID, ResIDs, RES, LogSeriesAlpha, omega, MUs, VarMUs, Maints, VarMaints, ResType, ResUseDict, DispParamsDict
+    global ResXcoords, ResYcoords, ResID, ResIDs, RES, alpha, omega, MUs, VarMUs, Maints, VarMaints, ResType, ResUseDict, DispParamsDict
 
     global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, sim, RAD, splist
-    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight, ct1, m, r, nr, rmax
+    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight, ct1, m, r, nr, rmax, Mu, Maint
+
+    global N, TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, T, R, seed, stop, prod_i, prod_q
 
     for step in range(1): # adjust number of steps for smooth animation
 
@@ -52,7 +54,7 @@ def nextFrame(arg):	# arg is the frame number
         RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0)
 
 	# immigration
-        COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, LogSeriesAlpha)
+        COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, alpha)
 
         # stream
         nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign = LBM.stream([nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign])
@@ -72,10 +74,14 @@ def nextFrame(arg):	# arg is the frame number
         RES, ResXcoords, ResYcoords, ResID, ResIDs = args
 
         # moving tracer particles
-        TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy)
+        TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk)
 
         # consume and reproduce
+        p1 = len(COM)
+        q1 = sum(MicQs)
         RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType = bide.ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict)
+        prod_i = len(COM) - p1
+        prod_q = sum(MicQs) - q1
 
         # maintenance
         args = [COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width]
@@ -95,46 +101,35 @@ def nextFrame(arg):	# arg is the frame number
     labelbottom='off',
     labelleft='off')   # labels along the bottom edge are off
 
-    T = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment.',
-        '\nAverage speed on the x-axis is '+str(u0)+' units per time step. Residence time is estimated from',
-        'inert tracers (red stars).\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
+    N = len(COM)
+    RAD, splist = bide.GetRAD(COM)
+    S = len(RAD)
 
-    txt.set_text(' '.join(T))
+    Title = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment. Average speed',
+           '\non the x-axis is '+str(u0)+' units per time step. '+str(len(TracerExitAge))+' tracers have passed through.',
+           'N = '+str(N)+', S = '+str(S)+'.'
+           '\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
+
+    txt.set_text(' '.join(Title))
     plt.draw()
     plt.ylim(0,height)
     plt.xlim(0,width)
 
     ##### PLOTTING THE MICROBES ############################################
-    tracer_scatImage.remove()
-    tracer_scatImage = plt.scatter(TracerXcoords, TracerYcoords, c = 'r', marker='*', lw=0.0, s = 200, alpha=0.6)
-
     resource_scatImage.remove()
     resource_scatImage = plt.scatter(ResXcoords, ResYcoords, c = 'w', edgecolor = 'SpringGreen', s = RES, lw = 0.6, alpha=0.7)
+
+    tracer_scatImage.remove()
+    tracer_scatImage = plt.scatter(TracerXcoords, TracerYcoords, c = 'r', marker='*', lw=0.0, s = 200, alpha=0.6)
 
     microbe_scatImage.remove()
     colorlist = []
 
     for i, val in enumerate(COM): colorlist.append(microbe_color_dict[val])
-    microbe_scatImage = plt.scatter(MicXcoords, MicYcoords, c = colorlist, edgecolor = 'k', s = MicQs, lw = 0.2, alpha=1.0)
+    microbe_scatImage = plt.scatter(MicXcoords, MicYcoords, c = colorlist, edgecolor = '0.2', s = MicQs, lw = 0.2, alpha=0.9)
 
-
-    if len(TracerExitAge) >= 10:
-        ct1 += 1
-
-        N = len(COM)
-        T = len(TracerIDs)
-        R = len(RES)
-
-        process = psutil.Process(os.getpid())
-        mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
-
-        # Physical and general community parameters
-        OutList = [ct1, sim, u0, width, height, viscosity, N, m]
-
-        # Residence times for tracers and microbes
-        TracerTau = float(np.mean(TracerExitAge))
-        MicrobeTau = float(np.mean(MicExitAge))
-        OutList.extend([TracerTau, MicrobeTau])
+    # Record model values and reset, or not
+    if len(TracerExitAge) >= stop:
 
         # Examining the resource RAD
         if len(ResType) > 0:
@@ -142,75 +137,50 @@ def nextFrame(arg):	# arg is the frame number
             ResDens = sum(RES)/(height*width)
             ResDiv = float(metrics.Shannons_H(ResRAD))
             ResRich = len(Rlist)
-            OutList.extend([ResDens, ResDiv, ResRich])
-        else: OutList.extend([0, 0, 0])
 
+        # Residence times for tracers and microbes
+        TracerTau = float(np.mean(TracerExitAge))
+        MicrobeTau = float(np.mean(MicExitAge))
 
-        if N == 0:
-            S = 0
-            OutList.extend([S, 0, 0, 0, 0, 0, 0, 0, 0])
+        T = len(TracerIDs)
+        R = len(RES)
 
-        else:
+        N = len(COM)
+        if N >= 1:
+
             RAD, splist = bide.GetRAD(COM)
             RAD, splist = zip(*sorted(zip(RAD, splist), reverse=True))
-
-            if N != sum(RAD):
-                print 'N != sum(RAD)'
-                sys.exit()
-
             S = len(RAD)
-            OutList.extend([S])
 
-            if S == 1: OutList.extend([0, 0, 1.0, 0, N, 0, 0, 0])
+            # Specific Growth rate and Maintenance
 
-            elif max(RAD) == min(RAD):
+            mu, maint = 0, 0
+            for i, sp in enumerate(splist):
+                mu = RAD[i] * GrowthDict[sp]
+                maint = RAD[i] * MaintDict[sp]
 
-                SD = float(metrics.simpsons_dom(RAD))
-                # Specific Growth rate and Maintenance
-                Mu, Maint = 0, 0
-                for i, sp in enumerate(splist):
-                    Mu += RAD[i] * GrowthDict[sp]
-                    Maint += RAD[i] * MaintDict[sp]
+            Mu = mu/N
+            Maint = maint/N
 
-                Mu = float(Mu/S)
-                Maint = float(Maint/S)
-                OutList.extend([Mu, Maint])
+            # Evenness, Dominance, and Rarity measures
+            Ev = float(metrics.e_var(RAD))
+            ES = float(metrics.e_simpson(RAD))
+            Nm = max(RAD)
+            BP = float(Nm/N)
+            SD = float(metrics.simpsons_dom(RAD))
+            sk = float(stats.skew(RAD))
 
-                OutList.extend([1, 1, S/N, SD, N/S, 0, Mu, Maint])
+        process = psutil.Process(os.getpid())
+        mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
 
-            else:
-                # Evenness, Dominance, and Rarity measures
-                Ev = metrics.e_var(RAD)
-                ES = float(metrics.e_simpson(RAD))
-                Nm = max(RAD)
-                BP = float(Nm/N)
-                SD = float(metrics.simpsons_dom(RAD))
-                sk = float(stats.skew(RAD))
+        print sim, ' N:', N, 'S:', S, ' pI:', round(prod_i,1), 'pQ:', round(prod_q,2), ': flow:', u0, ' MB:',mem
 
-                OutList.extend([ES, Ev, BP, SD, Nm, sk])
-
-                # Specific Growth rate and Maintenance
-                Mu, Maint = 0, 0
-                for i, sp in enumerate(splist):
-                    Mu += RAD[i] * GrowthDict[sp]
-                    Maint += RAD[i] * MaintDict[sp]
-
-                Mu = float(Mu/S)
-                Maint = float(Maint/S)
-                OutList.extend([Mu, Maint])
-
-                process = psutil.Process(os.getpid())
-                mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
-
-        print sim, ' N:', N, 'S:', S, ' T:', T,' R:', R, ' : flow rate:', u0, ' memory:',mem
-
-        OutString = str(OutList).strip('[]')
         SString = str(splist).strip('()')
         RADString = str(RAD).strip('()')
         OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
         OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
         OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
-        print>>OUT1, OutString
+        print>>OUT1, ct1, sim, prod_i, prod_q, r, nr, rmax, BarrierWidth, BarrierHeight, alpha, seed, stop, u0, width, height, viscosity, N, m, TracerTau, MicrobeTau,ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint
         print>>OUT2, RADString
         print>>OUT3, SString
         OUT1.close()
@@ -221,17 +191,27 @@ def nextFrame(arg):	# arg is the frame number
         if u0 == min(Rates):
             microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
             ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
-            m, r, nr, rmax = get_mrrmax()
+            seed, m, r, nr, rmax = get_mrrmax()
             sim += 1
-            LogSeriesAlpha = np.random.uniform(0.9, 0.999)
+            alpha = np.random.uniform(0.9, 0.999)
             print '\n'
 
         Rates = np.roll(Rates, -1, axis=0)
         u0 = Rates[0]  # initial in-flow speed
 
+        TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
         MicTimeIn, COM, MicXcoords, MicYcoords, TracerXcoords, TracerYcoords, RES, ResXcoords, ResYcoords, ResIDs, ResType, MicIDs, MicQs, MicExitAge, TracerExitAge, TracerIDs = [list([]) for _ in xrange(16)]
         # Lattice Boltzmann PARAMETERS
         n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+
+
+        # Seed or do not seed the community ############################################
+        if seed > 0:
+            # inflow of resources
+            RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, 1)
+            # immigration
+            COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(seed, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, 1, alpha)
 
         ####################### REPLACE ENVIRONMENT
         fig.add_subplot(1, 1, 1)
@@ -264,16 +244,18 @@ OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
 OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
 OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, FlowRate, Width, Height, Viscosity, N, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
-#              ct1,  sim, u0,       width, height, viscosity, N, m,                TracerTau,    MicrobeTau, ResDens,              ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
+print>>OUT1, 'RowID, sim, ind.prod, biomass.prod, res.inflow, res.types, max.res, barrier.width, barrier.height, logseries.a, starting.seed, stop.point, FlowRate, Width, Height, Viscosity, N, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
+#             ct1,   sim, prod_i,   prod_q,       r,          nr,        rmax,    BarrierWidth,  BarrierHeight,  alpha,       seed,          stop,       u0,       width, height, viscosity, N, m,                TracerTau,    MicrobeTau,ResDens,               ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
 OUT1.close()
 OUT2.close()
 OUT3.close()
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-m, r, nr, rmax = get_mrrmax()
+seed, m, r, nr, rmax = get_mrrmax()
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
-MicID, ResID, N, S, ct1 = 0, 0, 0, 0, 0
+MicID, ResID, N, S, ct1, Mu, Maint, T, R = 0, 0, 0, 0, 0, 0, 0, 0, 0
+prod_i, prod_q = 0, 0
+N, TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 COM, MicXcoords, MicYcoords, AvgTaus, RAD, splist = [], [], [], [], [], []
 MicIDs, MicQs, MicExitAge, MicTimeIn = [], [], [], []
@@ -284,21 +266,24 @@ microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
 ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-shift, sign, sim, ct1, BarrierWidth, BarrierHeight = 0.0, 0.1, 0, 0, 0.2, 0.2
-Rates = np.array([1.0, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05, 0.025, 0.01])  # inflow speeds
+stop, shift, sign, sim, BarrierWidth, BarrierHeight = 10, 0.0, 0.1, 0, 0.0, 0.0
+
+#Rates = np.array([1.0, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05, 0.025, 0.01])  # inflow speeds
+Rates = np.array([1.0, 0.75, 0.5, 0.1, 0.075, 0.05, 0.025, 0.01])  # inflow speeds
+
 u0 = Rates[0]  # initial in-flow speed
 
 BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [[],[],[],[]]
 
 width, height = 10, 10
-LogSeriesAlpha = np.random.uniform(0.9, 0.999)
+alpha = 0.99
 
 #####################  Lattice Boltzmann PARAMETERS  ###########################
-viscosity =  0.84   # fluid viscosity of water
+viscosity =  1
 n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
 
-###############  GRAPHICS AND ANIMATION ##########################################################################################################
+###############  GRAPHICS AND ANIMATION ########################################
 fig = plt.figure(figsize=(12, 8))
 fig.add_subplot(1, 1, 1) # initiate first plot
 
@@ -318,11 +303,20 @@ bheight = BarrierYcoords2[1] - bottom
 bwidth = BarrierXcoords2[1] - left
 BarrierImage2 = plt.bar(left-0.3, bheight, bwidth-0.3, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
 
-T = ['Microbes consume resource particles and grow, reproduce, and die as they flow through a complex fluid environment.',
+Title = ['Microbes consume resource particles and grow, reproduce, and die as they flow through a complex fluid environment.',
         '\nCurrent speed on the x-axis is '+str(round(u0,3)), 'units per time step.']
 
-txt = fig.suptitle(' '.join(T), fontsize = 12)
+txt = fig.suptitle(' '.join(Title), fontsize = 12)
 
-ani = animation.FuncAnimation(fig, nextFrame, frames=5000, interval=50, blit=False) # 20000 frames is a long movie
+
+# Seed or do not seed the community ############################################
+if seed > 0:
+    # inflow of resources
+    RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, 1)
+    # immigration
+    COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(seed, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, 1, alpha)
+
+
+ani = animation.FuncAnimation(fig, nextFrame, frames=5000, interval=100, blit=False) # 20000 frames is a long movie
 plt.show()
 #ani.save(mydir+'/Hydro-bide/results/movies/HydrobideVideoTest.avi', metadata={'artist':'Guido'}, bitrate=5000)

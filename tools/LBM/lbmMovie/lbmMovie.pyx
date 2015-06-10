@@ -26,14 +26,14 @@ def SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, Barrie
     barrier = np.zeros((height, width), bool)  # Initialize barriers
                                                # True wherever there's a barrier
 
-    barrier[0: BarrierHeight*height, 0.2*width: (0.2+BarrierWidth)*width] = True
-    barrier[height*(1-BarrierHeight): height, 0.7*width: (0.7+BarrierWidth)*width] = True
+    barrier[0.2*height: BarrierHeight*height+(0.2*height), 0.3*width: (0.3+BarrierWidth)*width] = True
+    barrier[0.8*height*(1-BarrierHeight): 0.8*height, 0.6*width: (0.6+BarrierWidth)*width] = True
 
-    BarrierXcoords1 = [0.2*width, (0.2+BarrierWidth)*width]
-    BarrierYcoords1 = [0, BarrierHeight*height]
+    BarrierXcoords1 = [0.3*width, (0.3+BarrierWidth)*width]
+    BarrierYcoords1 = [0.2*height, BarrierHeight*height+(0.2*height)]
 
-    BarrierXcoords2 = [0.7*width, (0.7+BarrierWidth)*width]
-    BarrierYcoords2 = [(1-BarrierHeight)*height, height]
+    BarrierXcoords2 = [0.6*width, (0.6+BarrierWidth)*width]
+    BarrierYcoords2 = [0.8*height*(1-BarrierHeight), 0.8*height]
 
 
     barrierN = np.roll(barrier,  1, axis=0)       # sites just north of barriers
