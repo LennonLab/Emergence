@@ -21,13 +21,19 @@ import bide
 def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    motion = ['fluid', 'conveyor', 'random_walk', 'uncorrelated']
-    reproduction = ['clonal', 'sexual']
-    mutation = ['yes', 'no']
-    predators = ['yes', 'no']
-    parasites = ['yes', 'no']
-    symbionts = ['yes', 'no']
-    env_gradient = ['no', 'yes']
+    motion = choice(['fluid', 'conveyor', 'random_walk', 'uncorrelated'])
+    D = str()
+    if motion == 'uncorrelated' or motion == 'random_walk':
+        D = choice(['2D', '3D'])
+    else:
+        D = '2D'
+
+    reproduction = choice(['clonal', 'sexual'])
+    mutation = choice(['yes', 'no'])
+    predators = choice(['yes', 'no'])
+    parasites = choice(['yes', 'no'])
+    symbionts = choice(['yes', 'no'])
+    env_gradient = choice(['no', 'yes'])
 
     # richness of the metacommunity
     J = choice([100, 1000, 10000])
@@ -46,8 +52,6 @@ def get_rand_params():
 
     # maximum resource particle size
     rmax = choice([500, 1000, 2000, 4000, 8000])
-
-    ## normally distributed trait values and ecological parameters
 
     # mean and standard deviation for number of prey
     avg_prey = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
@@ -73,7 +77,7 @@ def get_rand_params():
     # mean and standard deviation for specific resource use efficiency
     avg_res = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
 
-    return [motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
+    return [motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
 
 
 ######### Function called for each successive animation frame ##################
@@ -87,65 +91,57 @@ def nextFrame(arg):	# arg is the frame number
     global ResXcoords, ResYcoords, ResID, ResIDs, RES, alpha, omega, MUs, VarMUs, Maints, VarMaints, ResType, ResUseDict, DispParamsDict
 
     global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, sim, RAD, splist
-    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight, ct1, m, r, nr, rmax, Mu, Maint
+    global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight, ct1, Mu, Maint
 
+    global motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res
     global N, TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, T, R, seed, stop, prod_i, prod_q
 
     for step in range(1): # adjust number of steps for smooth animation
 
         # new tracers
-        TracerIDs, TracerXcoords, TracerYcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0)
+        TracerIDs, TracerXcoords, TracerYcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0, D)
 
         # inflow of resources
-        RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0)
+        RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0, D)
 
 	# immigration
-        COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, alpha)
+        COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, alpha, D)
 
-        # stream
-        nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign = LBM.stream([nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign])
+        if motion == 'fluid' or motion == 'conveyor':
+            # stream
+            nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign = LBM.stream([nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign])
 
-        # collide
-        rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW = LBM.collide(viscosity, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, u0)
+            # collide
+            rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW = LBM.collide(viscosity, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, u0)
 
         # dispersal
-        args1 = [COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height]
-        args2 = [u0, MicIDs, MicID, MicTimeIn, MicQs]
-        args1, args2 = bide.dispersal(args1, args2)
-        COM, MicXcoords, MicYcoords, MicExitAge = args1
-        MicIDs, MicID, MicTimeIn, MicQs = args2
+        COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.dispersal(COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, u0, MicIDs, MicID, MicTimeIn, MicQs, D)
 
         # resource flow
-        args = bide.resFlow([RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, ResID, ResIDs])
-        RES, ResXcoords, ResYcoords, ResID, ResIDs = args
+        RES, ResXcoords, ResYcoords, ResID, ResIDs = bide.resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, ResID, ResIDs, D)
 
         # moving tracer particles
-        TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk)
+        TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk, D)
 
         # consume and reproduce
         p1 = len(COM)
         q1 = sum(MicQs)
-        RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType = bide.ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict)
+        RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType = bide.ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict, D)
         prod_i = len(COM) - p1
         prod_q = sum(MicQs) - q1
 
         # maintenance
-        args = [COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width]
-        args = bide.maintenance(args)
-        COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = args
+        COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.maintenance(COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width, D)
+
 
     ########## GENERATE FIGURES ############################################
-    fig.add_subplot(1, 1, 1)  # Plot 1: plot of the system
+    if D = '2D' or motion == 'fluid' or motion == 'conveyor':
+        fig.add_subplot(1, 1, 1)  # Plot 1: plot of the system
+        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
-    plt.tick_params(\
-    axis='both',       # changes apply to the x-axis
-    which='both',      # both major and minor ticks are affected
-    bottom='off',      # ticks along the bottom edge are off
-    top='off',         # ticks along the top edge are off
-    left='off',
-    right='off',
-    labelbottom='off',
-    labelleft='off')   # labels along the bottom edge are off
+    elif D = '3D':
+        fig.add_subplot(111, projection='3d')
+        plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
     N = len(COM)
     RAD, splist = bide.GetRAD(COM)
@@ -237,7 +233,7 @@ def nextFrame(arg):	# arg is the frame number
         if u0 == min(Rates):
             microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
             ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
-            motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
+            motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
             sim += 1
             alpha = np.random.uniform(0.9, 0.999)
             print '\n'
@@ -302,7 +298,7 @@ OUT2.close()
 OUT3.close()
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-motion, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
+motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
 #######################  MICROBE COMMUNITY PARAMETERS  #########################
 MicID, ResID, N, S, ct1, Mu, Maint, T, R = 0, 0, 0, 0, 0, 0, 0, 0, 0
 prod_i, prod_q = 0, 0
