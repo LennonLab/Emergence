@@ -35,7 +35,7 @@ sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015June/June7/S
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 
-simulation <- sim.data$sim
+sim <- sim.data$sim # the specific simulation run
 height <- sim.data$Height
 width <- sim.data$Width
 flow.rate <- sim.data$FlowRate
@@ -75,7 +75,6 @@ plot(t.tau, m.tau, xlab="Particle Residence Time",
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
 par(mfrow=c(2, 2))
-
 
 plot(t.tau, N, xlab="Particle Residence Time", 
      ylab="Total Abundance", 
@@ -180,6 +179,42 @@ plot(m.tau, res.rich, xlab="Cell Residence Time",
      ylab="Number of resource types", 
      main = "Resource richness vs. Tau",
      col='slateblue')
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+sim.sub <- subset(sim.data, sim == 60)
+height <- sim.sub$Height
+width <- sim.sub$Width
+flow.rate <- sim.sub$FlowRate
+
+h.tau <- log((height * width)/flow.rate)
+m.tau <- log(sim.sub$cell.tau)
+t.tau <- log(sim.sub$particle.tau)
+
+N <- sim.sub$N
+S <- sim.sub$S
+e.var <- sim.sub$e.var
+e.simp <- sim.sub$simpson.e
+avg.ab <- N/S
+Skew <-sim.sub$skew
+Nmax <- sim.sub$N.max
+SimpD <- sim.sub$SD
+
+
+plot(t.tau, N, xlab="Particle Residence Time", 
+     ylab="Total Abundance", 
+     main = "N vs. Tau", col='cornsilk4')
+lines(t.tau, N)
+
+plot(t.tau, S, xlab="Particle Residence Time", 
+     ylab="Species Richness", 
+     main = "S vs. Tau", col='darkseagreen')
+lines(t.tau, S)
+
 ```
 
 
