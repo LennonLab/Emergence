@@ -20,22 +20,26 @@ def ycoord(low=1.5, high=8.5):
 
 
 
-def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0):
+def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, width, height, u0, D):
 
     x = np.random.binomial(1, u0)
 
     if x == 1:
-        y = ycoord(4,5)
+        y = coord()
         TracerYcoords.append(y)
-        x = xcoord()
+        x = coord()
         TracerXcoords.append(x)
         TracerIDs.append(0) # used to track the age of the tracer
 
-    return [TracerIDs, TracerXcoords, TracerYcoords]
+    if D == 3:
+        z = coord()
+        TracerZcoords.append(z)
+
+    return [TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords]
 
 
 
-def ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0):
+def ResIn(RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0, D):
 
     R = len(RES)
     x = np.random.binomial(1, u0)
@@ -59,13 +63,11 @@ def ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, widt
                 x = xcoord()
             ResXcoords.append(x)
 
-    return [RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType]
+    return [RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResType]
 
 
 
-def immigration(m, COM, MicXcoords, MicYcoords, width,
-        height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict,
-        MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, LogSeriesAlpha):
+def immigration(m, COM, MicXcoords, MicYcoords, MicZcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, LogSeriesAlpha, D):
 
     N = len(COM)
     x = np.random.binomial(1, u0)
@@ -110,7 +112,7 @@ def immigration(m, COM, MicXcoords, MicYcoords, width,
                     # species resource use efficiency
                     ResUseDict[prop] = np.random.uniform(0.1, 0.99, nr)
 
-    return [COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict]
+    return [COM, MicXcoords, MicYcoords, MicZcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict]
 
 
 
@@ -135,10 +137,7 @@ def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO MICROBE SPECIES
     return color_dict
 
 
-def dispersal(args1, args2):
-
-    COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height = args1
-    u0, MicIDs, MicID, MicTimeIn, MicQs = args2
+def dispersal(COM, ux, uy, MicXcoords, MicYcoords, MicZcoords, MicExitAge, width, height, u0, MicIDs, MicID, MicTimeIn, MicQs, D):
 
     ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
@@ -178,14 +177,11 @@ def dispersal(args1, args2):
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    return [[COM, MicXcoords, MicYcoords, MicExitAge],
-        [MicIDs, MicID, MicTimeIn, MicQs]]
+    return [COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs]
 
 
 
-def maintenance(args):
-
-    COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width = args
+def maintenance(COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width, D):
 
     for i, val in enumerate(MicQs):
 
@@ -204,14 +200,12 @@ def maintenance(args):
 
         else: MicQs[i] = val
 
-    return [COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs]
+    return [COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs]
 
 
 
 
-def resFlow(args):
-
-    RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, ResID, ResIDs = args
+def resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, ResZcoords, width, height, ResID, ResIDs, D):
 
     ux = np.reshape(ux, (width*height))       # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height))       # uy is the macroscopic y velocity
@@ -247,7 +241,7 @@ def resFlow(args):
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    return [RES, ResXcoords, ResYcoords, ResID, ResIDs]
+    return [RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs]
 
 
 
@@ -363,10 +357,7 @@ def ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID,
 
 
 
-def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width,
-        height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,
-        MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,
-        Ev, ES, Nm , BP , SD , sk):
+def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict, Ev, ES, Nm , BP , SD , sk, D):
 
     ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
@@ -396,4 +387,4 @@ def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width,
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    return [TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk]
+    return [TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk]

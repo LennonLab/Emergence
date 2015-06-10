@@ -17,16 +17,30 @@ sys.path.append(mydir + "/GitHub/hydrobide/tools/bide/bideMovie")
 import bide
 
 
+def checks(Qs2, Slist2, inds2, Tlist, xcoords, ycoords, zcoords):
+
+    Blist = list(set([len(Qs2), len(Slist2), len(inds2), len(Tlist), len(xcoords), len(ycoords), len(zcoords)]))
+    if len(Blist) > 1:
+        print 'lists of different sizes:', Blist
+        sys.exit()
+
+    N = len(Qs2)
+    if N == 0:
+        return ['N = 0']
+
+    return ['pass']
+
 
 def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
+
     motion = choice(['fluid', 'conveyor', 'random_walk', 'uncorrelated'])
     D = str()
     if motion == 'uncorrelated' or motion == 'random_walk':
-        D = choice(['2D', '3D'])
+        D = choice([2, 3])
     else:
-        D = '2D'
+        D = 2
 
     reproduction = choice(['clonal', 'sexual'])
     mutation = choice(['yes', 'no'])
@@ -126,7 +140,9 @@ def nextFrame(arg):	# arg is the frame number
         # consume and reproduce
         p1 = len(COM)
         q1 = sum(MicQs)
+
         RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType = bide.ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict, D)
+
         prod_i = len(COM) - p1
         prod_q = sum(MicQs) - q1
 
@@ -135,11 +151,11 @@ def nextFrame(arg):	# arg is the frame number
 
 
     ########## GENERATE FIGURES ############################################
-    if D = '2D' or motion == 'fluid' or motion == 'conveyor':
+    if D = 2 or motion == 'fluid' or motion == 'conveyor':
         fig.add_subplot(1, 1, 1)  # Plot 1: plot of the system
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
-    elif D = '3D':
+    elif D = 3:
         fig.add_subplot(111, projection='3d')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
