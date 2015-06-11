@@ -9,123 +9,23 @@ mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "tools/metrics")
 import metrics
 
-
 limit = 0.5
 
-def xcoord(low=0.2, high=8):
-    return float(np.random.uniform(low, high))
 
-def ycoord(low=1.5, high=8.5):
-    return float(np.random.uniform(low, high))
+def coord(d):
+    return float(np.random.uniform(0.2*d, 0.8*d))
 
 
-
-def NewTracers(TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, width, height, u0, D):
-
-    x = np.random.binomial(1, u0)
-
-    if x == 1:
-        y = coord()
-        TracerYcoords.append(y)
-        x = coord()
-        TracerXcoords.append(x)
-        TracerIDs.append(0) # used to track the age of the tracer
-
-    if D == 3:
-        z = coord()
-        TracerZcoords.append(z)
-
-    return [TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords]
-
-
-
-def ResIn(RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0, D):
-
-    R = len(RES)
-    x = np.random.binomial(1, u0)
-
-    if x == 1:
-        res_in = np.random.random_integers(1, rmax, r)
-        res_types = np.random.random_integers(0, nr-1, r)
-
-        for i, val in enumerate(res_in):
-
-            RES.append(val)
-            ResIDs.append(ResID)
-            ResType.append(res_types[i])
-            ResID += 1
-
-            y = ycoord()
-            ResYcoords.append(y)
-            if R == 0:
-                x = xcoord()
-            else:
-                x = xcoord()
-            ResXcoords.append(x)
-
-    return [RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResType]
-
-
-
-def immigration(m, COM, MicXcoords, MicYcoords, MicZcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, LogSeriesAlpha, D):
-
-    N = len(COM)
-    x = np.random.binomial(1, u0)
-
-    if x == 1:
-        props = np.random.logseries(LogSeriesAlpha, m)
-        #props = list(np.random.randint(1, 1000, m))
-
-        for i, prop in enumerate(props):
-
-            if prop <= 1000:
-                COM.append(prop)
-
-                y = ycoord()
-                MicYcoords.append(y)
-
-                if N == 0:
-                    x = xcoord()
-                else: x = xcoord()
-
-                MicXcoords.append(x)
-
-                MicIDs.append(MicID)
-                MicTimeIn.append(0)
-                MicID += 1
-                Q = float(np.random.uniform(50, 100))
-                MicQs.append(Q)
-
-                if prop not in microbe_color_dict:
-                    # species color
-                    microbe_color_dict = get_color(prop, microbe_color_dict)
-
-                    # species growth rate
-                    GrowthDict[prop] = np.random.uniform(0.5, 1)
-
-                    # species maintenance
-                    MaintDict[prop] = np.random.uniform(5, 15)
-
-                    # species active dispersal rate
-                    DispParamDict[prop] = 0.0 # np.random.uniform(0.09, 0.9)
-
-                    # species resource use efficiency
-                    ResUseDict[prop] = np.random.uniform(0.1, 0.99, nr)
-
-    return [COM, MicXcoords, MicYcoords, MicZcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict]
-
-
-
-def GetRAD(COM):
+def GetRAD(vector):
     RAD = []
-    tList = list(set(COM)) # species IDs
-    for i, sp in enumerate(tList):
-        RAD.append(COM.count(sp)) # the abundance of each species
-    return RAD, tList # the rad and the species list
+    unique = list(set(vector))
+    for val in unique:
+        RAD.append(vector.count(val)) # the abundance of each species
+
+    return RAD, unique # the rad and the species list
 
 
-
-def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO MICROBE SPECIES
+def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO SPECIES
 
     r1 = lambda: randint(0,255)
     r2 = lambda: randint(0,255)
@@ -137,17 +37,148 @@ def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO MICROBE SPECIES
     return color_dict
 
 
-def dispersal(COM, ux, uy, MicXcoords, MicYcoords, MicZcoords, MicExitAge, width, height, u0, MicIDs, MicID, MicTimeIn, MicQs, D):
+
+def NewTracers(IDs, coords, width, height, length, u0, D):
+
+    if D == 2:
+        Xcoords, Ycoords = coords
+    elif D == 3:
+        Xcoords, Ycoords, Zcoords = coords
+
+    x = np.random.binomial(1, u0)
+
+    if x == 1:
+        y = coord(height)
+        Ycoords.append(y)
+
+        x = coord(width)
+        Xcoords.append(x)
+
+        IDs.append(0) # used to track the age of the tracer
+
+    if D == 3:
+        z = coord(length)
+        Zcoords.append(z)
+
+    if D == 2:
+        coords = [Xcoords, Ycoords]
+    elif D == 3:
+        coords = [Xcoords, Ycoords, Zcoords]
+
+    return [TracerIDs, coords]
+
+
+
+def ResIn(Type, Vals, coords, ID, IDs, ExitAge, TimeIn, numr, rmax, nr, width, height, length, u0, D):
+
+    if D == 2:
+        Xcoords, Ycoords = coords
+    elif D == 3:
+        Xcoords, Ycoords, Zcoords = coords
+
+    for r in numr:
+        x = np.random.binomial(1, u0)
+
+        if x == 1:
+            rval = np.random.random_integers(1, rmax, 1)
+            rtype = np.random.random_integers(0, nr-1, 1)
+
+            Vals.append(val)
+            IDs.append(ID)
+            Type.append(rtype)
+            ID += 1
+
+            y = coord(height)
+            Ycoords.append(y)
+
+            x = coord(width)
+            Xcoords.append(x)
+
+            if D == 3:
+                z = coord(length)
+                Zcoords.append(z)
+
+    if D == 2:
+        coords = [Xcoords, Ycoords]
+    elif D == 3:
+        coords = [Xcoords, Ycoords, Zcoords]
+
+    return [Type, Vals, coords, ExitAge, IDs, ID, TimeIn]
+
+
+
+def immigration(numin, Species, coords, width, height, length, MaintDict, GrowthDict, DispParamDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
+
+    if D == 2:
+        Xcoords, Ycoords = coords
+    elif D == 3:
+        Xcoords, Ycoords, Zcoords = coords
+
+    N = len(COM)
+
+    for m in numin:
+        x = np.random.binomial(1, u0)
+
+        if x == 1:
+            prop = np.random.logseries(alpha, 1)
+            #props = list(np.random.randint(1, 1000, 1))
+
+            if prop > 1000: continue
+
+            Species.append(prop)
+
+            y = coord(height)
+            Ycoords.append(y)
+
+            x = coord(width)
+            Xcoords.append(x)
+
+            if D == 3:
+                z = coord(length)
+                Zcoords.append(z)
+
+            IDs.append(IndID)
+            TimeIn.append(0)
+            ID += 1
+            Q = float(np.random.uniform(50, 100))
+            Qs.append(Q)
+
+            if prop not in color_dict:
+                # species color
+                color_dict = get_color(prop, color_dict)
+
+                # species growth rate
+                GrowthDict[prop] = np.random.uniform(0.5, 1)
+
+                # species maintenance
+                MaintDict[prop] = np.random.uniform(5, 15)
+
+                # species active dispersal rate
+                DispParamDict[prop] = 0.0 # np.random.uniform(0.09, 0.9)
+
+                # species resource use efficiency
+                ResUseDict[prop] = np.random.uniform(0.1, 0.99, nr)
+
+    if D == 2:
+        coords = [Xcoords, Ycoords]
+    elif D == 3:
+        coords = [Xcoords, Ycoords, Zcoords]
+
+    return [Species, coords, width, height, MaintDict, GrowthDict, DispParamDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict]
+
+
+
+
+def fluid_movement(Type, IDlist, ID, TimeIn, Vals, ExitAge, ux, uy, Xcoords, Ycoords, width, height, u0):
 
     ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
 
-
     # dispersal inside the system
-    for i, val in enumerate(MicXcoords):
+    for i, val in enumerate(Xcoords):
 
-        X = int(round(MicXcoords[i]))
-        Y = int(round(MicYcoords[i]))
+        X = int(round(Xcoords[i]))
+        Y = int(round(Ycoords[i]))
 
         index =  int(round(X + Y * width))
 
@@ -156,183 +187,181 @@ def dispersal(COM, ux, uy, MicXcoords, MicYcoords, MicZcoords, MicExitAge, width
 
         k = np.random.binomial(1, 1)
         if k == 1:
-            MicXcoords[i] += ux[index]
-            MicYcoords[i] += uy[index]
+            Xcoords[i] += ux[index]
+            Ycoords[i] += uy[index]
 
-        y = MicYcoords[i]
-        if 0 > y: MicYcoords[i] = 0
-        elif y > height: MicYcoords[i] = height
+        y = Ycoords[i]
+        if 0 > y: Ycoords[i] = 0
+        elif y > height: Ycoords[i] = height
 
-        MicTimeIn[i] += 1
-        if MicXcoords[i] >= width - limit:
+        TimeIn[i] += 1
+        if Xcoords[i] >= width - limit:
 
-            MicExitAge.append(MicTimeIn[i])
-            MicXcoords.pop(i)
-            MicYcoords.pop(i)
-            MicIDs.pop(i)
-            MicQs.pop(i)
-            MicTimeIn.pop(i)
-            COM.pop(i)
-
-    ux = np.reshape(ux, (height, width))
-    uy = np.reshape(uy, (height, width))
-
-    return [COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs]
-
-
-
-def maintenance(COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width, D):
-
-    for i, val in enumerate(MicQs):
-
-        val -= MaintDict[COM[i]]  # maint influenced by species
-
-        if val < 5:   # starved
-
-            MicExitAge.append(MicTimeIn[i])
-
-            COM.pop(i)
-            MicXcoords.pop(i)
-            MicYcoords.pop(i)
-            MicIDs.pop(i)
-            MicQs.pop(i)
-            MicTimeIn.pop(i)
-
-        else: MicQs[i] = val
-
-    return [COM, MicXcoords, MicYcoords, MicZcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs]
-
-
-
-
-def resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, ResZcoords, width, height, ResID, ResIDs, D):
-
-    ux = np.reshape(ux, (width*height))       # ux is the macroscopic x velocity
-    uy = np.reshape(uy, (width*height))       # uy is the macroscopic y velocity
-
-    for i, val in enumerate(ResXcoords):
-
-        if len(ResXcoords) != len(ResYcoords):
-            print 'different lengths:', len(ResXcoords), len(ResYcoords)
-            sys.exit()
-
-        X = int(round(ResXcoords[i]))
-        Y = int(round(ResYcoords[i]))
-
-        index =  int(round(X + Y*width))
-
-        if index > len(ux) - 1: index = len(ux) - 1
-        if index > len(uy) - 1: index = len(uy) - 1
-
-        ResXcoords[i] += ux[index]
-        ResYcoords[i] += uy[index]
-        y = ResYcoords[i]
-
-        if 0 > y: ResYcoords[i] = 0
-        elif y > height: ResYcoords[i] = height
-
-        if ResXcoords[i] >= width - limit:
-
-            ResXcoords.pop(i)
-            ResYcoords.pop(i)
-            ResIDs.pop(i)
-            RES.pop(i)
+            ExitAge.append(TimeIn[i])
+            Xcoords.pop(i)
+            Ycoords.pop(i)
+            IDs.pop(i)
+            Vals.pop(i)
+            TimeIn.pop(i)
+            Type.pop(i)
 
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    return [RES, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs]
+    return [Type, Xcoords, Ycoords, ExitAge, IDs, ID, TimeIn, Vals]
 
 
 
-def ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict):
+def maintenance(Species, coords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D):
 
-    BoxesOfMicrobes = [list([]) for _ in xrange(width*height)]
-    BoxesOfResources = [list([]) for _ in xrange(width*height)]
+    if D == 2:
+        Xcoords, Ycoords = coords
+    elif D == 3:
+        Xcoords, Ycoords, Zcoords = coords
 
-    for i, val in enumerate(MicIDs):
+    for i, val in enumerate(Qs):
 
-        roundedX = int(round(MicXcoords[i]))
-        roundedY = int(round(MicYcoords[i]))
-        index = int(round(roundedX + (roundedY * width)))
+        val -= MaintDict[SpeciesTypes[i]]  # maintanence influenced by species
 
-        if index > len(BoxesOfMicrobes) - 1:
-            index = len(BoxesOfMicrobes) - 1
+        if val < 1:   # starved
+
+            Qs.pop(i)
+            ExitAge.append(TimeIn[i])
+            TimeIn.pop(i)
+            Species.pop(i)
+            IDs.pop(i)
+
+            Xcoords.pop(i)
+            Ycoords.pop(i)
+
+            if D == 3:
+                Zcoords.pop(i)
+
+        else: Qs[i] = val
+
+    if D == 2:
+        coords = [Xcoords, Ycoords]
+    elif D == 3:
+        coords = [Xcoords, Ycoords, Zcoords]
+
+    return [Species, coords, ExitAge, IDs, TimeIn, Qs]
+
+
+
+
+def ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, IndType, IndQs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict):
+
+    if D == 2:
+        ResXcoords, ResYcoords = ResCoords
+        IndXcoords, IndYcoords = IndCoords
+
+    elif D == 3:
+        ResXcoords, ResYcoords, ResZcoords = ResCoords
+        IndXcoords, IndYcoords, IndZcoords = IndCoords
+
+    if D == 2:
+        IndBoxes = [list([]) for _ in xrange(width*height)]
+        ResBoxes = [list([]) for _ in xrange(width*height)]
+
+    elif D == 3:
+        IndBoxes = [list([]) for _ in xrange(width*height*length)]
+        ResBoxes = [list([]) for _ in xrange(width*height*length)]
+
+    for i, val in enumerate(IndIDs):
+
+        roundedX = int(round(IndXcoords[i]))
+        roundedY = int(round(IndYcoords[i]))
+
+        if D == 2:
+            index = int(round(roundedX + (roundedY * width)))
+
+        if D == 3:
+            roundedZ = int(round(IndZcoords[i]))
+            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+
+        if index > len(IndBoxes) - 1:
+            index = len(IndBoxes) - 1
         elif index < 0:
             index = 0
 
-        BoxesOfMicrobes[index].append(val)
+        IndBoxes[index].append(val)
 
     for i, val in enumerate(ResIDs):
 
         roundedX = int(round(ResXcoords[i]))
         roundedY = int(round(ResYcoords[i]))
-        index = int(round(roundedX + roundedY * width))
 
-        if index > len(BoxesOfMicrobes) - 1:
-            index = len(BoxesOfMicrobes) - 1
+        if D == 2:
+            index = int(round(roundedX + (roundedY * width)))
+
+        elif D == 3:
+            roundedZ = int(round(ResZcoords[i]))
+            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+
+        if index > len(ResBoxes) - 1:
+            index = len(ResBoxes) - 1
         elif index < 0:
             index = 0
 
-        BoxesOfResources[index].append(val)
+        ResBoxes[index].append(val)
 
 
-    for i, MicrobeBox in enumerate(BoxesOfMicrobes):
-        ResourceBox = BoxesOfResources[i]
+    for i, box in enumerate(IndBoxes):
+        ResBox = ResBoxes[i]
 
-        while MicrobeBox: # The resource
-            if len(ResourceBox): pass
+        while box: # The resource
+            if len(ResBox): pass
             else: break
 
-            resID = choice(ResourceBox)
-
-            if resID in ResIDs:  # a check
-                pass
-            else:
-                print 'something wrong: line 565'
-                print ResourceBox, resID, ResIDs
-                sys.exit()
+            resID = choice(ResBox)
 
             # The food
             j = ResIDs.index(resID)
             restype = ResType[j]
-            food = RES[j]
+            resval = ResVal[j]
 
-            # The microbe
-            micID = choice(MicrobeBox)
-            MicrobeBox.remove(micID)
-            index = MicIDs.index(micID)
+            # The Individual
+            spID = choice(box)
+            box.remove(spID)
+            index = IndIDs.index(spID)
 
-            Q = MicQs[index]
-            sp = COM[index]
-            mu = GrowthDict[COM[index]] * ResUseDict[sp][restype]
+            Q = IndQs[index]
+            species = IndType[index]
+            mu = GrowthDict[species]
+            efficiency = ResUseDict[species][restype]
+            mu = mu * efficiency
 
-            if food > mu * Q: # Increase microbe cell quota
+            if resval > mu * Q: # Increase cell quota
                 Q += mu * Q
-                food -= mu * Q
-            else: # Increase microbe cell quota
-                Q += food
-                food = 0
+                resval -= mu * Q
+                ResBoxes[i][j] = resval
+                ResVal[j] = resval
+                ResTimeIn[j] += 1
 
-            MicQs[index] = Q
-            BoxesOfResources[i].remove(resID)
+            else:
+                Q += resval
+                ResBoxes[i].pop(j)
 
-            if food <= 0:
                 ResXcoords.pop(j)
                 ResYcoords.pop(j)
-                RES.pop(j)
+                ResZcoords.pop(j)
+
+                ResVal.pop(j)
+                ResTimeIn.pop(j)
                 ResType.pop(j)
                 ResIDs.pop(j)
+                ResExitAge.append(ResTimeIn[j])
 
-            else: RES[j] = food
+            IndQs[index] = Q
 
             if Q > 500: # reproduction
 
-                spID = COM[index]
-                X = MicXcoords[index]
-                Y = MicYcoords[index]
+                spID = IndType[index]
+                X =IndXcoords[index]
+                Y =IndYcoords[index]
+                Z =IndZcoords[index]
 
-                MicQs[index] = Q/2.0
+                IndQs[index] = Q/2.0
 
                 newX = float(np.random.uniform(X-0.5, X+0.5, 1))
                 if newX > width - limit:
@@ -342,49 +371,73 @@ def ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID,
                 if 0 > newY: newY = 0
                 elif newY > height: newY = height
 
-                MicQs.append(Q/2.0)
-                COM.append(spID)
-                MicXcoords.append(newX)
-                MicYcoords.append(newY)
-                MicIDs.append(MicID)
-                MicTimeIn.append(0)
-                MicID += 1
+                IndXcoords.append(newX)
+                IndYcoords.append(newY)
 
-    BoxesOfMicrobes = [list([]) for _ in xrange(width*height)]
-    BoxesOfResources = [list([]) for _ in xrange(width*height)]
+                if D == 3:
+                    newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
+                    if 0 > newZ: newZ = 0
+                    elif newZ > height: newZ = height
+                    IndZcoords.append(newZ)
 
-    return [RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType]
+                IndQs.append(Q/2.0)
+                IndType.append(spID)
+
+                IndIDs.append(IndID)
+                IndTimeIn.append(0)
+                IndID += 1
+
+    IndBoxes, ResBoxes = [], []
+
+    return [ResVal, ResType, ResIDs, ResCoords, ResTimeIn, ResExitAge, IndType, IndIDs, IndID, IndTimeIn, IndQs, IndCoords]
 
 
 
-def MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict, Ev, ES, Nm , BP , SD , sk, D):
+def nonfluid_movement(Type, Lists, ExitAge, coords, width, height, length, u0, D):
 
-    ux = np.reshape(ux, (width*height)) # ux is the macroscopic x velocity
-    uy = np.reshape(uy, (width*height)) # uy is the macroscopic y velocity
+    if D == 2:
+        Xcoords, Ycoords = coords
+    elif D == 3:
+        Xcoords, Ycoords, Zcoords = coords
 
-    # move the inert tracer particles
-    for i, val in enumerate(TracerIDs):
+    if Type == 'tracer':
+        IDs = Lists
+        Types, Vals = list(IDs), list(IDs)
 
-        # move all tracers
-        X = int(round(TracerXcoords[i]))
-        Y = int(round(TracerYcoords[i]))
-        index =  int(round(X + Y * width))
+    elif Type == 'individual' or Type == 'resource':
+        Types, IDs, vals = Lists
 
-        if index > len(ux) - 1: index = len(ux) - 1
-        elif index < 0: index = 0
+    for i, val in IDs:
 
-        TracerXcoords[i] += ux[index]
-        TracerYcoords[i] += uy[index]
-        TracerIDs[i] += 1
+        # go up or down
+        y = np.random.binomial(1, 0.5)
+        # go forward or backward
+        x = np.random.binomial(1, 0.5)
+        # go left or right
+        z = np.random.binomial(1, 0.5)
 
-        if TracerXcoords[i] >= width - limit:
+        if x == 1:
+            rval = np.random.random_integers(1, rmax, 1)
+            rtype = np.random.random_integers(0, nr-1, 1)
 
-            TracerExitAge.append(TracerIDs[i])
-            TracerXcoords.pop(i)
-            TracerYcoords.pop(i)
-            TracerIDs.pop(i)
+            Vals.append(val)
+            IDs.append(ID)
+            Type.append(rtype)
+            ID += 1
 
-    ux = np.reshape(ux, (height, width))
-    uy = np.reshape(uy, (height, width))
+            y = coord(height)
+            Ycoords.append(y)
 
-    return [TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk]
+            x = coord(width)
+            Xcoords.append(x)
+
+            if D == 3:
+                z = coord(length)
+                Zcoords.append(z)
+
+    if D == 2:
+        coords = [Xcoords, Ycoords]
+    elif D == 3:
+        coords = [Xcoords, Ycoords, Zcoords]
+
+    return [Type, Vals, coords, ExitAge, IDs, ID, TimeIn]
