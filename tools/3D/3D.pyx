@@ -12,7 +12,7 @@ mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "tools/metrics")
 import metrics
 
-sys.path.append(mydir + "/GitHub/hydrobide/tools/bide/bideMovie")
+sys.path.append(mydir + "/GitHub/hydrobide/tools/bide")
 import bide
 
 
