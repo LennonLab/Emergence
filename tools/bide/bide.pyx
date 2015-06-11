@@ -148,16 +148,16 @@ def immigration(numin, Species, coords, width, height, length, MaintDict, Growth
                 color_dict = get_color(prop, color_dict)
 
                 # species growth rate
-                GrowthDict[prop] = np.random.uniform(0.5, 1)
+                GrowthDict[prop] = np.random.uniform(.5, 1)
 
                 # species maintenance
                 MaintDict[prop] = np.random.uniform(5, 15)
 
                 # species active dispersal rate
-                DispParamDict[prop] = 0.0 # np.random.uniform(0.09, 0.9)
+                DispParamDict[prop] = np.random.uniform(.2, 2)
 
                 # species resource use efficiency
-                ResUseDict[prop] = np.random.uniform(0.1, 0.99, nr)
+                ResUseDict[prop] = np.random.uniform(0, 1, nr)
 
     if D == 2:
         coords = [Xcoords, Ycoords]
@@ -393,7 +393,7 @@ def ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, R
 
 
 
-def nonfluid_movement(Type, Lists, ExitAge, coords, width, height, length, u0, D):
+def nonfluid_movement(Type, Lists, ExitAge, TimeIn, coords, width, height, length, u0, D):
 
     if D == 2:
         Xcoords, Ycoords = coords
@@ -402,38 +402,67 @@ def nonfluid_movement(Type, Lists, ExitAge, coords, width, height, length, u0, D
 
     if Type == 'tracer':
         IDs = Lists
-        Types, Vals = list(IDs), list(IDs)
 
-    elif Type == 'individual' or Type == 'resource':
-        Types, IDs, vals = Lists
+    elif Type == 'individual':
+        Types, IDs, Vals, DispParamDict = Lists
 
-    for i, val in IDs:
+    elif Type == 'resource':
+        Types, IDs, Vals = Lists
 
+    for i, val in Types:
+
+        distance, direction, pop = [0, 0, 'no']
+
+        # get distance
+        if Type == 'individual':
+            distance = u0 * DispParamsDict[val]
+        else: distance = u0
+
+        X, Y = Xcoords[i], Ycoords[i]
         # go up or down
-        y = np.random.binomial(1, 0.5)
+        direction = choice([-1, 1])
+        Y += direction * distance
+
         # go forward or backward
-        x = np.random.binomial(1, 0.5)
-        # go left or right
-        z = np.random.binomial(1, 0.5)
+        direction = choice([-1, 1])
+        X += direction * distance
 
-        if x == 1:
-            rval = np.random.random_integers(1, rmax, 1)
-            rtype = np.random.random_integers(0, nr-1, 1)
+        if X > width - limit or X < limit:
+            pop = 'yes'
 
-            Vals.append(val)
-            IDs.append(ID)
-            Type.append(rtype)
-            ID += 1
+        elif Y > height - limit or Y < limit:
+            pop = 'yes'
 
-            y = coord(height)
-            Ycoords.append(y)
+        if D == 3 and pop == 'no':
+            Z = Zcoords[i]
+            # go left or right
+            direction = choice([-1, 1])
+            Z += direction * distance
 
-            x = coord(width)
-            Xcoords.append(x)
+            if Z > length - limit or Z < limit: pop = 'yes'
+
+        if pop == 'no':
+            Xcoords[i] = X
+            Ycoords[i] = Y
+
+            if D == 3: Zcoords[i] = Z
+
+        elif pop == 'yes':
+
+            elif Type == 'individual':
+
+            Vals.pop(i)
+            ExitAge.append(TimeIn[i])
+            TimeIn.pop(i)
+            Types.pop(i)
+            IDs.pop(i)
+
+            Xcoords.pop(i)
+            Ycoords.pop(i)
 
             if D == 3:
-                z = coord(length)
-                Zcoords.append(z)
+                Zcoords.pop(i)
+
 
     if D == 2:
         coords = [Xcoords, Ycoords]
