@@ -11,9 +11,9 @@ import psutil
 mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "tools/metrics")
 import metrics
-sys.path.append(mydir + "/GitHub/hydrobide/tools/LBM/lbmMovie")
-import lbmMovie as LBM
-sys.path.append(mydir + "/GitHub/hydrobide/tools/bide/bideMovie")
+sys.path.append(mydir + "/GitHub/hydrobide/tools/LBM")
+import LBM
+sys.path.append(mydir + "/GitHub/hydrobide/tools/bide")
 import bide
 
 
