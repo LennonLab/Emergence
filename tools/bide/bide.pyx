@@ -449,13 +449,9 @@ def nonfluid_movement(Type, Lists, ExitAge, TimeIn, coords, width, height, lengt
 
         elif pop == 'yes':
 
-            elif Type == 'individual':
-
-            Vals.pop(i)
+            IDs.pop(i)
             ExitAge.append(TimeIn[i])
             TimeIn.pop(i)
-            Types.pop(i)
-            IDs.pop(i)
 
             Xcoords.pop(i)
             Ycoords.pop(i)
@@ -463,10 +459,20 @@ def nonfluid_movement(Type, Lists, ExitAge, TimeIn, coords, width, height, lengt
             if D == 3:
                 Zcoords.pop(i)
 
+            if Type == 'individual' or Type == 'resource':
+                Vals.pop(i)
+                Types.pop(i)
+
 
     if D == 2:
         coords = [Xcoords, Ycoords]
     elif D == 3:
         coords = [Xcoords, Ycoords, Zcoords]
 
-    return [Type, Vals, coords, ExitAge, IDs, ID, TimeIn]
+    if Type == 'tracer':
+        Lists = [IDs]
+
+    if Type == 'individual' or Type == 'resource':
+        Lists = [Types, IDs, Vals]
+
+    return [Lists, ExitAge, TimeIn, coords]

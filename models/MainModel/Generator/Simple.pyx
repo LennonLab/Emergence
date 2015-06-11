@@ -142,22 +142,39 @@ def nextFrame(arg):	# arg is the frame number
 
         elif motion == 'random_walk' or motion == 'uncorrelated':
 
-            fluid_movement(typelist, IDlist, ID, TimeIn, valuelist, ExitAge, ux, uy, Xcoords, Ycoords, Zcoords, width, height, u0)
-            # dispersal
-           SpeciesIDs,IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, IndQs = bide.dispersal(SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, width, height, length, u0, IndIDs, IndID, IndTimeIn, IndQs, D)
+            # Moving tracer particles
+            Lists = [TracerIDs]
+            coords = [TracerXcoords, TracerYcoords]
+            if D == 3:
+                coords.append(TracerZcoords)
 
-            # resource flow
-            RES, ResXcoords, ResYcoords, ResID, ResIDs = bide.resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, length, ResID, ResIDs, D)
+            nonfluid_movement('tracer', Lists, TracerExitAge, TracerTimeIn, coords, width, height, length, u0, D)
 
-            # moving tracer particles
-            TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, IndTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, length, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,IndTau, IndExitAge,SpeciesIDs,N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk, D)
+            # Moving resource particles
+            coords = [ResXcoords, ResYcoords]
+            if D == 3:
+                coords.append(ResZcoords)
+
+            Lists = [ResType, ResIDs, ResVals]
+            nonfluid_movement('resource', Lists, ResExitAge, ResTimeIn, coords, width, height, length, u0, D)
+
+
+            # Moving individuals
+            coords = [IndXcoords, IndYcoords]
+            if D == 3:
+                coords.append(IndZcoords)
+
+            Lists = [SpeciesIDs, IndIDs, Qs, DispParamDict]
+            nonfluid_movement('individual', Lists, IndExitAge, IndTimeIn, coords, width, height, length, u0, D)
 
 
         # consume and reproduce
         p1 = len(COM)
         q1 = sum(IndQs)
 
-        ResType, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, IndQs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, IndQs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, D)
+        ResLists, IndLists = bide.ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, IndType, IndQs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict)
+        ResType, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords = ResLists
+        IndType, IndQs,   IndIDs, IndID, IndTimeIn,             IndXcoords, IndYcoords, IndZcoords = IndLists
 
         prod_i = len(COM) - p1
         prod_q = sum(IndQs) - q1
