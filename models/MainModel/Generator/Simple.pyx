@@ -17,7 +17,7 @@ sys.path.append(mydir + "/GitHub/hydrobide/tools/bide")
 import bide
 
 
-def checks(Qs2, Slist2, inds2, Tlist, xcoords, ycoords, zcoords):
+def checklists(Qs2, Slist2, inds2, Tlist, xcoords, ycoords, zcoords):
 
     Blist = list(set([len(Qs2), len(Slist2), len(inds2), len(Tlist), len(xcoords), len(ycoords), len(zcoords)]))
     if len(Blist) > 1:
@@ -99,16 +99,16 @@ def get_rand_params():
 def nextFrame(arg):	# arg is the frame number
 
     global width, height, Rates, u0, shift, sign, Ss, Ns, EVs, NSs, barrier, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, COM
-    global MicXcoords, MicYcoords, microbe_scatImage, microbe_color_dict, GrowthDict, MaintDict, AvgTaus, MicIDs, MicQs, MicID, MicIDs
+    global IndXcoords, IndYcoords, Ind_scatImage, Sp_color_dict, GrowthDict, MaintDict, AvgTaus, IndIDs, IndQs, IndID, IndIDs
 
-    global MicTimeIn, MicExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage
+    global IndTimeIn, IndExitAge, avgTau, TracerIDs, TracerExitAge, TracerXcoords, TracerYcoords, tracer_scatImage, resource_scatImage
     global ResXcoords, ResYcoords, ResID, ResIDs, RES, alpha, omega, MUs, VarMUs, Maints, VarMaints, ResType, ResUseDict, DispParamsDict
 
     global one9th, four9ths, one36th, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, sim, RAD, splist
     global BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2, BarrierWidth, BarrierHeight, ct1, Mu, Maint
 
     global motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res
-    global N, TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, T, R, seed, stop, prod_i, prod_q
+    global N, TracerTau, IndTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, T, R, seed, stop, prod_i, prod_q
 
     for step in range(1): # adjust number of steps for smooth animation
 
@@ -121,35 +121,49 @@ def nextFrame(arg):	# arg is the frame number
         RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, u0, D)
 
 	# immigration
-        COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(m, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, u0, alpha, D)
+       SpeciesIDs,IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict, nr, u0, alpha, D)
 
-        if motion == 'fluid' or motion == 'conveyor':
+        if motion == 'fluid' or motion == 'conveyor':  # a 'conveyor' belt action wherein y-coordinates never change will occur when there is no turbulence in a fluid dynamics model, most analogous to an infinitely viscous fluid
+
             # stream
             nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign = LBM.stream([nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign])
 
             # collide
             rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW = LBM.collide(viscosity, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, u0)
 
-        # dispersal
-        COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.dispersal(COM, ux, uy, MicXcoords, MicYcoords, MicExitAge, width, height, u0, MicIDs, MicID, MicTimeIn, MicQs, D)
+            # dispersal
+           SpeciesIDs,IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, IndQs = bide.fluid_movement(SpeciesIDs, IndIDs, IndID, IndTimeIn, IndQs, IndExitAge, ux, uy, IndXcoords, IndYcoords, IndZcoords, width, height, u0)
 
-        # resource flow
-        RES, ResXcoords, ResYcoords, ResID, ResIDs = bide.resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, ResID, ResIDs, D)
+            # resource flow
+            ResType, ResXcoords, ResYcoords, ResExitAge, ResIDs, ResID, ResTimeIn, ResVals = bide.fluid_movement(ResType, ResIDs, ResID, ResTimeIn, ResVals, ResExitAge, ux, uy, ResXcoords, ResYcoords, ResZcoords, width, height, u0)
 
-        # moving tracer particles
-        TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, MicrobeTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, ux, uy, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,MicrobeTau, MicExitAge, COM, N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk, D)
+            # moving tracer particles
+            TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, IndTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.fluid_MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,IndTau, IndExitAge,SpeciesIDs,N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk, D)
+
+        elif motion == 'random_walk' or motion == 'uncorrelated':
+
+            fluid_movement(typelist, IDlist, ID, TimeIn, valuelist, ExitAge, ux, uy, Xcoords, Ycoords, Zcoords, width, height, u0)
+            # dispersal
+           SpeciesIDs,IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, IndQs = bide.dispersal(SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, width, height, length, u0, IndIDs, IndID, IndTimeIn, IndQs, D)
+
+            # resource flow
+            RES, ResXcoords, ResYcoords, ResID, ResIDs = bide.resFlow(RES, ux, uy, u0, ResXcoords, ResYcoords, width, height, length, ResID, ResIDs, D)
+
+            # moving tracer particles
+            TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, T, R, ResDens, ResDiv, ResRich, TracerTau, IndTau, N, S, Mu, Maint, Ev, ES, Nm , BP , SD , sk = bide.MoveTracers(TracerExitAge, TracerIDs, TracerXcoords, TracerYcoords, width, height, length, T, R, RES, ResType, ResDens, ResDiv, ResRich, TracerTau,IndTau, IndExitAge,SpeciesIDs,N, S, Mu, Maint, GrowthDict, MaintDict,Ev, ES, Nm , BP , SD , sk, D)
+
 
         # consume and reproduce
         p1 = len(COM)
-        q1 = sum(MicQs)
+        q1 = sum(IndQs)
 
-        RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, ResType = bide.ConsumeAndReproduce(RES, ResIDs, ResXcoords, ResYcoords, COM, MicIDs, MicID, MicTimeIn, MicQs, MicXcoords, MicYcoords, width, height, GrowthDict, ResType, ResUseDict, D)
+        ResType, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, IndQs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, IndQs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, D)
 
         prod_i = len(COM) - p1
-        prod_q = sum(MicQs) - q1
+        prod_q = sum(IndQs) - q1
 
         # maintenance
-        COM, MicXcoords, MicYcoords, MicExitAge, MicIDs, MicID, MicTimeIn, MicQs = bide.maintenance(COM, MicXcoords, MicYcoords, MicExitAge, microbe_color_dict, MaintDict, MicIDs, MicID, MicTimeIn, MicQs, height, width, D)
+       SpeciesIDs,IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, IndQs = bide.maintenance(SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, Sp_color_dict, MaintDict, IndIDs, IndID, IndTimeIn, IndQs, height, width, D)
 
 
     ########## GENERATE FIGURES ############################################
@@ -165,7 +179,7 @@ def nextFrame(arg):	# arg is the frame number
     RAD, splist = bide.GetRAD(COM)
     S = len(RAD)
 
-    Title = ['Microbes consume resources, grow, reproduce, and die as they flow through a fluid environment. Average speed',
+    Title = ['Inds consume resources, grow, reproduce, and die as they flow through a fluid environment. Average speed',
            '\non the x-axis is '+str(u0)+' units per time step. '+str(len(TracerExitAge))+' tracers have passed through.',
            'N = '+str(N)+', S = '+str(S)+'.'
            '\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
@@ -175,18 +189,18 @@ def nextFrame(arg):	# arg is the frame number
     plt.ylim(0,height)
     plt.xlim(0,width)
 
-    ##### PLOTTING THE MICROBES ############################################
+    ##### PLOTTING THE IndS ############################################
     resource_scatImage.remove()
     resource_scatImage = plt.scatter(ResXcoords, ResYcoords, c = 'w', edgecolor = 'SpringGreen', s = RES, lw = 0.6, alpha=0.7)
 
     tracer_scatImage.remove()
     tracer_scatImage = plt.scatter(TracerXcoords, TracerYcoords, c = 'r', marker='*', lw=0.0, s = 200, alpha=0.6)
 
-    microbe_scatImage.remove()
+    Ind_scatImage.remove()
     colorlist = []
 
-    for i, val in enumerate(COM): colorlist.append(microbe_color_dict[val])
-    microbe_scatImage = plt.scatter(MicXcoords, MicYcoords, c = colorlist, edgecolor = '0.2', s = MicQs, lw = 0.2, alpha=0.9)
+    for i, val in enumerate(COM): colorlist.append(Sp_color_dict[val])
+    Ind_scatImage = plt.scatter(IndXcoords, IndYcoords, c = colorlist, edgecolor = '0.2', s = IndQs, lw = 0.2, alpha=0.9)
 
     # Record model values and reset, or not
     if len(TracerExitAge) >= stop:
@@ -198,9 +212,9 @@ def nextFrame(arg):	# arg is the frame number
             ResDiv = float(metrics.Shannons_H(ResRAD))
             ResRich = len(Rlist)
 
-        # Residence times for tracers and microbes
+        # Residence times for tracers and Inds
         TracerTau = float(np.mean(TracerExitAge))
-        MicrobeTau = float(np.mean(MicExitAge))
+        IndTau = float(np.mean(IndExitAge))
 
         T = len(TracerIDs)
         R = len(RES)
@@ -240,7 +254,7 @@ def nextFrame(arg):	# arg is the frame number
         OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
         OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
         OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
-        print>>OUT1, ct1,',', sim,',', prod_i,',', prod_q,',', r,',', nr,',', rmax,',', BarrierWidth,',', BarrierHeight,',', alpha,',', seed,',', stop,',', u0,',', width,',', height,',', viscosity,',', N,',', m,',', TracerTau,',', MicrobeTau,',', ResDens,',', ResDiv,',', ResRich,',', S,',', ES,',', Ev,',', BP,',', SD,',', Nm,',', sk,',', Mu,',', Maint
+        print>>OUT1, ct1,',', sim,',', prod_i,',', prod_q,',', r,',', nr,',', rmax,',', BarrierWidth,',', BarrierHeight,',', alpha,',', seed,',', stop,',', u0,',', width,',', height,',', viscosity,',', N,',', m,',', TracerTau,',', IndTau,',', ResDens,',', ResDiv,',', ResRich,',', S,',', ES,',', Ev,',', BP,',', SD,',', Nm,',', sk,',', Mu,',', Maint
         print>>OUT2, RADString
         print>>OUT3, SString
         OUT1.close()
@@ -249,7 +263,7 @@ def nextFrame(arg):	# arg is the frame number
 
 
         if u0 == min(Rates):
-            microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
+            Sp_color_dict, GrowthDict, MaintDict = {}, {}, {}
             ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
             motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
             sim += 1
@@ -259,9 +273,9 @@ def nextFrame(arg):	# arg is the frame number
         Rates = np.roll(Rates, -1, axis=0)
         u0 = Rates[0]  # initial in-flow speed
 
-        TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        TracerTau, IndTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
-        MicTimeIn, COM, MicXcoords, MicYcoords, TracerXcoords, TracerYcoords, RES, ResXcoords, ResYcoords, ResIDs, ResType, MicIDs, MicQs, MicExitAge, TracerExitAge, TracerIDs = [list([]) for _ in xrange(16)]
+        IndTimeIn,SpeciesIDs,IndXcoords, IndYcoords, TracerXcoords, TracerYcoords, RES, ResXcoords, ResYcoords, ResIDs, ResType, IndIDs, IndQs, IndExitAge, TracerExitAge, TracerIDs = [list([]) for _ in xrange(16)]
 
         if motion == 'fluid' or motion == 'conveyor':
             #####################  Lattice Boltzmann PARAMETERS  ###########################
@@ -276,7 +290,7 @@ def nextFrame(arg):	# arg is the frame number
             # inflow of resources
             RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, 1)
             # immigration
-            COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(seed, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, 1, alpha)
+           SpeciesIDs,IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict = bide.immigration(seed,SpeciesIDs,IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict, nr, 1, alpha)
 
         ####################### REPLACE ENVIRONMENT
         fig.add_subplot(1, 1, 1)
@@ -287,8 +301,8 @@ def nextFrame(arg):	# arg is the frame number
         resource_scatImage.remove()
         resource_scatImage = plt.scatter([0],[0], alpha=0.0)
 
-        microbe_scatImage.remove()
-        microbe_scatImage = plt.scatter([0],[0], alpha=0.0)
+        Ind_scatImage.remove()
+        Ind_scatImage = plt.scatter([0],[0], alpha=0.0)
 
         ########## GENERATE FIGURES ############################################
         if D = 2 or motion == 'fluid' or motion == 'conveyor':
@@ -307,24 +321,24 @@ OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
 OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
 print>>OUT1, 'RowID, sim, ind.prod, biomass.prod, res.inflow, res.types, max.res, barrier.width, barrier.height, logseries.a, starting.seed, stop.point, FlowRate, Width, Height, Viscosity, N, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
-#             ct1,   sim, prod_i,   prod_q,       r,          nr,        rmax,    BarrierWidth,  BarrierHeight,  alpha,       seed,          stop,       u0,       width, height, viscosity, N, m,                TracerTau,    MicrobeTau,ResDens,               ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
+#             ct1,   sim, prod_i,   prod_q,       r,          nr,        rmax,    BarrierWidth,  BarrierHeight,  alpha,       seed,          stop,       u0,       width, height, viscosity, N, m,                TracerTau,    IndTau,ResDens,               ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
 OUT1.close()
 OUT2.close()
 OUT3.close()
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
 motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, J, seed, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
-#######################  MICROBE COMMUNITY PARAMETERS  #########################
-MicID, ResID, N, S, ct1, Mu, Maint, T, R = 0, 0, 0, 0, 0, 0, 0, 0, 0
+#######################  Ind COMMUNITY PARAMETERS  #########################
+IndID, ResID, N, S, ct1, Mu, Maint, T, R = 0, 0, 0, 0, 0, 0, 0, 0, 0
 prod_i, prod_q = 0, 0
-N, TracerTau, MicrobeTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+N, TracerTau, IndTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-COM, MicXcoords, MicYcoords, AvgTaus, RAD, splist = [], [], [], [], [], []
-MicIDs, MicQs, MicExitAge, MicTimeIn = [], [], [], []
+SpeciesIDs, IndXcoords, IndYcoords, AvgTaus, RAD, splist = [], [], [], [], [], []
+IndIDs, IndQs, IndExitAge, IndTimeIn = [], [], [], []
 ResYcoords, RES, ResIDs, ResType, ResXcoords = [], [], [], [], []
 TracerIDs, TracerXcoords, TracerYcoords, TracerExitAge = [], [], [], []
 
-microbe_color_dict, GrowthDict, MaintDict = {}, {}, {}
+Sp_color_dict, GrowthDict, MaintDict = {}, {}, {}
 ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
@@ -351,7 +365,7 @@ if motion == 'fluid' or motion == 'conveyor':
 fig = plt.figure(figsize=(12, 8))
 fig.add_subplot(1, 1, 1) # initiate first plot
 
-microbe_scatImage = plt.scatter([0],[0], alpha=0.0)
+Ind_scatImage = plt.scatter([0],[0], alpha=0.0)
 tracer_scatImage = plt.scatter([0],[0], alpha=0.0)
 resource_scatImage = plt.scatter([0],[0], alpha=0.0)
 
@@ -367,7 +381,7 @@ bheight = BarrierYcoords2[1] - bottom
 bwidth = BarrierXcoords2[1] - left
 BarrierImage2 = plt.bar(left-0.3, bheight, bwidth-0.3, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
 
-Title = ['Microbes consume resource particles and grow, reproduce, and die as they flow through a complex fluid environment.',
+Title = ['Inds consume resource particles and grow, reproduce, and die as they flow through a complex fluid environment.',
         '\nCurrent speed on the x-axis is '+str(round(u0,3)), 'units per time step.']
 
 txt = fig.suptitle(' '.join(Title), fontsize = 12)
@@ -378,7 +392,7 @@ if seed > 0:
     # inflow of resources
     RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType = bide.ResIn(RES, ResXcoords, ResYcoords, ResID, ResIDs, ResType, r, rmax, nr, width, height, 1)
     # immigration
-    COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict = bide.immigration(seed, COM, MicXcoords, MicYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, microbe_color_dict, MicIDs, MicID, MicTimeIn, MicQs, ResUseDict, nr, 1, alpha)
+   SpeciesIDs, IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict = bide.immigration(seed, SpeciesIDs, IndXcoords, IndYcoords, width, height, MaintDict, GrowthDict, DispParamsDict, Sp_color_dict, IndIDs, IndID, IndTimeIn, IndQs, ResUseDict, nr, 1, alpha)
 
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=5000, interval=100, blit=False) # 20000 frames is a long movie
