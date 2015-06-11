@@ -112,6 +112,8 @@ def nextFrame(arg):	# arg is the frame number
 
     for step in range(1): # adjust number of steps for smooth animation
 
+        random.seed() # use current system time to initiate a random seed (ensures that autocorrelation doesn't crop-up, as is possible when using pseudorandom number generators)
+
         # new tracers
         TracerIDs, TracerXcoords, TracerYcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, width, height, u0, D)
 
@@ -288,17 +290,14 @@ def nextFrame(arg):	# arg is the frame number
         microbe_scatImage.remove()
         microbe_scatImage = plt.scatter([0],[0], alpha=0.0)
 
-        plt.tick_params(\
-        axis='both',          # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom='off',      # ticks along the bottom edge are off
-        top='off',         # ticks along the top edge are off
-        left='off',
-        right='off',
-        labelbottom='off',
-        labelleft='off') # labels along the bottom edge are off
-        plt.subplots_adjust(wspace=0.35, hspace=0.35)
+        ########## GENERATE FIGURES ############################################
+        if D = 2 or motion == 'fluid' or motion == 'conveyor':
+            fig.add_subplot(1, 1, 1)  # Plot 1: plot of the system
+            plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
+        elif D = 3:
+            fig.add_subplot(111, projection='3d')
+            plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
 
 
 
