@@ -389,7 +389,10 @@ def ConsumeAndReproduce(ResType, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, R
 
     IndBoxes, ResBoxes = [], []
 
-    return [ResVal, ResType, ResIDs, ResCoords, ResTimeIn, ResExitAge, IndType, IndIDs, IndID, IndTimeIn, IndQs, IndCoords]
+    ResLists = ResType, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords
+    IndLists = IndType, IndQs,   IndIDs, IndID, IndTimeIn,             IndXcoords, IndYcoords, IndZcoords
+
+    return [ResLists, IndLists]
 
 
 

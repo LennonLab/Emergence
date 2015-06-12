@@ -143,12 +143,17 @@ def nextFrame(arg):	# arg is the frame number
         elif motion == 'random_walk' or motion == 'uncorrelated':
 
             # Moving tracer particles
-            Lists = [TracerIDs]
             coords = [TracerXcoords, TracerYcoords]
             if D == 3:
                 coords.append(TracerZcoords)
 
-            nonfluid_movement('tracer', Lists, TracerExitAge, TracerTimeIn, coords, width, height, length, u0, D)
+            Lists = [TracerIDs]
+            Lists, ExitAge, TimeIn, coords = bide.nonfluid_movement('tracer', Lists, TracerExitAge, TracerTimeIn, coords, width, height, length, u0, D)
+            IDs = Lists
+
+            if D == 2: Xcoords, Ycoords = coords
+            elif D == 3: Xcoords, Ycoords, Zcoords = coords
+
 
             # Moving resource particles
             coords = [ResXcoords, ResYcoords]
@@ -156,7 +161,11 @@ def nextFrame(arg):	# arg is the frame number
                 coords.append(ResZcoords)
 
             Lists = [ResType, ResIDs, ResVals]
-            nonfluid_movement('resource', Lists, ResExitAge, ResTimeIn, coords, width, height, length, u0, D)
+            Lists, ExitAge, TimeIn, coords = bide.nonfluid_movement('resource', Lists, ResExitAge, ResTimeIn, coords, width, height, length, u0, D)
+            ResTypes, ResIDs, ResVals = Lists
+
+            if D == 2: Xcoords, Ycoords = coords
+            elif D == 3: Xcoords, Ycoords, Zcoords = coords
 
 
             # Moving individuals
@@ -165,10 +174,17 @@ def nextFrame(arg):	# arg is the frame number
                 coords.append(IndZcoords)
 
             Lists = [SpeciesIDs, IndIDs, Qs, DispParamDict]
-            nonfluid_movement('individual', Lists, IndExitAge, IndTimeIn, coords, width, height, length, u0, D)
+            Lists, ExitAge, TimeIn, coords = bide.nonfluid_movement('individual', Lists, IndExitAge, IndTimeIn, coords, width, height, length, u0, D)
+            SpeciesIDs, IndIDs, Qs = Lists
+
+            if D == 2: Xcoords, Ycoords = coords
+            elif D == 3: Xcoords, Ycoords, Zcoords = coords
 
 
         # consume and reproduce
+        coords = [ResXcoords, ResYcoords]
+        if D == 3: coords.append(ResZcoords)
+
         p1 = len(COM)
         q1 = sum(IndQs)
 
@@ -180,7 +196,12 @@ def nextFrame(arg):	# arg is the frame number
         prod_q = sum(IndQs) - q1
 
         # maintenance
-       SpeciesIDs,IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, IndQs = bide.maintenance(SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, Sp_color_dict, MaintDict, IndIDs, IndID, IndTimeIn, IndQs, height, width, D)
+        coords = [IndXcoords, IndYcoords]
+        if D == 3: coords.append(IndZcoords)
+
+        Species, coords, IndExitAge, IndIDs, IndTimeIn, Qs = bide.maintenance(Species, coords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D)
+        if D == 2: Xcoords, Ycoords = coords
+        elif D == 3: Xcoords, Ycoords, Zcoords = coords
 
 
     ########## GENERATE FIGURES ############################################
