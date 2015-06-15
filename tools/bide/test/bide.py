@@ -310,13 +310,13 @@ def predation(PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, 
 
 
 
-def Consume(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
+def consume(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
 
     IndBoxes, ResBoxes = [], []
     ResXcoords, ResYcoords, ResZcoords = ResCoords
     IndXcoords, IndYcoords, IndZcoords = IndCoords
 
-    if not len(ResTypes):
+    if not len(ResTypes) or not len(SpeciesIDs):
         ResLists = [ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords]
         IndLists = [SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
         return [ResLists, IndLists]
@@ -442,33 +442,33 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords,
                         # speciate
                         frac, whole = spID.split('.')
                         frac = int(frac) + 1
-                        newSp = whole +'.'+ str(frac)
+                        spID = whole +'.'+ str(frac)
 
                         # new species color
-                        color_dict = get_color(newSp, color_dict)
+                        color_dict = get_color(spID, color_dict)
 
                         # new species growth rate
                         p = np.random.binomial(0.25, 1)
-                        GrowthDict[newSp] = np.random.uniform(0.1, 1.0)
+                        GrowthDict[spID] = np.random.uniform(0.1, 1.0)
 
                         # new species maintenance
                         p = np.random.binomial(0.25, 1)
-                        MaintDict[newSp] = np.random.uniform(0.001, 0.01)
+                        MaintDict[spID] = np.random.uniform(0.001, 0.01)
 
                         # new species active dispersal rate
                         p = np.random.binomial(0.25, 1)
-                        DispDict[newSp] = np.random.uniform(0.0, 0.1)
+                        DispDict[spID] = np.random.uniform(0.0, 0.1)
 
                         # new species resource use efficiencies
                         p = np.random.binomial(0.25, 1)
-                        ResUseDict[newSp] = np.random.uniform(0.1, 1.0, nr)
+                        ResUseDict[spID] = np.random.uniform(0.1, 1.0, nr)
 
 
-                SpeciesIDs.append(SpeciesIDs[ID])
+                SpeciesIDs.append(spID)
                 direction = choice([-1,1])
-                Xcoords.append(Xcoords[ID] + direction*DispDict[SpeciesIDs[ID]])
+                Xcoords.append(Xcoords[i] + direction*DispDict[SpeciesIDs[i]])
                 direction = choice([-1,1])
-                Ycoords.append(Ycoords[ID] + direction*DispDict[SpeciesIDs[ID]])
+                Ycoords.append(Ycoords[i] + direction*DispDict[SpeciesIDs[i]])
 
                 if D == 3: Zcoords.append(Zcoords[ID])
 
