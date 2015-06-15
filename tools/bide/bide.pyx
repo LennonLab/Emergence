@@ -293,6 +293,90 @@ def maintenance(SpeciesIDs, coords, ExitAge, color_dict, MaintDict, IDs, TimeIn,
 
 
 
+def predation(PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, D):
+
+    PredXcoords, PredYcoords, PredZcoords, IndXcoords, IndYcoords, IndZcoords, IndBoxes, PredBoxes = [[], [], [], [], [], [], [], []]
+    PredXcoords, PredYcoords, PredYcoords = ResCoords
+    IndXcoords, IndYcoords, IndZcoords = IndCoords
+
+    if not len(PredTypes):
+        PredLists = [PredTypes, PredVals, PredIDs, PredID, PredTimeIn, PredExitAge, PredXcoords, PredYcoords, PredZcoords]
+        IndLists = [SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
+        return [PredLists, IndLists]
+
+    if D == 2:
+        IndBoxes = [list([]) for _ in xrange(width*height)]
+        PredBoxes = [list([]) for _ in xrange(width*height)]
+
+    elif D == 3:
+        IndBoxes = [list([]) for _ in xrange(width*height*length)]
+        PredBoxes = [list([]) for _ in xrange(width*height*length)]
+
+    index = 0
+    for i, val in enumerate(IndIDs):
+        roundedX = int(round(IndXcoords[i]))
+        roundedY = int(round(IndYcoords[i]))
+
+        if D == 2: index = int(round(roundedX + (roundedY * width)))
+
+        elif D == 3:
+            roundedZ = int(round(IndZcoords[i]))
+            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+
+        if index > len(IndBoxes) - 1: index = len(IndBoxes) - 1
+        elif index < 0: index = 0
+
+        IndBoxes[index].append(val)
+
+    index = 0
+    for i, val in enumerate(PredIDs):
+        roundedX = int(round(PredXcoords[i]))
+        roundedY = int(round(PredYcoords[i]))
+
+        if D == 2: index = int(round(roundedX + (roundedY * width)))
+
+        elif D == 3:
+            roundedZ = int(round(PredZcoords[i]))
+            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+
+        if index > len(PredBoxes) - 1: index = len(PredBoxes) - 1
+        elif index < 0: index = 0
+
+        PredBoxes[index].append(val)
+
+
+    for i, PredBox in enumerate(PredBoxes):
+        if not len(PredBox): continue
+
+        IndBox = IndBoxes[i]
+
+        for pred in PredBox:
+            if not len(IndBox): break
+
+            # The predator
+            PredBox.pop(0)
+
+            # The prey
+            IndID = choice(IndBox)
+            index = IndBox.index(IndID)
+            IndBox.pop(index)
+
+            j = IndIDs.index(IndID)
+            Qs.pop(j)
+            IndExitAge.append(ResTimeIn[j])
+            IndTimeIn.pop(j)
+            SpeciesIDs.pop(j)
+            IndIDs.pop(j)
+            IndXcoords.pop(j)
+            IndYcoords.pop(j)
+            IndZcoords.pop(j)
+
+    PredLists = PredIDs, PredID, PredXCoords, PredYCoords, PredZCoords, PredTimeIn, PredExitAge
+    IndLists = SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXCoords, IndYCoords, IndZCoords
+
+    return [PredLists, IndLists]
+
+
 
 def Consume(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
 

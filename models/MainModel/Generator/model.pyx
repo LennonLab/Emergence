@@ -37,10 +37,11 @@ def get_rand_params():
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
 
-    predators = choice(['yes', 'no'])
-    parasites = choice(['yes', 'no'])
+    predators = choice([0, 1, 2, 4, 8])
+    parasites = choice([0, 1, 2, 4, 8])
 
     env_gradient = choice(['no', 'yes'])
+
     # size of starting community
     seedcom = choice([100, 500, 1000, 5000])
 
@@ -62,8 +63,7 @@ def get_rand_params():
 
 def testlengths(TypeOf, function, Lists):
     vals = []
-    for List in Lists:
-        vals.append(len(List))
+    for List in Lists: vals.append(len(List))
 
     if min(vals) != max(vals):
         print '\n'+TypeOf+': '+function+', list lengths are different sizes:', vals
@@ -93,43 +93,20 @@ def nextFrame(arg):	# arg is the frame number
 
 
     # inflow of tracers
-    coords = [TracerXcoords, TracerYcoords]
-    if D == 3:
-        coords.append(TracerZcoords)
-        testlengths('tracers', 'Before NewTracers', [TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn])
-
+    coords = [TracerXcoords, TracerYcoords, TracerZcoords]
     TracerIDs, TracerTimeIn, coords = bide.NewTracers(TracerIDs, coords, TracerTimeIn, width, height, length, u0, D)
-    if D == 2: TracerXcoords, TracerYcoords = coords
-    elif D == 3: TracerXcoords, TracerYcoords, TracerZcoords = coords
+    TracerXcoords, TracerYcoords, TracerZcoords = coords
 
     # inflow of resources
-    coords = [ResXcoords, ResYcoords]
-    if D == 3:
-        coords.append(ResZcoords)
-        testlengths('resources', 'Before ResIn', [ResIDs, ResTypes, ResXcoords, ResYcoords, ResZcoords, ResTimeIn])
-
+    coords = [ResXcoords, ResYcoords, ResZcoords]
     ResTypes, ResVals, coords, ResIDs, ResID, ResTimeIn = bide.ResIn(ResTypes, ResVals, coords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
-    if D == 2: ResXcoords, ResYcoords = coords
-    elif D == 3: ResXcoords, ResYcoords, ResZcoords = coords
-
-    if D == 3:
-        coords.append(ResZcoords)
-        testlengths('resources', 'After ResIn', [ResIDs, ResTypes, ResXcoords, ResYcoords, ResZcoords, ResTimeIn])
-
+    ResXcoords, ResYcoords, ResZcoords = coords
 
     # immigration
-    coords = [IndXcoords, IndYcoords]
-    if D == 3:
-        coords.append(IndZcoords)
-        testlengths('resources', 'Before immigration', [IndIDs, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, IndTimeIn])
+    coords = [IndXcoords, IndYcoords, IndZcoords]
+    SpeciesIDs, coords, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, coords, width, height, length, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+    IndXcoords, IndYcoords, IndZcoords = coords
 
-    if ct == 0:
-        SpeciesIDs, coords, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(seedcom, SpeciesIDs, coords, width, height, length, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
-        ct += 1
-    else: SpeciesIDs, coords, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, coords, width, height, length, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
-
-    if D == 2: IndXcoords, IndYcoords = coords
-    elif D == 3: IndXcoords, IndYcoords, IndZcoords = coords
 
     if motion == 'fluid' or motion == 'conveyor':  # a 'conveyor' belt action wherein y-coordinates never change will occur when there is no turbulence in a fluid dynamics model, most analogous to an infinitely viscous fluid
 
@@ -144,99 +121,66 @@ def nextFrame(arg):	# arg is the frame number
             List = [SpeciesIDs, IndIDs, IndID, Qs]
             SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, Qs = bide.fluid_movement('individual', List, IndTimeIn, IndExitAge, IndXcoords, IndYcoords, ux, uy, width, height, u0)
 
-        testlengths('individuals', 'fluid_movement', [SpeciesIDs, IndXcoords, IndYcoords, IndIDs, IndTimeIn, Qs])
-
         # resource flow
         if len(ResTypes) > 0:
             List = [ResTypes, ResIDs, ResID, ResVals]
             ResTypes, ResXcoords, ResYcoords, ResExitAge, ResIDs, ResID, ResTimeIn, ResVals = bide.fluid_movement('resource', List, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ux, uy, width, height, u0)
 
-        testlengths('resources', 'fluid_movement', [ResTypes, ResXcoords, ResYcoords, ResIDs, ResTimeIn, ResVals])
         # moving tracer particles
         if len(TracerIDs) > 0:
             TracerIDs, TracerXcoords, TracerYcoords, TracerExitAge, TracerTimeIn = bide.fluid_movement('tracer', TracerIDs, TracerTimeIn, TracerExitAge, TracerXcoords, TracerYcoords, ux, uy, width, height, u0)
 
-        testlengths('tracers', 'fluid_movement',  [TracerIDs, TracerXcoords, TracerYcoords, TracerTimeIn])
-
     elif motion == 'random_walk' or motion == 'unidirectional':
 
         # Moving tracer particles
-        coords = [TracerXcoords, TracerYcoords]
-        if D == 3: coords.append(TracerZcoords)
-
-        if D == 2:
-            TracerXcoords, TracerYcoords = coords
-            testlengths('tracers', 'Before nonfluid_movement 2D', [TracerIDs, TracerXcoords, TracerYcoords, TracerTimeIn])
-
-        elif D == 3:
-            TracerXcoords, TracerYcoords, TracerZcoords = coords
-            testlengths('tracers', 'Before nonfluid_movement 3D', [TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn])
-
+        coords = [TracerXcoords, TracerYcoords, TracerZcoords]
         TracerIDs, TracerExitAge, TracerTimeIn, coords = bide.nonfluid_movement('tracer', motion, TracerIDs, TracerExitAge, TracerTimeIn, coords, width, height, length, u0, D)
-
-        if D == 2:
-            TracerXcoords, TracerYcoords = coords
-            testlengths('tracers', 'After nonfluid_movement 2D', [TracerIDs, TracerXcoords, TracerYcoords, TracerTimeIn])
-
-        elif D == 3:
-            TracerXcoords, TracerYcoords, TracerZcoords = coords
-            testlengths('tracers', 'After nonfluid_movement 3D', [TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn])
+        TracerXcoords, TracerYcoords, TracerZcoords = coords
 
         # Moving resource particles
-        coords = [ResXcoords, ResYcoords]
-        if D == 3: coords.append(ResZcoords)
+        coords = [ResXcoords, ResYcoords, ResZcoords]
         Lists = [ResTypes, ResIDs, ResVals]
 
         Lists, ResExitAge, ResTimeIn, coords = bide.nonfluid_movement('resource', motion, Lists, ResExitAge, ResTimeIn, coords, width, height, length, u0, D)
+
         ResTypes, ResIDs, ResVals = Lists
-
-        if D == 2:
-            Xcoords, Ycoords = coords
-            testlengths('resources', 'nonfluid_movement 2D', [ResTypes, ResXcoords, ResYcoords, ResIDs, ResTimeIn, ResVals])
-
-        elif D == 3:
-            Xcoords, Ycoords, Zcoords = coords
-            testlengths('resources', 'nonfluid_movement 3D', [ResTypes, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResTimeIn, ResVals])
+        Xcoords, Ycoords, Zcoords = coords
 
         # Moving individuals
-        coords = [IndXcoords, IndYcoords]
-        if D == 3: coords.append(IndZcoords)
+        coords = [IndXcoords, IndYcoords, IndZcoords]
         Lists = [SpeciesIDs, IndIDs, Qs, DispParamsDict]
         Lists, IndExitAge, IndTimeIn, coords = bide.nonfluid_movement('individual', motion, Lists, IndExitAge, IndTimeIn, coords, width, height, length, u0, D)
         SpeciesIDs, IndIDs, Qs = Lists
-
-        if D == 2:
-            Xcoords, Ycoords = coords
-            testlengths('individuals', 'nonfluid_movement 2D', [SpeciesIDs, IndXcoords, IndYcoords, IndIDs, IndTimeIn, Qs])
-        elif D == 3:
-            Xcoords, Ycoords, Zcoords = coords
-            testlengths('individuals', 'nonfluid_movement 3D', [SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, IndIDs, IndTimeIn, Qs])
+        Xcoords, Ycoords, Zcoords = coords
 
     # consume and reproduce
-    ResCoords = [ResXcoords, ResYcoords]
-    if D == 3: ResCoords.append(ResZcoords)
-
-    IndCoords = [IndXcoords, IndYcoords]
-    if D == 3: IndCoords.append(IndZcoords)
-
-    p1 = len(IndIDs)
-    q1 = sum(Qs)
+    ResCoords = [ResXcoords, ResYcoords, ResZcoords]
+    IndCoords = [IndXcoords, IndYcoords, IndZcoords]
+    p1, q1 = [len(IndIDs), sum(Qs)]
 
     ResLists, IndLists = bide.ConsumeAndReproduce(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict, DispParamsDict, D)
+
     ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords = ResLists
     SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = IndLists
-
-    prod_i = len(IndIDs) - p1
-    prod_q = sum(Qs) - q1
-
+    prod_i, prod_q = [len(IndIDs) - p1, sum(Qs) - q1]
 
     # maintenance
-    coords = [IndXcoords, IndYcoords]
-    if D == 3: coords.append(IndZcoords)
+    coords = [IndXcoords, IndYcoords, IndZcoords]
     SpeciesIDs, coords, IndExitAge, IndIDs, IndTimeIn, Qs = bide.maintenance(SpeciesIDs, coords, IndExitAge, SpColorDict, MaintDict, IndIDs, IndTimeIn, Qs, D)
-    if D == 2: Xcoords, Ycoords = coords
-    elif D == 3: Xcoords, Ycoords, Zcoords = coords
+    Xcoords, Ycoords, Zcoords = coords
 
+    """
+    # predation
+    PredCoords = [PredXcoords, PredYcoords, PredZcoords]
+    IndCoords = [IndXcoords, IndYcoords, IndZcoords]
+    p1, n1 = [len(PredIDs), len(IndIDs)]
+
+    PredLists, IndLists = bide.predation(PredTypes, PredVals, PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, D)
+
+    PredIDs, PredID, PredXCoords, PredYCoords, PredZCoords, PredTimeIn, PredExitAge = PredLists
+    SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXCoords, IndYCoords, IndZCoords = IndLists
+    pred_i, pred_n = [len(ParaIDs) - p1, sum(IndIDs) - n1]
+    """
 
     ########## plot the system #################################################
     colorlist = []
@@ -286,11 +230,12 @@ def nextFrame(arg):	# arg is the frame number
     if D == 2: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.6)
     elif D == 3: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, TracerZcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.8)
 
-
     plt.draw()
+
     # Record model values and reset, or not
     if len(TracerExitAge) >= stop:
         ct = 0
+
         # Examining the resource RAD
         if len(ResTypes) > 0:
             ResRAD, Rlist = bide.GetRAD(ResTypes)
@@ -369,34 +314,21 @@ def nextFrame(arg):	# arg is the frame number
 
         # Seed or do not seed the community ############################################
         if seedcom > 0:
+
             # inflow of resources
-            coords = [ResXcoords, ResYcoords]
-            if D == 3: coords.append(ResZcoords)
-
+            coords = [ResXcoords, ResYcoords, ResZcoords]
             ResTypes, ResVals, coords, ResIDs, ResID, ResTimeIn = bide.ResIn(ResTypes, ResVals, coords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
-
-            if D == 2: ResXcoords, ResYcoords = coords
-            elif D == 3: ResXcoords, ResYcoords, ResZcoords = coords
+            ResXcoords, ResYcoords, ResZcoords = coords
 
             # immigration
-            coords = [IndXcoords, IndYcoords]
-            if D == 3: coords.append(IndZcoords)
-
+            coords = [IndXcoords, IndYcoords, IndZcoords]
             SpeciesIDs, coords, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IDs, ID, TimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, coords, width, height, length, MaintDict, GrowthDict, DispParamsDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
-
-            if D == 2: IndXcoords, IndYcoords = coords
-            elif D == 3: IndXcoords, IndYcoords, IndZcoords = coords
+            IndXcoords, IndYcoords, IndZcoords = coords
 
         ####################### REPLACE ENVIRONMENT
-        #tracer_scatImage.remove()
-        #resource_scatImage.remove()
-        #Ind_scatImage.remove()
+        if D == 3: ax = fig.add_subplot(111, projection='3d')
+        elif D == 2: ax = fig.add_subplot(111)
 
-        if D == 3:
-            ax = fig.add_subplot(111, projection='3d')
-
-        elif D == 2:
-            ax = fig.add_subplot(111)
 
 
 ############## OPEN OUTPUT DATA FILE ###########################################
