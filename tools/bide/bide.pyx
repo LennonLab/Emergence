@@ -426,33 +426,33 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords,
                 ID += 1
                 IDs.append(ID)
                 TimeIn.append(TimeIn[i])
+                spID = SpeciesIDs[i]
 
                 if speciation == 'yes':
                     p = np.random.binomial(10**-4, 1)
                     if p == 1:
-                        spID = SpeciesIDs[i]
 
-                        # mutate!
+                        # speciate
                         frac, whole = spID.split('.')
                         frac = int(frac) + 1
                         newSp = whole +'.'+ str(frac)
 
-                        # species color
+                        # new species color
                         color_dict = get_color(newSp, color_dict)
 
-                        # species growth rate
+                        # new species growth rate
                         p = np.random.binomial(0.25, 1)
                         GrowthDict[newSp] = np.random.uniform(0.1, 1.0)
 
-                        # species maintenance
+                        # new species maintenance
                         p = np.random.binomial(0.25, 1)
                         MaintDict[newSp] = np.random.uniform(0.001, 0.01)
 
-                        # species active dispersal rate
+                        # new species active dispersal rate
                         p = np.random.binomial(0.25, 1)
                         DispDict[newSp] = np.random.uniform(0.0, 0.1)
 
-                        # species resource use efficiency
+                        # new species resource use efficiencies
                         p = np.random.binomial(0.25, 1)
                         ResUseDict[newSp] = np.random.uniform(0.1, 1.0, nr)
 
@@ -513,7 +513,7 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords,
                 if spbox.count(sp1) > 1:
                     i2 = spbox.index(sp1) # choose an individual of the same species
                     box.pop(i2) # remove the individual
-	            spbox.pop(i2) # remove the species ID
+                    spbox.pop(i2) # remove the species ID
                     index2 = IDs.index(i2)
                     q2 = Qs[index2]
 

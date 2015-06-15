@@ -36,11 +36,11 @@ def get_rand_params():
 
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
+
     predators = choice(['yes', 'no'])
     parasites = choice(['yes', 'no'])
-    symbionts = choice(['yes', 'no'])
-    env_gradient = choice(['no', 'yes'])
 
+    env_gradient = choice(['no', 'yes'])
     # size of starting community
     seedcom = choice([100, 500, 1000, 5000])
 
@@ -56,31 +56,7 @@ def get_rand_params():
     # maximum resource particle size
     rmax = choice([500, 1000, 2000, 4000, 8000])
 
-    # mean and standard deviation for number of prey
-    avg_prey = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for number of symbionts
-    avg_symb = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for number of parasites
-    avg_parasite = [np.random.uniform(0, 10), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for specific growth rate
-    avg_growth = [np.random.uniform(0.1, 1.0), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for propagule cell quota
-    avg_Q = [np.random.uniform(0.1, 1.0), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for specific maintenance
-    avg_maint = [np.random.uniform(0.01, 0.1), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for specific active dispersal
-    avg_disp = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
-
-    # mean and standard deviation for specific resource use efficiency
-    avg_res = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
-
-    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
+    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nr, rmax]
 
 
 
