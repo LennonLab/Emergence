@@ -34,8 +34,8 @@ def get_rand_params():
     length = choice([5, 10, 15, 20])
     alpha = np.random.uniform(0.99, 0.999)
 
-    reproduction = choice(['clonal', 'sexual'])
-    mutation = choice(['yes', 'no'])
+    reproduction = choice(['fission', 'sexual'])
+    speciation = choice(['yes', 'no'])
     predators = choice(['yes', 'no'])
     parasites = choice(['yes', 'no'])
     symbionts = choice(['yes', 'no'])
@@ -80,7 +80,7 @@ def get_rand_params():
     # mean and standard deviation for specific resource use efficiency
     avg_res = [np.random.uniform(0.01, 1.0), np.random.uniform(0.01, 0.1)]
 
-    return [width, height, length, alpha, motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
+    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res]
 
 
 
@@ -111,7 +111,7 @@ def nextFrame(arg):	# arg is the frame number
     global barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW
     global BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2
 
-    global ct1, Mu, Maint, motion, D, reproduction, mutation, predators, parasites, symbionts
+    global ct1, Mu, Maint, motion, D, reproduction, speciation, predators, parasites, symbionts
     global env_gradient, seedcom, m, r, nr, rmax, sim, RAD, splist, N, TracerTau, IndTau, ct
     global ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, T, R, stop, prod_i, prod_q, viscosity, alpha
 
@@ -373,7 +373,7 @@ def nextFrame(arg):	# arg is the frame number
         if u0 == min(Rates):
             SpColorDict, GrowthDict, MaintDict = {}, {}, {}
             ResUseDict, ResColorDict, DispParamsDict = {}, {}, {}
-            width, height, length, alpha, motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
+            width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
             sim += 1
             alpha = np.random.uniform(0.9, 0.999)
             print '\n'
@@ -436,7 +436,7 @@ OUT3.close()
 
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-width, height, length, alpha, motion, D, reproduction, mutation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
+width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, symbionts, env_gradient, seedcom, m, r, nr, rmax, avg_prey, avg_symb, avg_parasite, avg_growth, avg_Q, avg_maint, avg_disp, avg_res = get_rand_params()
 
 #######################  Ind COMMUNITY PARAMETERS  #########################
 TracerTau, IndTau, ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0,0,0,0,0,0,0,0,0,0,0,0,0,0
