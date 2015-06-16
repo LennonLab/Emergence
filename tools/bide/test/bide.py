@@ -4,11 +4,12 @@ import numpy as np
 import sys
 from math import modf
 import decimal
+import time
 
-limit = 0.5
+limit = 0.2
 
 def coord(d):
-    return float(np.random.uniform(0.05*d, 0.8*d))
+    return float(np.random.uniform(0.1*d, 0.9*d))
 
 
 def GetRAD(vector):
@@ -38,17 +39,18 @@ def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0
     x = np.random.binomial(1, u0)
     if x == 1:
         TimeIn.append(0)
-        Ycoords.append(coord(height))
-        Xcoords.append(coord(width))
-        Zcoords.append(coord(length))
+        Ycoords.append(float(np.random.uniform(0.4*height, 0.6*height)))
+        Xcoords.append(float(np.random.uniform(0.2*width, 0.21*width)))
+        Zcoords.append(float(np.random.uniform(0.4*length, 0.6*length)))
         IDs.append(0) # used to track the age of the tracer
 
     return [IDs, TimeIn, Xcoords, Ycoords, Zcoords]
 
 
 
-def ResIn(Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
+def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
 
+    if motion == 'random_walk': numr = numr * 2
     for r in range(numr):
         x = np.random.binomial(1, u0)
 
@@ -62,9 +64,16 @@ def ResIn(Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr
             TimeIn.append(0)
             ID += 1
 
-            Ycoords.append(coord(height))
-            Xcoords.append(coord(width))
-            Zcoords.append(coord(length))
+            if motion == 'random_walk':
+                Ycoords.append(float(np.random.uniform(0.2*height, 0.8*height)))
+                Xcoords.append(float(np.random.uniform(0.2*width, 0.8*width)))
+                Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+
+            else:
+                Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
+                Xcoords.append(float(np.random.uniform(0.01*width, 0.6*width)))
+                Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+
 
     return [Type, Vals, Xcoords, Ycoords, Zcoords, IDs, ID, TimeIn]
 
@@ -80,9 +89,9 @@ def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length
 
             Species.append(prop)
 
-            Ycoords.append(coord(height))
-            Xcoords.append(coord(width))
-            Zcoords.append(coord(length))
+            Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
+            Xcoords.append(float(np.random.uniform(0.01*width, 0.6*width)))
+            Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
 
             IDs.append(ID)
             TimeIn.append(0)
@@ -101,7 +110,7 @@ def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length
                 MaintDict[prop] = np.random.uniform(0.001, 0.01)
 
                 # species active dispersal rate
-                DispDict[prop] = np.random.uniform(0.0, 0.1)
+                DispDict[prop] = np.random.uniform(0.01, 0.1)
 
                 # species resource use efficiency
                 ResUseDict[prop] = np.random.uniform(0.1, 1.0, nr)
@@ -176,7 +185,7 @@ def maintenance(SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, color_dict, Main
 
     for i, val in enumerate(Qs):
         val -= MaintDict[SpeciesIDs[i]]  # maintanence influenced by species
-        if val <= 0.0:   # starved
+        if val <= 0.01:   # starved
 
             Qs.pop(i)
             ExitAge.append(TimeIn[i])
@@ -185,7 +194,7 @@ def maintenance(SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, color_dict, Main
             IDs.pop(i)
             Xcoords.pop(i)
             Ycoords.pop(i)
-            if D == 3: Zcoords.pop(i)
+            Zcoords.pop(i)
 
         else: Qs[i] = val
 
@@ -205,32 +214,26 @@ def predation(PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn
     for i, val in enumerate(IndIDs):
         roundedX = int(round(IndXcoords[i]))
         roundedY = int(round(IndYcoords[i]))
+        roundedZ = int(round(IndZcoords[i]))
 
         if D == 2: index = int(round(roundedX + (roundedY * width)))
-
-        elif D == 3:
-            roundedZ = int(round(IndZcoords[i]))
-            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+        elif D == 3: index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
 
         if index > len(IndBoxes) - 1: index = len(IndBoxes) - 1
         elif index < 0: index = 0
-
         IndBoxes[index].append(val)
 
     index = 0
     for i, val in enumerate(PredIDs):
         roundedX = int(round(PredXcoords[i]))
         roundedY = int(round(PredYcoords[i]))
+        roundedZ = int(round(PredZcoords[i]))
 
         if D == 2: index = int(round(roundedX + (roundedY * width)))
-
-        elif D == 3:
-            roundedZ = int(round(PredZcoords[i]))
-            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+        elif D == 3: index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
 
         if index > len(PredBoxes) - 1: index = len(PredBoxes) - 1
         elif index < 0: index = 0
-
         PredBoxes[index].append(val)
 
 
@@ -266,24 +269,24 @@ def predation(PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn
 
 def consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
 
-    if not len(ResTypes) or not len(SpeciesIDs):
-        ResLists = [ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords]
-        IndLists = [SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
-        return [ResLists, IndLists]
+    if not len(ResTypes) or not len(SpeciesIDs): return [ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
 
-    if D == 2: IndBoxes, ResBoxes = [[list([]) for _ in xrange(width*height)]]*2
-    elif D == 3: IndBoxes, ResBoxes = [[list([]) for _ in xrange(width*height*length)]]*2
+    if D == 2:
+        IndBoxes = [list([]) for _ in xrange(width*height)]
+        ResBoxes = [list([]) for _ in xrange(width*height)]
+
+    elif D == 3:
+        IndBoxes = [list([]) for _ in xrange(width*height*length)]
+        ResBoxes = [list([]) for _ in xrange(width*height*length)]
 
     index = 0
     for i, val in enumerate(IndIDs):
         roundedX = int(round(IndXcoords[i]))
         roundedY = int(round(IndYcoords[i]))
+        roundedZ = int(round(IndZcoords[i]))
 
         if D == 2: index = int(round(roundedX + (roundedY * width)))
-
-        elif D == 3:
-            roundedZ = int(round(IndZcoords[i]))
-            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+        elif D == 3: index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
 
         if index > len(IndBoxes) - 1: index = len(IndBoxes) - 1
         elif index < 0: index = 0
@@ -292,14 +295,13 @@ def consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords
 
     index = 0
     for i, val in enumerate(ResIDs):
+
         roundedX = int(round(ResXcoords[i]))
         roundedY = int(round(ResYcoords[i]))
+        roundedZ = int(round(ResZcoords[i]))
 
         if D == 2: index = int(round(roundedX + (roundedY * width)))
-
-        elif D == 3:
-            roundedZ = int(round(ResZcoords[i]))
-            index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+        elif D == 3: index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
 
         if index > len(ResBoxes) - 1: index = len(ResBoxes) - 1
         elif index < 0: index = 0
@@ -334,16 +336,18 @@ def consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords
             if resval > (mu * Q): # Increase cell quota
                 resval = resval - (mu * Q)
                 Q = Q + (mu * Q)
-                if Q > 1.0:
-                    resval = Q - 1.0
-                    Q = 1.0
-                ResVals[j] = resval
 
             else:
                 Q += resval
                 resval = 0.0
 
-            if resval == 0.0:
+            if Q > 1.0:
+                resval = Q - 1.0
+                Q = 1.0
+                ResVals[j] = resval
+
+
+            if resval <= 0.0:
                 ResBox.pop(boxIndex)
                 ResVals.pop(j)
                 ResExitAge.append(ResTimeIn[j])
@@ -352,21 +356,18 @@ def consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords
                 ResIDs.pop(j)
                 ResXcoords.pop(j)
                 ResYcoords.pop(j)
-                if D == 3: ResZcoords.pop(j)
+                ResZcoords.pop(j)
 
             Qs[ID] = Q
 
-    ResLists = ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords
-    IndLists = SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords
-
-    return [ResLists, IndLists]
+    return [ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
 
 
 
 def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, width, height, length, GrowthDict, DispDict, color_dict, ResUseDict, MaintDict, D, nr):
 
     if SpeciesIDs == []:
-        return [SpeciesIDs, Xcoords, Ycoords, Zcoords, IDs, TimeIn, Qs]
+        return [SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, GrowthDict, DispDict]
 
     if reproduction == 'fission':
         for i, Q in enumerate(Qs):
@@ -379,25 +380,29 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
                 TimeIn.append(TimeIn[i])
                 spID = SpeciesIDs[i]
 
+                X = Xcoords[i]
+                Y = Ycoords[i]
+                Z = Zcoords[i]
+
                 if speciation == 'yes':
-                    p = np.random.binomial(10**-4, 1)
+                    p = np.random.binomial(1, 0.01)
                     if p == 1:
+                        #print 'new species'
 
                         # speciate
-                        frac, whole = spID.split('.')
-                        frac = int(frac) + 1
-                        spID = whole +'.'+ str(frac)
+                        t = time.clock()
+                        spID = spID +' '+ str(t)
 
                         # new species color
                         color_dict = get_color(spID, color_dict)
 
                         # new species growth rate
                         p = np.random.binomial(0.25, 1)
-                        GrowthDict[spID] = np.random.uniform(0.1, 1.0)
+                        GrowthDict[spID] = np.random.uniform(0.5, 1.0)
 
                         # new species maintenance
                         p = np.random.binomial(0.25, 1)
-                        MaintDict[spID] = np.random.uniform(0.001, 0.01)
+                        MaintDict[spID] = np.random.uniform(0.01, 0.1)
 
                         # new species active dispersal rate
                         p = np.random.binomial(0.25, 1)
@@ -407,22 +412,35 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
                         p = np.random.binomial(0.25, 1)
                         ResUseDict[spID] = np.random.uniform(0.1, 1.0, nr)
 
-
                 SpeciesIDs.append(spID)
-                direction = choice([-1,1])
-                Xcoords.append(Xcoords[i] + direction*DispDict[SpeciesIDs[i]])
-                direction = choice([-1,1])
-                Ycoords.append(Ycoords[i] + direction*DispDict[SpeciesIDs[i]])
 
-                if D == 3: Zcoords.append(Zcoords[ID])
+                newX = float(np.random.uniform(X-0.5, X, 1))
+                if limit > newX: newX = 0
+                if newX > width - limit: newX = width - limit
+                Xcoords.append(newX)
+
+                newY = float(np.random.uniform(Y-0.5, Y+0.5, 1))
+                if limit > newY: newY = 0
+                elif newY > height: newY = height - limit
+                Ycoords.append(newY)
+
+                newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
+                if limit > newZ: newZ = 0
+                elif newZ > length: newZ = length - limit
+                Zcoords.append(newZ)
 
     elif reproduction == 'sexual':
 
         indBoxes = []
         spBoxes = []
 
-        if D == 2: IndBoxes, SpBoxes = [[list([]) for _ in xrange(width*height)]]*2
-        elif D == 3: IndBoxes, SpBoxes = [[list([]) for _ in xrange(width*height*length)]]*2
+        if D == 2:
+            indBoxes = [list([]) for _ in xrange(width*height)]
+            spBoxes = [list([]) for _ in xrange(width*height)]
+
+        elif D == 3:
+            indBoxes = [list([]) for _ in xrange(width*height*length)]
+            spBoxes = [list([]) for _ in xrange(width*height*length)]
 
         index = 0
         for i, indID in enumerate(IDs):
@@ -430,11 +448,10 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
             spID = SpeciesIDs[i]
             roundedX = int(round(Xcoords[i]))
             roundedY = int(round(Ycoords[i]))
+            roundedZ = int(round(Zcoords[i]))
 
             if D == 2: index = int(round(roundedX + (roundedY * width)))
-            elif D == 3:
-                roundedZ = int(round(Zcoords[i]))
-                index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
+            elif D == 3: index = int(round((roundedY * length * width) + (roundedX * length) + roundedZ))
 
             if index > len(indBoxes) - 1: index = len(indBoxes) - 1
             elif index < 0: index = 0
@@ -448,40 +465,53 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
             spbox = spBoxes[i]
             while len(box) > 1:
                 i1 = choice(range(len(box))) # choose an individual at random
-                ID1 = box.pop(i1) # remove the individual
-                sp1 = spbox.pop(i1) # remove the species ID
-                index1 = IDs.index(i1)
+                ind1 = box.pop(i1)
+                sp = spbox.pop(i1) # remove the species ID
+
+                index1 = IDs.index(ind1)
                 q1 = Qs[index1]
 
                 p1 = np.random.binomial(1, q1)
                 if p1 == 0: continue # individual not large enough to reproduce
 
                 # Find another of the same species
-                if spbox.count(sp1) > 1:
-                    i2 = spbox.index(sp1) # choose an individual of the same species
-                    box.pop(i2) # remove the individual
+                if spbox.count(sp) > 1:
+                    i2 = spbox.index(sp) # choose an individual of the same species
                     spbox.pop(i2) # remove the species ID
+                    box.pop(i2) # remove the individual
+
                     index2 = IDs.index(i2)
                     q2 = Qs[index2]
 
                     p2 = np.random.binomial(1, q2)
                     if p2 == 0: continue # individual not large enough to reproduce
 
-                    fq = choice([q1, q2])
-                    Qs[i] = fq/2.0
-                    Qs.append(fq/2.0)
+                    Qs[i2] = q2/2.0
+                    Qs.append(q2/2.0)
+
+                    X = Xcoords[i2]
+                    Y = Ycoords[i2]
+                    Z = Zcoords[i2]
+
+                    newX = float(np.random.uniform(X-0.5, X+0.5, 1))
+                    if limit > newX: newX = 0
+                    if newX > width - limit: newX = width - limit
+
+                    newY = float(np.random.uniform(Y-0.5, Y+0.5, 1))
+                    if limit > newY: newY = 0
+                    elif newY > height: newY = height - limit
+
+                    newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
+                    if limit > newZ: newZ = 0
+                    elif newZ > length: newZ = length - limit
+
                     ID += 1
                     IDs.append(ID)
-                    TimeIn.append(TimeIn[i])
+                    TimeIn.append(0)
+                    SpeciesIDs.append(sp)
 
-                    SpeciesIDs.append(SpeciesIDs[ID1])
-                    direction = choice([-1,1])
-                    Xcoords.append(Xcoords[ID] + direction*DispDict[SpeciesIDs[ID]])
-                    direction = choice([-1,1])
-                    Ycoords.append(Ycoords[ID] + direction*DispDict[SpeciesIDs[ID]])
 
-    coords = Xcoords, Ycoords, Zcoords
-    return [SpeciesIDs, Qs, IDs, ID, TimeIn, coords, width, height, length, GrowthDict, DispDict]
+    return [SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, GrowthDict, DispDict]
 
 
 
@@ -502,8 +532,7 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
         if TypeOf == 'individual': distance = u0 * DispDict[Types[i]]
         else: distance = u0
 
-        X, Y = Xcoords[i], Ycoords[i]
-        if D == 3: Z = Zcoords[i]
+        X, Y, Z = Xcoords[i], Ycoords[i], Zcoords[i]
 
         # go up or down
         #if TypeOf != 'resource':
@@ -520,16 +549,14 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
         if X > width - limit or X < limit: pop = 'yes'
         elif Y > height - limit or Y < limit: pop = 'yes'
 
-        if D == 3:
-            # go left or right
-            if motion == 'unidirectional': direction = np.random.uniform(-0.5, 1.5)
-            if motion == 'random_walk': direction = np.random.uniform(-length, length)
-            Z = Z + (direction * distance)
+        # go left or right
+        if motion == 'unidirectional': direction = np.random.uniform(-0.5, 1.5)
+        if motion == 'random_walk': direction = np.random.uniform(-length, length)
+        Z = Z + (direction * distance)
+        if Z > length - limit or Z < limit: pop = 'yes'
 
-            if Z > length - limit or Z < limit: pop = 'yes'
 
         if pop == 'no': Xcoords[i], Ycoords[i], Zcoords[i] = X, Y, Z
-
         elif pop == 'yes':
             IDs.pop(i)
             ExitAge.append(TimeIn[i])
@@ -543,6 +570,6 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
                 Types.pop(i)
 
     if TypeOf == 'tracer': Lists = IDs
-    if TypeOf == 'individual' or TypeOf == 'resource': Lists = [Types, IDs, Vals]
+    elif TypeOf == 'individual' or TypeOf == 'resource': Lists = [Types, IDs, Vals]
 
     return [Lists, ExitAge, TimeIn, Xcoords, Ycoords, Zcoords]

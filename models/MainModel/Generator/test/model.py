@@ -43,6 +43,15 @@ def get_rand_params():
     nr = choice([1, 2, 4, 8, 16, 32]) # maximum number of resources types
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
+    r = 100
+    m = 0
+    motion = 'random_walk'
+    width, height, length = 10, 10, 5
+    alpha = 0.99
+    reproduction = 'fission'
+    speciation = 'yes'
+    seedcom = 10
+
     return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nr, rmax]
 
 
@@ -80,11 +89,15 @@ def nextFrame(arg):	# arg is the frame number
     TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u0, D)
 
     # inflow of resources
-    ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
+    ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
 
     # immigration
-    if ct == 0: m, ct = seedcom, 1
-    SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+    if ct == 0:
+        ct = 1
+        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(seedcom, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+    else:
+        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+
 
     if motion == 'fluid' or motion == 'conveyor':  # a 'conveyor' belt action wherein y-coordinates never change occurs when there is 0 turbulence
 
@@ -93,9 +106,13 @@ def nextFrame(arg):	# arg is the frame number
         rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW = LBM.collide(viscosity, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, u0)
 
         # dispersal
-        if len(SpeciesIDs) > 0: SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, Qs = bide.fluid_movement('individual', SpeciesIDs, IndIDs, IndID, Qs, IndTimeIn, IndExitAge, IndXcoords, IndYcoords, ux, uy, width, height, u0)
+        Lists = [SpeciesIDs, IndIDs, IndID, Qs]
+        if len(SpeciesIDs) > 0: SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, Qs = bide.fluid_movement('individual', Lists, IndTimeIn, IndExitAge, IndXcoords, IndYcoords, ux, uy, width, height, u0)
+
         # resource flow
-        if len(ResTypes) > 0: ResTypes, ResXcoords, ResYcoords, ResExitAge, ResIDs, ResID, ResTimeIn, ResVals = bide.fluid_movement('resource', ResTypes, ResIDs, ResID, ResVals, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ux, uy, width, height, u0)
+        Lists = [ResTypes, ResIDs, ResID, ResVals]
+        if len(ResTypes) > 0: ResTypes, ResXcoords, ResYcoords, ResExitAge, ResIDs, ResID, ResTimeIn, ResVals = bide.fluid_movement('resource', Lists, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ux, uy, width, height, u0)
+
         # moving tracer particles
         if len(TracerIDs) > 0: TracerIDs, TracerXcoords, TracerYcoords, TracerExitAge, TracerTimeIn = bide.fluid_movement('tracer', TracerIDs, TracerTimeIn, TracerExitAge, TracerXcoords, TracerYcoords, ux, uy, width, height, u0)
 
@@ -112,10 +129,11 @@ def nextFrame(arg):	# arg is the frame number
         Lists = [SpeciesIDs, IndIDs, Qs, DispDict]
         Lists, IndExitAge, IndTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('individual', motion, Lists, IndExitAge, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, u0, D)
         SpeciesIDs, IndIDs, Qs = Lists
+
     # consume & reproduce
     p1, q1 = [len(IndIDs), sum(Qs)]
     ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, DispDict, D)
-    SpeciesIDs, Qs, IDs, ID, TimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, DispDict = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, GrowthDict, DispDict, SpColorDict, ResUseDict, MaintDict, D, nr)
+    SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, GrowthDict, DispDict = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, DispDict, SpColorDict, ResUseDict, MaintDict, D, nr)
     prod_i, prod_q = [len(IndIDs) - p1, sum(Qs) - q1]
 
     # maintenance
@@ -144,8 +162,8 @@ def nextFrame(arg):	# arg is the frame number
            '\nOpen circles are resource particles. Semi-impermeable barriers (grey bars) produce turbulence.']
 
     txt.set_text(' '.join(Title))
-    plt.ylim(0, height)
-    plt.xlim(0, width)
+    ax.set_ylim(0, height)
+    ax.set_xlim(0, width)
     if D == 3: ax.set_zlim(0,length)
 
     ##### PLOTTING THE INDIVIDUALS ############################################
@@ -155,12 +173,15 @@ def nextFrame(arg):	# arg is the frame number
     Ind_scatImage.remove()
 
     colorlist = []
-    for val in SpeciesIDs: colorlist.append(SpColorDict[val])
+    sizelist = []
+    for i, val in enumerate(SpeciesIDs):
+        colorlist.append(SpColorDict[val])
+        sizelist.append(Qs[i] * 1000)
 
     if D == 2: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.7)
     elif D == 3: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, ResZcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.2)
 
-    if D == 2: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, s = Qs, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.9)
+    if D == 2: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, s = sizelist, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.9)
     elif D == 3: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, IndZcoords, s = Qs, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.99)
 
     if D == 2: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.6)
@@ -169,7 +190,7 @@ def nextFrame(arg):	# arg is the frame number
     plt.draw()
 
     # Record model values and reset, or not
-    if len(TracerExitAge) >= stop:
+    if len(TracerExitAge) >= stop or N == 0:
         ct = 0
 
         # Examining the resource RAD
@@ -241,7 +262,7 @@ def nextFrame(arg):	# arg is the frame number
 
         if seedcom > 0:
             # inflow of resources
-            ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
+            ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
             # immigration
             SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IDs, ID, TimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
 
@@ -274,10 +295,10 @@ ResXcoords, ResYcoords, ResZcoords, ResIDs, ResTypes, ResExitAge, ResTimeIn, Res
 SpColorDict, GrowthDict, MaintDict, ResUseDict, ResColorDict, DispDict = {}, {}, {}, {}, {}, {}
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-stop, shift, sign, sim, BarrierWidth, BarrierHeight = 20, 0.0, 0.1, 0, 0.1, 0.1
+stop, shift, sign, sim, BarrierWidth, BarrierHeight = 30, 0.0, 0.1, 0, 0.0, 0.0
 BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [],[],[],[]
 viscosity = 1 # unitless but required by an LBM model
-Rates = np.array([1.0, 0.5, 0.1, 0.05, 0.01])  # inflow speeds
+Rates = np.array([0.8, 0.4, 0.2, 0.08, 0.04, 0.02])  # inflow speeds
 u0 = Rates[0]  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
@@ -294,12 +315,12 @@ if D == 2:
         n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
         left, bottom = BarrierXcoords1[0], BarrierYcoords1[0]
-        BHeight, BWidth = [BarrierYcoords1[1] - bottom, BarrierXcoords1[1] - left]
-        BarrierImage1 = plt.bar(left-0.3, BHeight, BWidth-0.3, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
+        BHeight = BarrierYcoords1[1] - bottom
+        BarrierImage1 = plt.bar(left, BHeight, 1, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
 
         left, bottom = [BarrierXcoords2[0], BarrierYcoords2[0]]
-        BHeight, BWidth = [BarrierYcoords2[1] - bottom, BarrierXcoords2[1] - left]
-        BarrierImage2 = plt.bar(left-0.3, BHeight, BWidth-0.3, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
+        BHeight = BarrierYcoords2[1] - bottom
+        BarrierImage2 = plt.bar(left, BHeight, 1, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
 
 elif D == 3:
     ax = fig.add_subplot(111, projection='3d')
