@@ -103,15 +103,19 @@ def nextFrame(arg):	# arg is the frame number
 
         # Moving tracer particles
         TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.nonfluid_movement('tracer', motion, TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords, width, height, length, u0, D)
-        # Moving resource particles
-        ResTypes, ResIDs, ResVals, ResExitAge, ResTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('resource', motion, ResTypes, ResIDs, ResVals, ResExitAge, ResTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, u0, D)
-        # Moving individuals
-        SpeciesIDs, IndIDs, Qs, IndExitAge, IndTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('individual', motion, SpeciesIDs, IndIDs, Qs, DispDict, IndExitAge, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, u0, D)
 
+        # Moving resource particles
+        Lists = [ResTypes, ResIDs, ResVals]
+        Lists, ResExitAge, ResTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('resource', motion, Lists, ResExitAge, ResTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, u0, D)
+        ResTypes, ResIDs, ResVals = Lists
+        # Moving individuals
+        Lists = [SpeciesIDs, IndIDs, Qs, DispDict]
+        Lists, IndExitAge, IndTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('individual', motion, Lists, IndExitAge, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, u0, D)
+        SpeciesIDs, IndIDs, Qs = Lists
     # consume & reproduce
     p1, q1 = [len(IndIDs), sum(Qs)]
     ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, DispDict, D)
-    SpeciesIDs, Qs, IDs, ID, TimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, DispDict = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, coords, width, height, length, GrowthDict, DispDict, SpColorDict, ResUseDict, MaintDict, D, nr)
+    SpeciesIDs, Qs, IDs, ID, TimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, DispDict = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, GrowthDict, DispDict, SpColorDict, ResUseDict, MaintDict, D, nr)
     prod_i, prod_q = [len(IndIDs) - p1, sum(Qs) - q1]
 
     # maintenance
@@ -120,8 +124,8 @@ def nextFrame(arg):	# arg is the frame number
     """
     # predation
     p1, n1 = [len(PredIDs), len(IndIDs)]
-    PredIDs, PredID, PredXCoords, PredYCoords, PredZCoords, PredTimeIn, PredExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXCoords, IndYCoords, IndZCoords = bide.predation(PredTypes, PredVals, PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn, PredExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, D)
-    pred_i, pred_n = [len(ParaIDs) - p1, sum(IndIDs) - n1]
+    PredIDs, PredID, PredTimeIn, PredXcoords, PredYcoords, PredZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.predation(predation(PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn, IndExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, D)
+    pred_i, pred_n = [len(PredIDs) - p1, sum(IndIDs) - n1]
     """
 
     ########## PLOT THE SYSTEM #################################################

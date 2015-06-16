@@ -33,34 +33,22 @@ def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO SPECIES
 
 
 
-def NewTracers(IDs, coords, TimeIn, width, height, length, u0, D):
+def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0, D):
 
-    Xcoords, Ycoords, Zcoords = coords
     x = np.random.binomial(1, u0)
-
     if x == 1:
         TimeIn.append(0)
-
-        y = coord(height)
-        Ycoords.append(y)
-
-        x = coord(width)
-        Xcoords.append(x)
-
+        Ycoords.append(coord(height))
+        Xcoords.append(coord(width))
+        Zcoords.append(coord(length))
         IDs.append(0) # used to track the age of the tracer
 
-        if D == 3:
-            z = coord(length)
-            Zcoords.append(z)
-
-    coords = [Xcoords, Ycoords, Zcoords]
-    return [IDs, TimeIn, coords]
+    return [IDs, TimeIn, Xcoords, Ycoords, Zcoords]
 
 
 
-def ResIn(Type, Vals, coords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
+def ResIn(Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
 
-    Xcoords, Ycoords, Zcoords = coords
     for r in range(numr):
         x = np.random.binomial(1, u0)
 
@@ -74,24 +62,16 @@ def ResIn(Type, Vals, coords, ID, IDs, TimeIn, numr, rmax, nr, width, height, le
             TimeIn.append(0)
             ID += 1
 
-            y = coord(height)
-            Ycoords.append(y)
+            Ycoords.append(coord(height))
+            Xcoords.append(coord(width))
+            Zcoords.append(coord(length))
 
-            x = coord(width)
-            Xcoords.append(x)
-
-            if D == 3:
-                z = coord(length)
-                Zcoords.append(z)
-
-    coords = [Xcoords, Ycoords, Zcoords]
-    return [Type, Vals, coords, IDs, ID, TimeIn]
+    return [Type, Vals, Xcoords, Ycoords, Zcoords, IDs, ID, TimeIn]
 
 
 
-def immigration(numin, Species, coords, width, height, length, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
+def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
 
-    Xcoords, Ycoords, Zcoords = coords
     for m in range(numin):
         x = np.random.binomial(1, u0)
 
@@ -100,15 +80,9 @@ def immigration(numin, Species, coords, width, height, length, MaintDict, Growth
 
             Species.append(prop)
 
-            y = coord(height)
-            Ycoords.append(y)
-
-            x = coord(width)
-            Xcoords.append(x)
-
-            if D == 3:
-                z = coord(length)
-                Zcoords.append(z)
+            Ycoords.append(coord(height))
+            Xcoords.append(coord(width))
+            Zcoords.append(coord(length))
 
             IDs.append(ID)
             TimeIn.append(0)
@@ -132,8 +106,8 @@ def immigration(numin, Species, coords, width, height, length, MaintDict, Growth
                 # species resource use efficiency
                 ResUseDict[prop] = np.random.uniform(0.1, 1.0, nr)
 
-    coords = [Xcoords, Ycoords, Zcoords]
-    return [Species, coords, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict]
+    return [Species, Xcoords, Ycoords, Zcoords, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict]
+
 
 
 def fluid_movement(TypeOf, List, TimeIn, ExitAge, Xcoords, Ycoords, ux, uy, width, height, u0):
@@ -189,23 +163,18 @@ def fluid_movement(TypeOf, List, TimeIn, ExitAge, Xcoords, Ycoords, ux, uy, widt
     ux = np.reshape(ux, (height, width))
     uy = np.reshape(uy, (height, width))
 
-    listlengths = [len(Xcoords), len(Ycoords), len(IDs)]
     if TypeOf == 'tracer':
         return [IDs, Xcoords, Ycoords, ExitAge, TimeIn]
-
     elif TypeOf == 'resource' or TypeOf == 'individual':
         return [Type, Xcoords, Ycoords, ExitAge, IDs, ID, TimeIn, Vals]
 
 
 
-def maintenance(SpeciesIDs, coords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D):
+def maintenance(SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D):
 
-    if SpeciesIDs == []:
-        return [SpeciesIDs, coords, ExitAge, IDs, TimeIn, Qs]
+    if SpeciesIDs == []: return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
 
-    Xcoords, Ycoords, Zcoords = coords
     for i, val in enumerate(Qs):
-
         val -= MaintDict[SpeciesIDs[i]]  # maintanence influenced by species
         if val <= 0.0:   # starved
 
@@ -220,29 +189,17 @@ def maintenance(SpeciesIDs, coords, ExitAge, color_dict, MaintDict, IDs, TimeIn,
 
         else: Qs[i] = val
 
-    coords = [Xcoords, Ycoords, Zcoords]
-    return [SpeciesIDs, coords, ExitAge, IDs, TimeIn, Qs]
+    return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
 
 
 
-def predation(PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, D):
+def predation(PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn, IndExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, D):
 
-    PredXcoords, PredYcoords, PredZcoords, IndXcoords, IndYcoords, IndZcoords, IndBoxes, PredBoxes = [[], [], [], [], [], [], [], []]
-    PredXcoords, PredYcoords, PredYcoords = ResCoords
-    IndXcoords, IndYcoords, IndZcoords = IndCoords
+    IndBoxes, PredBoxes = [], []
+    if not len(PredIDs): return [PredIDs, PredID, PredTimeIn, PredXcoords, PredYcoords, PredZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
 
-    if not len(PredTypes):
-        PredLists = [PredTypes, PredVals, PredIDs, PredID, PredTimeIn, PredExitAge, PredXcoords, PredYcoords, PredZcoords]
-        IndLists = [SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
-        return [PredLists, IndLists]
-
-    if D == 2:
-        IndBoxes = [list([]) for _ in xrange(width*height)]
-        PredBoxes = [list([]) for _ in xrange(width*height)]
-
-    elif D == 3:
-        IndBoxes = [list([]) for _ in xrange(width*height*length)]
-        PredBoxes = [list([]) for _ in xrange(width*height*length)]
+    if D == 2: IndBoxes, PredBoxes = [[list([]) for _ in xrange(width*height)]]*2
+    elif D == 3: IndBoxes, PredBoxes = [[list([]) for _ in xrange(width*height*length)]]*2
 
     index = 0
     for i, val in enumerate(IndIDs):
@@ -295,7 +252,7 @@ def predation(PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, 
 
             j = IndIDs.index(IndID)
             Qs.pop(j)
-            IndExitAge.append(ResTimeIn[j])
+            IndExitAge.append(IndTimeIn[j])
             IndTimeIn.pop(j)
             SpeciesIDs.pop(j)
             IndIDs.pop(j)
@@ -303,31 +260,19 @@ def predation(PredIDs, PredID, PredCoords, PredTimeIn, PredExitAge, SpeciesIDs, 
             IndYcoords.pop(j)
             IndZcoords.pop(j)
 
-    PredLists = PredIDs, PredID, PredXCoords, PredYCoords, PredZCoords, PredTimeIn, PredExitAge
-    IndLists = SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXCoords, IndYCoords, IndZCoords
-
-    return [PredLists, IndLists]
+    return [PredIDs, PredID, PredTimeIn, PredXcoords, PredYcoords, PredZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
 
 
 
-def consume(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndCoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
-
-    IndBoxes, ResBoxes = [], []
-    ResXcoords, ResYcoords, ResZcoords = ResCoords
-    IndXcoords, IndYcoords, IndZcoords = IndCoords
+def consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, DispDict, D):
 
     if not len(ResTypes) or not len(SpeciesIDs):
         ResLists = [ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords]
         IndLists = [SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
         return [ResLists, IndLists]
 
-    if D == 2:
-        IndBoxes = [list([]) for _ in xrange(width*height)]
-        ResBoxes = [list([]) for _ in xrange(width*height)]
-
-    elif D == 3:
-        IndBoxes = [list([]) for _ in xrange(width*height*length)]
-        ResBoxes = [list([]) for _ in xrange(width*height*length)]
+    if D == 2: IndBoxes, ResBoxes = [[list([]) for _ in xrange(width*height)]]*2
+    elif D == 3: IndBoxes, ResBoxes = [[list([]) for _ in xrange(width*height*length)]]*2
 
     index = 0
     for i, val in enumerate(IndIDs):
@@ -418,12 +363,11 @@ def consume(ResTypes, ResVals, ResIDs, ResID, ResCoords, ResTimeIn, ResExitAge, 
 
 
 
-def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords, width, height, length, GrowthDict, DispDict, color_dict, ResUseDict, MaintDict, D, nr):
+def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, width, height, length, GrowthDict, DispDict, color_dict, ResUseDict, MaintDict, D, nr):
 
     if SpeciesIDs == []:
-        return [SpeciesIDs, coords, IDs, TimeIn, Qs]
+        return [SpeciesIDs, Xcoords, Ycoords, Zcoords, IDs, TimeIn, Qs]
 
-    Xcoords, Ycoords, Zcoords = coords
     if reproduction == 'fission':
         for i, Q in enumerate(Qs):
             p = np.random.binomial(1, Q)
@@ -477,12 +421,8 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords,
         indBoxes = []
         spBoxes = []
 
-        if D == 2:
-            indBoxes = [list([]) for _ in xrange(width*height)]
-            spBoxes = [list([]) for _ in xrange(width*height)]
-        elif D == 3:
-            indBoxes = [list([]) for _ in xrange(width*height*length)]
-            spBoxes = [list([]) for _ in xrange(width*height*length)]
+        if D == 2: IndBoxes, SpBoxes = [[list([]) for _ in xrange(width*height)]]*2
+        elif D == 3: IndBoxes, SpBoxes = [[list([]) for _ in xrange(width*height*length)]]*2
 
         index = 0
         for i, indID in enumerate(IDs):
@@ -545,15 +485,12 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, coords,
 
 
 
-def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, coords, width, height, length, u0, D):
+def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, Zcoords, width, height, length, u0, D):
 
-    limit = 0.5
-    distance, direction, pop = 0, 0, 'no'
+    limit, distance, direction, pop = 0.5, 0, 0, 'no'
     X, Y, Z = 0, 0, 0
     IDs, Types, Vals = [], [], []
     DispDict = {}
-
-    Xcoords, Ycoords, Zcoords = coords
 
     if TypeOf == 'tracer': IDs = Lists
     elif TypeOf == 'individual': Types, IDs, Vals, DispDict = Lists
@@ -562,13 +499,10 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, coords, width, hei
     for i, val in enumerate(IDs):
 
         # get distance
-        if TypeOf == 'individual':
-            distance = u0 * DispDict[Types[i]]
-        else:
-            distance = u0
+        if TypeOf == 'individual': distance = u0 * DispDict[Types[i]]
+        else: distance = u0
 
         X, Y = Xcoords[i], Ycoords[i]
-
         if D == 3: Z = Zcoords[i]
 
         # go up or down
@@ -594,11 +528,7 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, coords, width, hei
 
             if Z > length - limit or Z < limit: pop = 'yes'
 
-        if pop == 'no':
-            Xcoords[i] = X
-            Ycoords[i] = Y
-
-            if D == 3: Zcoords[i] = Z
+        if pop == 'no': Xcoords[i], Ycoords[i], Zcoords[i] = X, Y, Z
 
         elif pop == 'yes':
             IDs.pop(i)
@@ -606,15 +536,13 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, coords, width, hei
             TimeIn.pop(i)
             Xcoords.pop(i)
             Ycoords.pop(i)
-
-            if D == 3: Zcoords.pop(i)
+            Zcoords.pop(i)
 
             if TypeOf == 'individual' or TypeOf == 'resource':
                 Vals.pop(i)
                 Types.pop(i)
 
-    coords = [Xcoords, Ycoords, Zcoords]
     if TypeOf == 'tracer': Lists = IDs
     if TypeOf == 'individual' or TypeOf == 'resource': Lists = [Types, IDs, Vals]
 
-    return [Lists, ExitAge, TimeIn, coords]
+    return [Lists, ExitAge, TimeIn, Xcoords, Ycoords, Zcoords]
