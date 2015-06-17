@@ -37,12 +37,12 @@ def get_rand_params():
     env_gradient = choice(['no', 'yes'])
 
     seedcom = choice([10, 20, 40, 80, 160]) # size of starting community
-    m = choice([0, 1, 2, 4]) # individuals immigrating per time step
+    m = choice([0, 1]) # individuals immigrating per time step
     r = choice([100, 200, 300, 400]) # resource particles flowing in per time step
     nr = choice([1, 2, 4, 8, 16]) # maximum number of resources types
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
-    #m = 0
+    m = 0
     motion = 'fluid'
     reproduction = 'fission'
     speciation = 'yes'
@@ -130,7 +130,7 @@ def nextFrame(arg):	# arg is the frame number
     p1, q1 = [len(IndIDs), sum(Qs)]
     ResTypes, ResVals, ResIDs, ResID, ResTimeIn, ResExitAge, ResXcoords, ResYcoords, ResZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords = bide.consume(ResTypes, ResVals, ResIDs, ResID, ResXcoords, ResYcoords, ResZcoords, ResTimeIn, ResExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, ResUseDict, DispDict, D)
     SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords, Ycoords, Zcoords, GrowthDict, DispDict = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, GrowthDict, DispDict, SpColorDict, ResUseDict, MaintDict, D, nr)
-    prod_i, prod_q = [len(IndIDs) - p1, sum(Qs) - q1]
+    PRODI, PRODQ = [len(IndIDs) - p1, sum(Qs) - q1]
 
     # maintenance
     SpeciesIDs, Xcoords, Ycoords, Zcoords, IndExitAge, IndIDs, IndTimeIn, Qs = bide.maintenance(SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, IndExitAge, SpColorDict, MaintDict, IndIDs, IndTimeIn, Qs, D)
@@ -194,6 +194,12 @@ def nextFrame(arg):	# arg is the frame number
     # Record model values and reset, or not
     if len(TracerExitAge) >= LowerLimit or N == 0:
 
+        PRODIs.append(PRODI)
+        PRODQs.append(PRODQ)
+
+        RESTAUs.append(np.mean(ResExitAge))
+        INDTAUs.append(np.mean(IndExitAge))
+        TRACERTAUs.append(np.mean(TracerExitAge))
         # Examining the resource RAD
         if len(ResTypes) > 0:
             ResRAD, Rlist = bide.GetRAD(ResTypes)
@@ -218,6 +224,7 @@ def nextFrame(arg):	# arg is the frame number
             Ss.append(0)
 
         if N >= 1:
+
             RAD, splist = bide.GetRAD(SpeciesIDs)
             RAD, splist = zip(*sorted(zip(RAD, splist), reverse=True))
             S = len(RAD)
