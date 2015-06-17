@@ -40,7 +40,7 @@ def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0
     if x == 1:
         TimeIn.append(0)
         Ycoords.append(float(np.random.uniform(0.4*height, 0.6*height)))
-        Xcoords.append(float(np.random.uniform(0.2*width, 0.21*width)))
+        Xcoords.append(float(np.random.uniform(0.1*width, 0.11*width)))
         Zcoords.append(float(np.random.uniform(0.4*length, 0.6*length)))
         IDs.append(0) # used to track the age of the tracer
 
@@ -50,7 +50,6 @@ def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0
 
 def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
 
-    if motion == 'random_walk': numr = numr * 2
     for r in range(numr):
         x = np.random.binomial(1, u0)
 
@@ -65,9 +64,9 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
             ID += 1
 
             if motion == 'random_walk':
-                Ycoords.append(float(np.random.uniform(0.2*height, 0.8*height)))
-                Xcoords.append(float(np.random.uniform(0.2*width, 0.8*width)))
-                Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+                Ycoords.append(float(np.random.uniform(0.4*height, 0.6*height)))
+                Xcoords.append(float(np.random.uniform(0.4*width, 0.6*width)))
+                Zcoords.append(float(np.random.uniform(0.4*length, 0.6*length)))
 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
@@ -517,7 +516,7 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
 
 def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, Zcoords, width, height, length, u0, D):
 
-    limit, distance, direction, pop = 0.5, 0, 0, 'no'
+    limit, distance, direction, pop = 0.1, 0, 0, 'no'
     X, Y, Z = 0, 0, 0
     IDs, Types, Vals = [], [], []
     DispDict = {}
@@ -529,7 +528,7 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
     for i, val in enumerate(IDs):
 
         # get distance
-        if TypeOf == 'individual': distance = u0 * DispDict[Types[i]]
+        if TypeOf == 'individual': distance = u0 #np.random.uniform(0, 0.5) #u0 * DispDict[Types[i]]
         else: distance = u0
 
         X, Y, Z = Xcoords[i], Ycoords[i], Zcoords[i]
@@ -537,13 +536,13 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
         # go up or down
         #if TypeOf != 'resource':
         if motion == 'unidirectional': direction = np.random.uniform(-1, 1)
-        if motion == 'random_walk': direction = np.random.uniform(-height, height)
+        if motion == 'random_walk': direction = np.random.uniform(-1, 1)
         Y = Y + (direction * distance)
 
         # go forward or backward
         #if TypeOf != 'resource':
         if motion == 'unidirectional': direction = np.random.uniform(1, 1)
-        if motion == 'random_walk': direction = np.random.uniform(-width, width)
+        if motion == 'random_walk': direction = np.random.uniform(-1, 1)
         X = X + (direction * distance)
 
         if X > width - limit or X < limit: pop = 'yes'
@@ -551,7 +550,7 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
 
         # go left or right
         if motion == 'unidirectional': direction = np.random.uniform(-0.5, 1.5)
-        if motion == 'random_walk': direction = np.random.uniform(-length, length)
+        if motion == 'random_walk': direction = np.random.uniform(-1, 1)
         Z = Z + (direction * distance)
         if Z > length - limit or Z < limit: pop = 'yes'
 
