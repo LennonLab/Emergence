@@ -103,7 +103,7 @@ def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length
                 color_dict = get_color(prop, color_dict)
 
                 # species growth rate
-                GrowthDict[prop] = np.random.uniform(0.1, 1.0)
+                GrowthDict[prop] = np.random.uniform(0.1, 0.5)
 
                 # species maintenance
                 MaintDict[prop] = np.random.uniform(0.001, 0.01)
