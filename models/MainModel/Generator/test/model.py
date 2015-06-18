@@ -37,13 +37,13 @@ def get_rand_params():
     env_gradient = choice(['no', 'yes'])
 
     seedcom = choice([10, 20, 40, 80, 160]) # size of starting community
-    m = choice([0, 1]) # individuals immigrating per time step
+    m = choice([0, 1, 2, 4]) # individuals immigrating per time step
     r = choice([100, 200, 300, 400]) # resource particles flowing in per time step
     nr = choice([1, 2, 4, 8, 16]) # maximum number of resources types
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
-    m = 0
-    motion = 'random_walk'
+    #m = 0
+    #motion = 'random_walk'
     reproduction = 'fission'
     speciation = 'yes'
 
