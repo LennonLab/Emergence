@@ -109,7 +109,7 @@ def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length
                 MaintDict[prop] = np.random.uniform(0.001, 0.01)
 
                 # species active dispersal rate
-                DispDict[prop] = np.random.uniform(0.01, 0.1)
+                DispDict[prop] = np.random.uniform(0, 0.2)
 
                 # species resource use efficiency
                 ResUseDict[prop] = np.random.uniform(0.1, 1.0, nr)
@@ -122,7 +122,8 @@ def fluid_movement(TypeOf, List, TimeIn, ExitAge, Xcoords, Ycoords, ux, uy, widt
 
     Type, IDs, ID, Vals = [], [], int(), []
 
-    if TypeOf == 'resource' or TypeOf == 'individual': Type, IDs, ID, Vals = List
+    if TypeOf == 'resource': Type, IDs, ID, Vals = List
+    elif TypeOf == 'individual': Type, IDs, ID, Vals, DispDict = List
     else: IDs = List
 
     if Xcoords == []:
@@ -146,8 +147,10 @@ def fluid_movement(TypeOf, List, TimeIn, ExitAge, Xcoords, Ycoords, ux, uy, widt
         if index > len(ux) - 1: index = len(ux) - 1
         if index > len(uy) - 1: index = len(uy) - 1
 
-        k = np.random.binomial(1, 1)
-        if k == 1:
+        k = 0
+        if TypeOf == 'individual': k = np.random.binomial(1, DispDict[Type[i]])
+
+        if k == 0:
             Xcoords[i] += ux[index]
             Ycoords[i] += uy[index]
 

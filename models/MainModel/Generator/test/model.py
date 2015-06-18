@@ -102,7 +102,7 @@ def nextFrame(arg):	# arg is the frame number
         rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW = LBM.collide(viscosity, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, u0)
 
         # dispersal
-        Lists = [SpeciesIDs, IndIDs, IndID, Qs]
+        Lists = [SpeciesIDs, IndIDs, IndID, Qs, DispDict]
         if len(SpeciesIDs) > 0: SpeciesIDs, IndXcoords, IndYcoords, IndExitAge, IndIDs, IndID, IndTimeIn, Qs = bide.fluid_movement('individual', Lists, IndTimeIn, IndExitAge, IndXcoords, IndYcoords, ux, uy, width, height, u0)
 
         # resource flow
@@ -115,16 +115,18 @@ def nextFrame(arg):	# arg is the frame number
     elif motion == 'random_walk' or motion == 'unidirectional':
 
         # Moving tracer particles
-        TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.nonfluid_movement('tracer', motion, TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords, width, height, length, u0, D)
+        if len(TracerIDs) > 0: TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.nonfluid_movement('tracer', motion, TracerIDs, TracerExitAge, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords, width, height, length, u0, D)
 
         # Moving resource particles
-        Lists = [ResTypes, ResIDs, ResVals]
-        Lists, ResExitAge, ResTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('resource', motion, Lists, ResExitAge, ResTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, u0, D)
-        ResTypes, ResIDs, ResVals = Lists
+        if len(ResTypes) > 0:
+            Lists = [ResTypes, ResIDs, ResVals]
+            Lists, ResExitAge, ResTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('resource', motion, Lists, ResExitAge, ResTimeIn, ResXcoords, ResYcoords, ResZcoords, width, height, length, u0, D)
+            ResTypes, ResIDs, ResVals = Lists
         # Moving individuals
-        Lists = [SpeciesIDs, IndIDs, Qs, DispDict]
-        Lists, IndExitAge, IndTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('individual', motion, Lists, IndExitAge, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, u0, D)
-        SpeciesIDs, IndIDs, Qs = Lists
+        if len(SpeciesIDs) > 0:
+            Lists = [SpeciesIDs, IndIDs, Qs, DispDict]
+            Lists, IndExitAge, IndTimeIn, Xcoords, Ycoords, Zcoords = bide.nonfluid_movement('individual', motion, Lists, IndExitAge, IndTimeIn, IndXcoords, IndYcoords, IndZcoords, width, height, length, u0, D)
+            SpeciesIDs, IndIDs, Qs = Lists
 
     # consume & reproduce
     p1, q1 = [len(IndIDs), sum(Qs)]
@@ -261,7 +263,7 @@ def nextFrame(arg):	# arg is the frame number
         process = psutil.Process(os.getpid())
         mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
 
-        if len(Ns) >= 10 or N == 0:
+        if len(Ns) >= 4 or N == 0:
             ct = 0
             T, R, PRODI, PRODQ, N, RESTAU, TRACERTAU, INDTAU, RESDENS, RESDIV, RESRICH, S, ES, EV, BP, SD, NMAX, SK, MU, MAINT = [np.mean(Ts), np.mean(Rs), np.mean(PRODIs), np.mean(PRODQs), np.mean(Ns), np.mean(RESTAUs), np.mean(TRACERTAUs), np.mean(INDTAUs), np.mean(RESDENs), np.mean(RESDIVs), np.mean(RESRICHs), np.mean(Ss), np.mean(ESs), np.mean(EVs), np.mean(BPs), np.mean(SDs), np.mean(NMAXs), np.mean(SKs), np.mean(MUs), np.mean(MAINTs)]
             print ct, sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(prod_i), 'pQ:', int(prod_q), ': flow:', u0, ' MB:',int(round(mem))
