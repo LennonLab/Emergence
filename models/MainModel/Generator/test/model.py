@@ -43,7 +43,7 @@ def get_rand_params():
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
     m = 0
-    motion = 'fluid'
+    motion = 'random_walk'
     reproduction = 'fission'
     speciation = 'yes'
 
