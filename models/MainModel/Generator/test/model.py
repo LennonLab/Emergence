@@ -43,7 +43,7 @@ def get_rand_params():
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
     #m = 0
-    #motion = 'random_walk'
+    motion = 'random_walk'
     reproduction = 'fission'
     speciation = 'yes'
 
@@ -164,7 +164,6 @@ def nextFrame(arg):	# arg is the frame number
     if D == 3: ax.set_zlim(0,length)
 
     ##### PLOTTING THE INDIVIDUALS ############################################
-    """
     resource_scatImage.remove()
     tracer_scatImage.remove()
     Ind_scatImage.remove()
@@ -185,7 +184,6 @@ def nextFrame(arg):	# arg is the frame number
     elif D == 3: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, TracerZcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.8)
 
     plt.draw()
-    """
 
     if u0 == 1.0: LowerLimit = 50
     elif u0 >= 0.5: LowerLimit = 40
@@ -263,7 +261,7 @@ def nextFrame(arg):	# arg is the frame number
         process = psutil.Process(os.getpid())
         mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
 
-        if len(Ns) >= 4 or N == 0:
+        if len(Ns) >= 1 or N == 0:
             ct = 0
             T, R, PRODI, PRODQ, N, RESTAU, TRACERTAU, INDTAU, RESDENS, RESDIV, RESRICH, S, ES, EV, BP, SD, NMAX, SK, MU, MAINT = [np.mean(Ts), np.mean(Rs), np.mean(PRODIs), np.mean(PRODQs), np.mean(Ns), np.mean(RESTAUs), np.mean(TRACERTAUs), np.mean(INDTAUs), np.mean(RESDENs), np.mean(RESDIVs), np.mean(RESRICHs), np.mean(Ss), np.mean(ESs), np.mean(EVs), np.mean(BPs), np.mean(SDs), np.mean(NMAXs), np.mean(SKs), np.mean(MUs), np.mean(MAINTs)]
             print ct, sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(prod_i), 'pQ:', int(prod_q), ': flow:', u0, ' MB:',int(round(mem))
@@ -374,5 +372,6 @@ elif D == 3:
 Title = ['','']
 txt = fig.suptitle(' '.join(Title), fontsize = 12)
 
-ani = animation.FuncAnimation(fig, nextFrame, frames=5000, interval=100, blit=False) # 20000 frames is a long movie
+ani = animation.FuncAnimation(fig, nextFrame, frames=100, interval=100, blit=False) # 20000 frames is a long movie
 plt.show()
+#ani.save(mydir+'/GitHub/hydrobide/results/movies/HydrobideVideo.avi', metadata={'artist':'Guido'}, bitrate=10000)
