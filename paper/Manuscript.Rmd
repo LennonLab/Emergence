@@ -8,12 +8,6 @@ output: pdf_document
 geometry: margin=2.54cm
 ---
 
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-rm(list=ls()) 
-getwd() 
-setwd("~/GitHub/hydrobide") 
-```
-
 ## INTRODUCTION
 
 **P1**—Biological and ecological change is marked by time. From rates of metabolism, growth, and evolution to the duration of seasons, succession, and life history, time is a primary dimension of biology. But despite its universal relevance, time is more often used as an independent variable or to characterize rates of change, than it is treated as a primary driver of change and biodiversity *per se*. The general influence of time  is so rarely mentioned that it may be self-evident, non-existent, or taken for granted. This is unlike the influence of other general variables, such as space and abundance.
@@ -29,12 +23,13 @@ setwd("~/GitHub/hydrobide")
 
 ## METHODS
 
-**Quantifying residence time—**In aquatic systems, residence time equals the ratio of volume to rate of flow, i.e. (V/Q = (V/V/time) = time). The inverse is known as dilution rate (1/time), i.e., the portion of particles or individuals lost or replaced per unit time. In experimental and engineered systems, dilution rate approximates growth rate and is used a master variable to control productivity and biomass (cite). For example, if dilution rate exceeds population growth rate, then populations can be washed out. But, if dilution rate is too slow (residence time is very long) then the supply of a vital resource (e.g. oxygen, nitrogen, carbon) may be too low to maintain actively growing populations.
+**Quantifying residence time—**In ideal systems (homogeneously mixed aquatic microcosms), residence time (τ) equals the ratio of volume to flow rate (τ = V/Q). Volume *per se* is not critical and the size of the system could also be quantified with area (A) and distance (D). This is easy to see by considering a perfect cube where residence times based on V, A, or D would be equal. That is, τ = V/Q = D^{3}/Q = D^{3}/(D^{3}/time) = time. The inverse of τ is dilution rate (τ^{-1}) and is the portion replaced per unit time, which often approximates growth rate. If τ^{-1} exceeds growth rate, then populations can be washed out. But, if τ^{-1} is too slow (i.e., τ is too long) then the supply resources may be too low to maintain actively growing populations.
 
-**Residence time distributions—**
+**Residence time distribution (RTD)—**In ecological systems, V/Q may be a poor approximation of individual residence time and, at least, only represents one moment of an entire distribution. The amount of time that particles, individuals, etc., spend inside a system can be characterized with a frequency/probability distribution (MacMullin and Weber 1935, Danckwerts 1953). RTDs are used among engineers and hydrologists to characterize turnover, mixing, and flow and to compare the behavior of real systems to simplified models. In our individual-based modeling, we examine residence time distributions for individuals, resources, inert particles, species, traits, and any other aspect of the system that is not permanent.
 
+**Predictions of highly correlated residence times—**As a starting prediction, residence times of individuals, resource particles, inert tracers, and most any non-permanent component of the system should be highly and positively correlated. That is, in general and without invoking a specific scenario, very short ecosystem residence times should not lead to long residence times for individual particles. 
 
-**Predictions of highly correlated residence times and residence time distributions—**
+**Right-skewed residence time distributions—**
 
 
 **Predictions of abundance and species diversity—**
@@ -97,6 +92,12 @@ We used a stochastic individual-based model that simulated a wide array of envir
 
 
 
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/hydrobide") 
+```
 
 
 
