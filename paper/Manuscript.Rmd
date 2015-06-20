@@ -73,11 +73,11 @@ Because the model is individual-based, information intensive, physiologically re
 
 ## Results
 
-*Autocorrelated residence times and right-skewed residence time distributions——*As expected, residence times of individuals, resource particles, inert tracers, and most any non-permanent component of the system were highly correlated. Right-skewed distributions characterized the life history of individuals, the presence of resource particles, and the tenure of species and traits (Figure ?). Residence time distributions were generally well approximated by lognormal and power-law models (e.g. Pareto, Zipf, Zipf-Mandelbrot).
+*Autocorrelated residence times and right-skewed residence time distributions—*The probabilistic and complex modeling approach produced all primary expected results, signifying that predictions of otherwise simplistic and idealized chemostat theory could arise in a complex system. Residence times of individuals, resource particles, inert tracers, and most any non-permanent component of the system were highly correlated (Fig 1). Likewise, residence time distributions were right-skewed and well approximated by lognormal and power-law models (e.g. Pareto, Zipf, Zipf-Mandelbrot) (Fig 2). We also observed the expected  hump-shaped relationship of *N* to residence time, revealing that residence time could be low enough to exclude reproduction and high enough to result in a rate of resource supply that could not support optimal growth.
 
 **Predictions of abundance and species diversity**
 
-*Total abundance (N)*—Chemostat models predict a unimodal relationship between biomass or total abundance (*N*) and residence time ($\tau$) when accounting for maintenance energy (cites). Sufficiently low $\tau$ can exclude reproduction while sufficiently high $\tau$ can mean a slow rate of resource resupply and immigration. In this way, we expect residence time to be a primary constraint on *N*. In turn, *N* is a primary constraint on aspects of diversity related to the species-abundance distribution such as richness, evenness, rarity, dominance.
+*Total abundance (N)*—
 
 *Richness, evenness, rarity, and dominance*—Changes in *N* are often associated with changes in the number of species (i.e. *S*). Richness must change as quickly or less quickly than *N*, i.e., species cannot be gained or lost faster than individuals. We expect the relationship of *S* to $\tau$ to follow a hump-shaped relationship, the slope of which must be equal to or shallower than the relationship of N to $\tau$. Moreover, we expect *S* to share a power-law-like relationship with *N*, i.e., *S* = *cN*$^{z}$, where z ~ 0.5, as has been observed by May (1988) and others (cite). In contrast to richness, similarity in abundance among species (evenness) should decrease with *N* purely because of numerical constraints (Locey and White 2013). That is, a greater portion of possible forms of the species abundance distribution reflect high rarity, low evenness, and high dominance as *N* increases. Consequently, greater *N* constrains the distribution of abundance among species to take a form that reflects greater rarity, greater dominance, and less evenness.
 
@@ -94,7 +94,7 @@ Because the model is individual-based, information intensive, physiologically re
 
 
 
-## Conclusion
+## Conclusion/Discussion
 
 We used a stochastic individual-based model that simulated a wide array of environmental and ecological conditions and species-level and individual-level traits. As much of this variation as possible was assigned at random, to explore a large swath of multi-parameter space. Rather than examine the independent influence of each of these factors, our purpose was to find whether simple relationships of residence time to total abundance and community-level characteristics should hold in ecologically complex conditions.
 
@@ -107,21 +107,16 @@ getwd()
 setwd("~/GitHub/hydrobide") 
 ```
 
-
-
-
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 #install.packages("vegan") 
 require("vegan") 
 ```
 
-
-```{r, results = 'hide', message = FALSE, warning = FALSE}
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Load Data
 sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/SimData.csv")  
 sim.data <- subset(sim.data, motion == ' fluid ')
 ```
-
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Assign Data
