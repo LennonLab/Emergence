@@ -1,7 +1,7 @@
 ---
-title: "How residence time constrains diversity"
+title: "Residence time, a master variable for a more temporal ecology"
 author: "Ken Locey, Jay Lennon"
-date: "May 31, 2015"
+date: "20 June, 2015"
 setspace: doublespacing
 header-includes:
    - \usepackage{array}
@@ -11,7 +11,7 @@ geometry: margin=2.54cm
 
 ## INTRODUCTION
 
-**P1**—Biological and ecological change is marked by time and from rates of metabolism, growth, and evolution to the duration of seasons, succession, and life history, time is the fundamental dimension of biology. But despite its universal relevance in biological and ecological systems, time is more often used as an independent variable or to characterize rates of change, than it is treated as a primary driver of change and biodiversity. While the large lack of study into the general influence of time is recognized among some ecologists (cite), the precise importance or general influence of time is so rarely mentioned that it may be self-evident, non-existent, or commonly taken for granted. But, this is unlike the influence of other general variables such as space and abundance.
+**P1**—Biological processes and ecological change are marked by time. From rates of metabolism, growth, and evolution to the duration of seasons, succession, and life history, time is the central dimension of biology. But despite its universal relevance in biological and ecological systems, time is more often used as an independent variable or to characterize rates of change, than it is treated as a primary driver of change and biodiversity. While the large lack of study into the general influence of time is recognized among some ecologists (cite), the precise importance or general influence of time is so rarely mentioned that it may be self-evident, non-existent, or commonly taken for granted. But, this is unlike the influence of other general variables such as space and abundance.
 
 **P2**—Law-like patterns of space and abundance such as the species-area relationship and the species-abundance distribution are central to the ecological study of biodiversity (Hubbell 2001, McGill 2010, Harte 2011). Yet, a similarly general temporal pattern (species-time relationship) is rarely studied and is neither central to nor predicted by general ecological theory (White, Adler et al.). While area and abundance are common inputs to biodiversity theories (McGill 2010), no general theory uses time *per se* as an input. And, while at least one popular ecological subfield is devoted to spatial dynamics, i.e., spatial ecology (16000 results on Google scholar), "temporal ecology" has yet to be deemed a subfield (590 results on Google scholar) while temporal dynamics are studied along with spatial, i.e., "spatio-temporal". 
 
