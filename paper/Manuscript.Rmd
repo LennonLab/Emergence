@@ -85,10 +85,11 @@ Because the model is individual-based, information intensive, physiologically re
 
 **Trait-related predictions**
 
+
+
 *Growth rate vs. maintenance—*A large literature suggests increasing selection for quickly growing and reproducing organisms as residence time decreases. But, as residence time decreases, selection on rapid growth and reproduction should lessen with respect to selection on a low-cost of maintenance and the ability to persist in the face of low resource supply. However, organisms that can quickly consume resources, grow, and reproduce, could continue to dominance if they can keep maintenance costs down.
 
 *Attachment vs. motility—*Attachment and motility have clear costs and benefits. Motility allows organisms to seek out resources, refuge, and mates, while attachment allows weakly dispersing organisms to resist being carried away. However, structures required for motility and attachment are not energy-free and presumably come at an energetic cost.
-
 
 
 
@@ -97,7 +98,7 @@ Because the model is individual-based, information intensive, physiologically re
 
 We used a stochastic individual-based model that simulated a wide array of environmental and ecological conditions and species-level and individual-level traits. As much of this variation as possible was assigned at random, to explore a large swath of multi-parameter space. Rather than examine the independent influence of each of these factors, our purpose was to find whether simple relationships of residence time to total abundance and community-level characteristics should hold in ecologically complex conditions.
 
-
+The random selection of trait values of new species (whether immigrating or evolving) allowed realistic and unreasonable trait combinations to occur. For example, a species requiring little maintenance but capable of rapid growth was possible. However, the trait combinations that persisted in the model were realistic combinations of traits that point to life history trade-offs. 
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
