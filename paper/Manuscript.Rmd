@@ -106,6 +106,8 @@ setwd("~/GitHub/hydrobide")
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 #install.packages("vegan") 
 require("vegan") 
+#install.packages("moments")
+require("moments")
 ```
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
@@ -379,23 +381,136 @@ plot(x, y, xlab=xlabel,
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-rads <- list()
-rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/RADs.csv",
+## Loading simulated RADs and species lists
+
+rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/RADs.csv",
             header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
             as.is = TRUE, skipNul = TRUE, fill = TRUE)
-
 rad.list[is.na(rad.list)] <- 0
+
+
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/Species.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+species.list[is.na(species.list)] <- -1
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading simulated data csv files
+
+sims <- c()
+cts <- c()
+tracer.RTDs <- list()
+res.RTDs <- list()
+ind.RTDs <- list()
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/IndRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  cts <- c(cts, line[1])
+  sims <- c(sims, line[2])
+  rtd <- line[-1:-2]
+  ind.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/TracerRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  rtd <- line[-1:-2]
+  tracer.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/ResRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  rtd <- line[-1:-2]
+  res.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+par(mfrow=c(2, 2))
+
+t.skews <- c()
+i.skews <- c()
+r.skews <- c()
+t.means <- c()
+i.means <- c()
+r.means <- c()
+
+colors <- rainbow(length(ind.RTDs))
+plot(density(log(tracer.RTDs[[1]])), col = 'white', xlab='Residence Time', ylab='Probability Density', xlim = c(0, 8), ylim = c(0, 2),  main = "Tracer RTD")
+
+ct <- 1
+for(rtd in tracer.RTDs){
+  if(any(is.na(rtd)) == FALSE){
+    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+    t.skews <- c(t.skews, skewness(rtd))
+    t.means <- c(t.means, mean(rtd))
+    }
+  ct = ct + 1
+}
+
+
+plot(density(log(ind.RTDs[[1]])), col = 'white', xlab='Residence Time', ylab='Probability Density', xlim = c(0, 8), ylim = c(0, 2), main = "Individual RTD")
+
+ct <- 1
+for(rtd in ind.RTDs){
+  if(any(is.na(rtd)) == FALSE){
+    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+    i.skews <- c(i.skews, skewness(rtd))
+    i.means <- c(i.means, mean(rtd))
+    }
+  ct = ct + 1
+}
+
+
+plot(density(log(ind.RTDs[[1]])), col = 'white', xlab='Residence Time', ylab='Probability Density', xlim = c(0, 8), ylim = c(0, 2), main = "Resource RTD")
+
+ct <- 1
+for(rtd in res.RTDs){
+  if(any(is.na(rtd)) == FALSE){
+    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+    r.skews <- c(r.skews, skewness(rtd))
+    r.means <- c(r.means, mean(rtd))
+    }
+  ct = ct + 1
+}
 ```
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-species <- list()
-species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/Species.csv",
-            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
-            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+par(mfrow=c(1, 1))
 
-species.list[is.na(species.list)] <- -1
+plot(log(t.means), t.skews, col = 'darkmagenta', xlab='mean', ylab='skewness', xlim = c(1, 8), ylim = c(-1.2, 3), lwd=2, 
+     main = "Most RTD's are right-skewed,\n(many short-lived, few long-lived)")
+
+points(log(i.means),i.skews, lwd=2, col = 'darkcyan')
+points(log(r.means), r.skews, lwd=2, col = 'black')
+
+legend("topright", legend = c("tracers", "individuals", "resources"), pch=20, bty = "o", col = c("darkmagenta", "darkcyan", "black"))
 ```
+
+
+
 
 
 

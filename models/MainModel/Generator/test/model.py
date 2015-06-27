@@ -43,7 +43,7 @@ def get_rand_params():
     rmax = choice([500, 1000, 2000, 4000, 8000]) # maximum resource particle size
 
     #m = 0
-    motion = 'random_walk'
+    motion = 'fluid'
     reproduction = 'fission'
     speciation = 'yes'
 
@@ -163,6 +163,7 @@ def nextFrame(arg):	# arg is the frame number
     ax.set_xlim(0, width)
     if D == 3: ax.set_zlim(0,length)
 
+    """
     ##### PLOTTING THE INDIVIDUALS ############################################
     resource_scatImage.remove()
     tracer_scatImage.remove()
@@ -182,6 +183,7 @@ def nextFrame(arg):	# arg is the frame number
 
     if D == 2: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.6)
     elif D == 3: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, TracerZcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.8)
+    """
 
     plt.draw()
 
@@ -215,6 +217,20 @@ def nextFrame(arg):	# arg is the frame number
         TracerTau, IndTau, ResTau = [np.mean(TracerExitAge), np.mean(IndExitAge), np.mean(ResExitAge)]
         # Number of tracers, resource particles, and individuals
         T, R, N = len(TracerIDs), len(ResIDs), len(SpeciesIDs)
+
+        IndRTD = str(IndExitAge).strip('[]')
+        TracerRTD = str(TracerExitAge).strip('[]')
+        ResRTD = str(ResExitAge).strip('[]')
+        OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/IndRTD.csv','a')
+        OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/TracerRTD.csv','a')
+        OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/ResRTD.csv','a')
+        print>>OUT4, ct1,',', sim,',', IndRTD
+        print>>OUT5, ct1,',', sim,',', TracerRTD
+        print>>OUT6, ct1,',', sim,',', ResRTD
+        OUT4.close()
+        OUT5.close()
+        OUT6.close()
+
         TracerExitAge, IndExitAge, ResExitAge= [],[],[]
         Ts.append(T)
         Rs.append(R)
@@ -258,6 +274,7 @@ def nextFrame(arg):	# arg is the frame number
             sk = stats.skew(RAD)
             SKs.append(sk)
 
+
         process = psutil.Process(os.getpid())
         mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)    # return the memory usage in MB
 
@@ -271,12 +288,15 @@ def nextFrame(arg):	# arg is the frame number
             OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
             OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
             OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
+
             print>>OUT1, ct1,',', sim,',', motion,',', D,',', PRODI,',', PRODQ,',', r,',', nr,',', rmax,',', BarrierWidth,',', BarrierHeight,',', alpha,',', seedcom,',', LowerLimit,',', u0,',', width,',', height,',', viscosity,',', N,',', m,',',RESTAU,',',TRACERTAU,',', INDTAU,',', RESDENS,',', RESDIV,',', RESRICH,',', S,',', ES,',', EV,',', BP,',', SD,',', NMAX,',', SK,',', MU,',', MAINT,',',T,',',R
             print>>OUT2, RADString
             print>>OUT3, SString
+
             OUT1.close()
             OUT2.close()
             OUT3.close()
+
             ct1 += 1
 
             if u0 == min(Rates):
@@ -311,6 +331,11 @@ def nextFrame(arg):	# arg is the frame number
 OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
 OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
 OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
+
+OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/IndRTD.csv','w+')
+OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/TracerRTD.csv','w+')
+OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/ResRTD.csv','w+')
+
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
 print>>OUT1, 'RowID, sim, motion, D, ind.prod, biomass.prod, res.inflow, res.types, max.res.val, barrier.width, barrier.height, logseries.a, starting.seed, lower.limit, FlowRate, Width, Height, Viscosity, N, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint, tracer.particles, resource.particles'
 #             ct,   sim, motion, D, PRODI,    PRODQ,        r,           nr,       rmax,        BarrierWidth,  BarrierHeight,  alpha,       seedcom,       LowerLimit,  u0,       width, height, viscosity, N, m,                RESTAU,       TRACERTAU,    INDTAU,         RESDENS,                RESDIV,                      RESRICH,           S, ES,        EV,    BP,            SD,         NMAX,  SK,   MU,                    MAINT,                T,                R

@@ -40,7 +40,7 @@ def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0
     if x == 1:
         TimeIn.append(0)
         Ycoords.append(float(np.random.uniform(0.4*height, 0.6*height)))
-        Xcoords.append(float(np.random.uniform(0.1*width, 0.11*width)))
+        Xcoords.append(float(np.random.uniform(0.1*width, 0.5*width)))
         Zcoords.append(float(np.random.uniform(0.4*length, 0.6*length)))
         IDs.append(0) # used to track the age of the tracer
 
@@ -181,26 +181,6 @@ def fluid_movement(TypeOf, List, TimeIn, ExitAge, Xcoords, Ycoords, ux, uy, widt
 
 
 
-def maintenance(SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D):
-
-    if SpeciesIDs == []: return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
-
-    for i, val in enumerate(Qs):
-        val -= MaintDict[SpeciesIDs[i]]  # maintanence influenced by species
-        if val <= 0.01:   # starved
-
-            Qs.pop(i)
-            ExitAge.append(TimeIn[i])
-            TimeIn.pop(i)
-            SpeciesIDs.pop(i)
-            IDs.pop(i)
-            Xcoords.pop(i)
-            Ycoords.pop(i)
-            Zcoords.pop(i)
-
-        else: Qs[i] = val
-
-    return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
 
 
 
@@ -266,6 +246,31 @@ def predation(PredIDs, PredID, PredXcoords, PredYcoords, PredZcoords, PredTimeIn
             IndZcoords.pop(j)
 
     return [PredIDs, PredID, PredTimeIn, PredXcoords, PredYcoords, PredZcoords, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndXcoords, IndYcoords, IndZcoords]
+
+
+
+
+
+def maintenance(SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, color_dict, MaintDict, IDs, TimeIn, Qs, D):
+
+    if SpeciesIDs == []: return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
+
+    for i, val in enumerate(Qs):
+        val -= MaintDict[SpeciesIDs[i]]  # maintanence influenced by species
+        if val <= 0.01:   # starved
+
+            Qs.pop(i)
+            ExitAge.append(TimeIn[i])
+            TimeIn.pop(i)
+            SpeciesIDs.pop(i)
+            IDs.pop(i)
+            Xcoords.pop(i)
+            Ycoords.pop(i)
+            Zcoords.pop(i)
+
+        else: Qs[i] = val
+
+    return [SpeciesIDs, Xcoords, Ycoords, Zcoords, ExitAge, IDs, TimeIn, Qs]
 
 
 
