@@ -1,0 +1,320 @@
+---
+title: "How residence time constrains diversity"
+author: "Ken Locey, Jay Lennon"
+date: "May 31, 2015"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/hydrobide") 
+```
+
+## INTRODUCTION
+
+Here, we explore the influence of mean cell residence time, hydraulic residence time, and particle residence time on abundance, local ($\alpha$) diversity, physiology, and resource availability and diversity.
+
+These simulations 
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+#install.packages("vegan") 
+require("vegan") 
+```
+
+
+```{r, results = 'hide', message = FALSE, warning = FALSE}
+## Load Data
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/SimData.csv")  
+sim.data <- subset(sim.data, motion == ' fluid ')
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Assign Data
+sim <- sim.data$sim # the specific simulation run
+height <- sim.data$Height
+width <- sim.data$Width
+flow.rate <- sim.data$FlowRate
+seed <- sim.data$starting.seed
+
+h.tau <- log((height * width)/flow.rate)
+m.tau <- log(sim.data$individual.tau)
+t.tau <- log(sim.data$particle.tau)
+
+N <- sim.data$N
+S <- sim.data$S
+e.var <- sim.data$e.var
+e.simp <- sim.data$simpson.e
+avg.ab <- N/S
+Skew <-sim.data$skew
+Nmax <- sim.data$N.max
+SimpD <- sim.data$SD
+
+res.inflow <- sim.data$res.inflow
+res.types <- sim.data$res.types
+max.res.val <- sim.data$max.res.val
+
+res.conc <- sim.data$resource.concentration
+num.tracers <- sim.data$tracer.particles
+num.resources <- sim.data$resource.particles
+```
+
+
+## Univariate relationships
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+par(mfrow=c(1, 2))
+
+num.sims <- max(sim.data$sim)
+colors <- rainbow(num.sims)
+
+i <- 0
+while (i < num.sims){
+
+  sim.sub <- subset(sim.data, sim == i)
+  i <- i + 1
+  print(i)
+  
+  height <- sim.sub$Height
+  width <- sim.sub$Width
+  flow.rate <- sim.sub$FlowRate
+  e.var <- sim.sub$e.var
+  e.simp <- sim.sub$simpson.e
+  avg.ab <- N/S
+  Skew <-sim.sub$skew
+  Nmax <- sim.sub$N.max
+  SimpD <- sim.sub$SD
+
+  h.tau <- log((height * width)/flow.rate)
+
+  N <- sim.sub$N
+  N <- log(N)
+  S <- sim.sub$S
+  S <- log(S)
+
+  x <- c()
+  y <- c()
+  ct <- 1
+  for (val in N){
+    if(is.nan(val) == FALSE && val > 0.1){
+      y <- c(y, val)
+      x <- c(x, h.tau[ct])
+      }
+    ct <- ct+1
+    }
+
+  if (i == 1){
+    plot(x, y, xlab="log(ecosystem residence time)", 
+    ylab="Total Abundance", ylim=c(3.5, 10), xlim=c(3, 9),
+    main = "N vs. Tau", col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  else{
+    points(x, y, col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  
+  }
+  
+i <- 0
+while (i < num.sims){
+
+  sim.sub <- subset(sim.data, sim == i)
+  i <- i + 1
+  
+  height <- sim.sub$Height
+  width <- sim.sub$Width
+  flow.rate <- sim.sub$FlowRate
+  e.var <- sim.sub$e.var
+  e.simp <- sim.sub$simpson.e
+  avg.ab <- N/S
+  Skew <-sim.sub$skew
+  Nmax <- sim.sub$N.max
+  SimpD <- sim.sub$SD
+
+  h.tau <- log((height * width)/flow.rate)
+  S <- sim.sub$S
+  S <- log(S)
+
+  x <- c()
+  y <- c()
+  ct <- 1
+  for (val in S){
+    if(is.nan(val) == FALSE && val > 0.1){
+      y <- c(y, val)
+      x <- c(x, h.tau[ct])
+      }
+    ct <- ct+1
+    }
+
+  if (i == 1){
+    plot(x, y, xlab="log(ecosystem residence time)", 
+    ylab="log(species richness)", ylim=c(0, 4), xlim=c(3, 9),
+    main = "S vs. Tau", col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  else{
+    points(x, y, col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+}
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Reassign Data
+
+sim <- sim.data$sim # the specific simulation run
+height <- sim.data$Height
+width <- sim.data$Width
+flow.rate <- sim.data$FlowRate
+seed <- sim.data$starting.seed
+
+h.tau <- log((height * width)/flow.rate)
+m.tau <- log(sim.data$individual.tau)
+t.tau <- log(sim.data$particle.tau)
+
+N <- sim.data$N
+S <- sim.data$S
+e.var <- sim.data$e.var
+e.simp <- sim.data$simpson.e
+avg.ab <- N/S
+Skew <-sim.data$skew
+Nmax <- sim.data$N.max
+SimpD <- sim.data$SD
+
+res.inflow <- sim.data$res.inflow
+res.types <- sim.data$res.types
+max.res.val <- sim.data$max.res.val
+
+res.conc <- sim.data$resource.concentration
+num.tracers <- sim.data$tracer.particles
+num.resources <- sim.data$resource.particles
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+par(mfrow=c(1, 2))
+
+growth <- sim.data$avg.per.capita.growth
+x <- c()
+y <- c()
+
+ct <- 1
+for (val in growth){
+  if(is.nan(val) == FALSE && val > 0.1){
+    y <- c(y, val)
+    x <- c(x, h.tau[ct])
+    }
+  ct <- ct+1
+  }
+
+plot(x, y, xlab="log(ecosystem residence time)", 
+     ylab="growth rate", 
+     main = "Per capita growth vs. Tau",
+     col='dodgerblue')
+
+maint <- (S*sim.data$avg.per.capita.maint)/N
+plot(h.tau, log(maint), xlab="log(ecosystem residence time)", 
+     ylab="log(maintenance)", 
+     main = "Per capita maintenance vs. Tau",
+     col='darkolivegreen')
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+plot(log(N), Skew, xlab="Total abundance", 
+     ylab="Skewness",
+     main = "Rarity vs. N",
+     col='plum')
+
+plot(log(N), log(Nmax), xlab="Total abundance", 
+     ylab="Nmax", 
+     main = "Nmax vs. N",
+     col='darkorange')
+
+plot(log(N), log(e.var), xlab="Total abundance", 
+     ylab="Species Evenness", 
+     main = "Evenness vs. N",
+     col='lightseagreen')
+
+plot(log(N), log(S), xlab="Total abundance",
+     ylab="Species Richness", 
+     main = "S vs. N",
+     col='indianred')
+
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+par(mfrow=c(1, 2))
+
+xlabel <- "log(ecosystem residence time)"
+res.conc <- sim.data$resource.concentration
+res.div <- sim.data$shannons.resource.diversity
+res.rich <- sim.data$resource.richness
+
+x <- c()
+y <- c()
+ct <- 1
+for (val in res.conc){
+  if(is.nan(val) == FALSE && val > 0.1){
+    y <- c(y, val)
+    x <- c(x, h.tau[ct])
+    }
+  ct <- ct+1
+  }
+
+plot(x, log(y), xlab=xlabel, 
+     ylab="density", 
+     main = "Resource density vs. Tau",
+     col='peru')
+
+
+x <- c()
+y <- c()
+ct <- 1
+for (val in res.rich){
+  if(is.nan(val) == FALSE && val > 0.1){
+    y <- c(y, val)
+    x <- c(x, h.tau[ct])
+    }
+  ct <- ct+1
+  }
+
+plot(x, y, xlab=xlabel, 
+     ylab="Number of resource types", 
+     main = "Resource richness vs. Tau",
+     col='slateblue')
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rads <- list()
+rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/RADs.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+
+rad.list[is.na(rad.list)] <- 0
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+species <- list()
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/Species.csv",
+            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+
+species.list[is.na(species.list)] <- -1
+```
+
+
+

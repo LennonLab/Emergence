@@ -1,0 +1,419 @@
+---
+title: "Residence time, a master variable of ecology, physiology, and natural selection"
+author: "Ken Locey, Jay Lennon"
+date: "June, 2015"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/hydrobide") 
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+#install.packages("vegan") 
+require("vegan") 
+#install.packages("moments")
+require("moments")
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Load Data
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_June/18_June_3/SimData.csv")  
+sim.data <- subset(sim.data, motion == ' fluid ')
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Assign Data
+sim <- sim.data$sim # the specific simulation run
+height <- sim.data$Height
+width <- sim.data$Width
+flow.rate <- sim.data$FlowRate
+seed <- sim.data$starting.seed
+
+h.tau <- (height * width)/flow.rate
+m.tau <- sim.data$individual.tau
+t.tau <- sim.data$particle.tau
+r.tau <- sim.data$resource.tau
+
+N <- sim.data$N
+S <- sim.data$S
+e.var <- sim.data$e.var
+e.simp <- sim.data$simpson.e
+avg.ab <- N/S
+Skew <-sim.data$skew
+Nmax <- sim.data$N.max
+SimpD <- sim.data$SD
+
+res.inflow <- sim.data$res.inflow
+res.types <- sim.data$res.types
+max.res.val <- sim.data$max.res.val
+
+res.conc <- sim.data$resource.concentration
+num.tracers <- sim.data$tracer.particles
+num.resources <- sim.data$resource.particles
+```
+
+
+
+## We expected mean residence times for individuals, inert tracers, and resource particles to reflect ecosystem residence time.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+plot(h.tau, m.tau, xlab="Ecosystem residence time", log="xy",
+     ylab="Individual residence Time", col='darkmagenta')
+
+plot(h.tau, t.tau, xlab="Ecosystem residence time", log="xy",
+     ylab="Particle residence Time", col='grey')
+
+plot(h.tau, r.tau, xlab="Ecosystem residence time", log="xy",
+     ylab="Resource residence Time", col='darkcyan')
+```
+
+
+## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+par(mfrow=c(1, 2))
+
+num.sims <- max(sim.data$sim)
+colors <- rainbow(num.sims)
+
+i <- 0
+while (i < num.sims){
+
+  sim.sub <- subset(sim.data, sim == i)
+  i <- i + 1
+  print(i)
+  
+  height <- sim.sub$Height
+  width <- sim.sub$Width
+  flow.rate <- sim.sub$FlowRate
+  e.var <- sim.sub$e.var
+  e.simp <- sim.sub$simpson.e
+  avg.ab <- N/S
+  Skew <-sim.sub$skew
+  Nmax <- sim.sub$N.max
+  SimpD <- sim.sub$SD
+
+  h.tau <- (height * width)/flow.rate
+
+  N <- sim.sub$N
+  S <- sim.sub$S
+  
+  x <- c()
+  y <- c()
+  ct <- 1
+  for (val in N){
+    if(is.nan(val) == FALSE && val > 0.1){
+      y <- c(y, val)
+      x <- c(x, h.tau[ct])
+      }
+    ct <- ct+1
+    }
+
+  if (i == 1){
+    plot(x, y, xlab="Ecosystem residence time", log="xy",
+    ylab="Total Abundance", xlim = c(20, 6000), ylim = c(10, 20000),
+    main = "N vs. Tau", col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  else{
+    points(x, y, col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  
+  }
+  
+i <- 0
+while (i < num.sims){
+
+  sim.sub <- subset(sim.data, sim == i)
+  i <- i + 1
+  
+  height <- sim.sub$Height
+  width <- sim.sub$Width
+  flow.rate <- sim.sub$FlowRate
+  e.var <- sim.sub$e.var
+  e.simp <- sim.sub$simpson.e
+  avg.ab <- N/S
+  Skew <-sim.sub$skew
+  Nmax <- sim.sub$N.max
+  SimpD <- sim.sub$SD
+
+  h.tau <- (height * width)/flow.rate
+  S <- sim.sub$S
+
+  x <- c()
+  y <- c()
+  ct <- 1
+  for (val in S){
+    if(is.nan(val) == FALSE && val > 0.1){
+      y <- c(y, val)
+      x <- c(x, h.tau[ct])
+      }
+    ct <- ct+1
+    }
+
+  if (i == 1){
+    plot(x, y, xlab="Ecosystem residence time", log="xy",
+    ylab="Species richness", xlim = c(20, 6000), ylim = c(2, 50),
+    main = "S vs. Tau", col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+  else{
+    points(x, y, col=colors[i])
+    lines(x, y, col=colors[i])
+    }
+}
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Reassign Data
+
+sim <- sim.data$sim # the specific simulation run
+height <- sim.data$Height
+width <- sim.data$Width
+flow.rate <- sim.data$FlowRate
+seed <- sim.data$starting.seed
+
+h.tau <- (height * width)/flow.rate
+m.tau <- sim.data$individual.tau
+t.tau <- sim.data$particle.tau
+
+N <- sim.data$N
+S <- sim.data$S
+e.var <- sim.data$e.var
+e.simp <- sim.data$simpson.e
+avg.ab <- N/S
+Skew <-sim.data$skew
+Nmax <- sim.data$N.max
+SimpD <- sim.data$SD
+
+res.inflow <- sim.data$res.inflow
+res.types <- sim.data$res.types
+max.res.val <- sim.data$max.res.val
+
+res.conc <- sim.data$resource.concentration
+num.tracers <- sim.data$tracer.particles
+num.resources <- sim.data$resource.particles
+```
+
+
+## We expected lower maintenance requirements at higher residence times, where individuals could grow quickly, scrambling to consume available resources, or have an overall slow life history.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+par(mfrow=c(1, 2))
+
+growth <- sim.data$avg.per.capita.growth
+x <- c()
+y <- c()
+
+ct <- 1
+for (val in growth){
+  if(is.nan(val) == FALSE && val > 0.1){
+    y <- c(y, val)
+    x <- c(x, h.tau[ct])
+    }
+  ct <- ct+1
+  }
+
+plot(x, y, xlab="Ecosystem residence time", log="x",
+     ylab="growth rate", 
+     main = "Per capita growth vs. Tau",
+     col='dodgerblue')
+
+maint <- (S*sim.data$avg.per.capita.maint)/N
+plot(h.tau, maint, xlab="Ecosystem residence time", log="xy",
+     ylab="Maintenance", 
+     main = "Per capita maintenance vs. Tau",
+     col='darkolivegreen')
+```
+
+
+## We hypothesized that aspects of diversity would be related to total abundance (N), reflecting the feasible set and the influence of residence time.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+plot(N, Skew, xlab="Total abundance", log="xy",
+     ylab="Skewness",
+     main = "Rarity vs. N",
+     col='plum')
+
+plot(N, Nmax, xlab="Total abundance", log="xy",
+     ylab="Nmax", 
+     main = "Nmax vs. N",
+     col='darkorange')
+
+plot(N, e.var, xlab="Total abundance", log="xy",
+     ylab="Species Evenness", 
+     main = "Evenness vs. N",
+     col='lightseagreen')
+
+plot(N, S, xlab="Total abundance", log="xy",
+     ylab="Species Richness", 
+     main = "S vs. N",
+     col='indianred')
+
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading simulated data csv files
+
+sims <- c()
+cts <- c()
+tracer.RTDs <- list()
+res.RTDs <- list()
+ind.RTDs <- list()
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/IndRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  cts <- c(cts, line[1])
+  sims <- c(sims, line[2])
+  rtd <- line[-1:-2]
+  ind.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/TracerRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  rtd <- line[-1:-2]
+  tracer.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+
+
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/ResRTD.csv"
+con  <- file(inputFile, open = "r")
+ct = 1
+while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
+  line <- as.numeric(myLine)
+  rtd <- line[-1:-2]
+  res.RTDs[[ct]] <- rtd
+  ct <- ct + 1
+  } 
+close(con)
+```
+
+
+# We hypothesized that, as often observed for tracers in real systems, residence time distributions (RTDs) for individuals and resource particles would be lognormal-like curves, which appear normal or left-skewed on a log x-axis. Colors correspond across plots.
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+par(mfrow=c(2, 2))
+
+t.skews <- c()
+i.skews <- c()
+r.skews <- c()
+t.means <- c()
+i.means <- c()
+r.means <- c()
+
+colors <- rainbow(length(ind.RTDs))
+plot(density(tracer.RTDs[[1]]), col = 'white', xlab='Residence Time',
+     xlim = c(0,8), ylim = c(0,2),
+     ylab='Probability Density',  main = "Tracer RTD")
+
+ct <- 1
+for(rtd in tracer.RTDs){
+  if(any(is.na(rtd)) == FALSE){
+    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+    t.skews <- c(t.skews, skewness(rtd))
+    t.means <- c(t.means, mean(rtd))
+    }
+  ct = ct + 1
+}
+
+
+plot(density(ind.RTDs[[1]]), col = 'white', xlab='Residence time',
+  xlim = c(0,8), ylim = c(0,2),
+  ylab='Probability Density', main = "Individual RTD")
+
+ct <- 1
+for(rtd in ind.RTDs){
+  if(any(is.na(rtd)) == FALSE){
+    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+    i.skews <- c(i.skews, skewness(rtd))
+    i.means <- c(i.means, mean(rtd))
+    }
+  ct = ct + 1
+}
+
+
+#plot(density(res.RTDs[[1]]), col = 'white', xlab='Residence time',
+#     xlim = c(0,8), ylim = c(0,2),
+#     ylab='Probability Density', main = "Resource RTD")
+
+#ct <- 1
+#for(rtd in res.RTDs){
+#  if(any(is.na(rtd)) == FALSE){
+#    lines(density(log(rtd), bw = 0.2), col = colors[ct])
+#    r.skews <- c(r.skews, skewness(rtd))
+#    r.means <- c(r.means, mean(rtd))
+#    }
+#  ct = ct + 1
+#}
+```
+
+# Increasing ecosystem residence time shifts the mean of the RTD to higher average values (older individuals). But, it also changes the skewness of the RTD from asymmetrically young to asymmetrically old. No significant effect is seen among tracers.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=6, fig.height=6}
+par(mfrow=c(1, 1))
+
+plot(log(t.means), t.skews, col = 'grey', xlab='Mean of the RTD, i.e., avg. residence time', ylab='Skewness of the RTD', lwd=2, xlim = c(0,7), ylim = c(-1,2),
+     main = "Increasing mean residence time flips the age
+     structure of the community from young to old")
+
+points(log(i.means), i.skews, lwd=2, col = 'darkmagenta')
+#points(r.means, r.skews, lwd=2, col = 'darkcyan')
+lines(c(0,9), c(0,0), lty=2, col='black')
+
+i.OLS <- lm(i.skews ~ log(i.means))
+coeff <- summary(i.OLS, correlation = TRUE)
+i.slope <- round(coefficients(i.OLS)[2], 3)
+i.p <- round(summary(i.OLS)$coefficients[8], 3)
+abline(i.OLS, col = "darkmagenta", lw = 2)
+
+t.OLS <- lm(t.skews ~ log(t.means))
+coeff <- summary(t.OLS, correlation = TRUE)
+t.slope <- round(coefficients(t.OLS)[2], 2)
+t.p <- round(summary(t.OLS)$coefficients[8], 2)
+abline(t.OLS, col = "grey", lw = 2)
+
+legend("topright", legend = c(paste("Tracers: slope=",t.slope,", p=",t.p), paste("Individuals: slope=",i.slope,", p=",i.p)), pch=19, bty = "n", col = c("grey", "darkmagenta"))
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading simulated RADs and species lists
+
+rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/RADs.csv", header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
+            as.is = TRUE, skipNul = TRUE, fill = TRUE)
+rad.list[is.na(rad.list)] <- 0
+
+
+species.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/Species.csv", header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)), as.is = TRUE, skipNul = TRUE, fill = TRUE)
+species.list[is.na(species.list)] <- -1
+```
+
