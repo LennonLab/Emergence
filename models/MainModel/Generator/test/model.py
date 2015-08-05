@@ -25,10 +25,13 @@ def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
     motion = choice(['fluid', 'random_walk'])
+    motion = 'fluid'
     D = choice([2, 2]) # number of spatial dimensions
 
-    width, height = [choice([5,6,7,8,9,10]), choice([5,6,7,8,9,10])]
-    length = choice([5, 10, 15, 20])
+    #width, height = [choice([5,6,7,8,9,10]), choice([5,6,7,8,9,10])]
+    #length = choice([5, 10, 15, 20])
+    width, height, length = [10, 10, 10]
+
     alpha = np.random.uniform(0.99, 0.999)
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
@@ -65,6 +68,7 @@ def testlengths(TypeOf, function, Lists):
 
 def nextFrame(arg):	# arg is the frame number
 
+    plot_system = 'yes'
     global width, height, length, Rates, u0, shift, sign, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW
     global SpColorDict, GrowthDict, ResUseDict, DispDict, MaintDict, one9th, four9ths, one36th, barrier
     global IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndXcoords, IndYcoords, IndZcoords, Ind_scatImage, SpeciesIDs
@@ -82,7 +86,7 @@ def nextFrame(arg):	# arg is the frame number
     global Ts, Rs, PRODIs, PRODQs, Ns, TRACERTAUs, INDTAUs, RESDENs, RESDIVs, RESRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, RESTAUs
 
     # inflow of tracers
-    TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u0, D)
+    TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(motion, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u0, D)
 
     # inflow of resources
     ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
@@ -90,9 +94,9 @@ def nextFrame(arg):	# arg is the frame number
     # immigration
     if ct == 0:
         ct = 1
-        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(seedcom, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(motion, seedcom, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
     else:
-        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+        SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict = bide.immigration(motion, m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
 
 
     if motion == 'fluid' or motion == 'conveyor':  # a 'conveyor' belt action wherein y-coordinates never change occurs when there is 0 turbulence
@@ -163,27 +167,27 @@ def nextFrame(arg):	# arg is the frame number
     ax.set_xlim(0, width)
     if D == 3: ax.set_zlim(0,length)
 
-    """
-    ##### PLOTTING THE INDIVIDUALS ############################################
-    resource_scatImage.remove()
-    tracer_scatImage.remove()
-    Ind_scatImage.remove()
+    if plot_system == 'yes':
 
-    colorlist = []
-    sizelist = []
-    for i, val in enumerate(SpeciesIDs):
-        colorlist.append(SpColorDict[val])
-        sizelist.append(Qs[i] * 1000)
+        ##### PLOTTING THE INDIVIDUALS ############################################
+        resource_scatImage.remove()
+        tracer_scatImage.remove()
+        Ind_scatImage.remove()
 
-    if D == 2: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.7)
-    elif D == 3: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, ResZcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.2)
+        colorlist = []
+        sizelist = []
+        for i, val in enumerate(SpeciesIDs):
+            colorlist.append(SpColorDict[val])
+            sizelist.append(Qs[i] * 1000)
 
-    if D == 2: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, s = sizelist, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.9)
-    elif D == 3: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, IndZcoords, s = Qs, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.99)
+        if D == 2: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.7)
+        elif D == 3: resource_scatImage = ax.scatter(ResXcoords, ResYcoords, ResZcoords, s = ResVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.2)
 
-    if D == 2: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.6)
-    elif D == 3: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, TracerZcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.8)
-    """
+        if D == 2: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, s = sizelist, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.9)
+        elif D == 3: Ind_scatImage = ax.scatter(IndXcoords, IndYcoords, IndZcoords, s = Qs, c = colorlist, edgecolor = '0.2', lw = 0.2, alpha=0.99)
+
+        if D == 2: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.6)
+        elif D == 3: tracer_scatImage = ax.scatter(TracerXcoords, TracerYcoords, TracerZcoords, s = 200, c = 'r', marker='*', lw=0.0, alpha=0.8)
 
     plt.draw()
 
@@ -315,26 +319,27 @@ def nextFrame(arg):	# arg is the frame number
             TracerXcoords, TracerYcoords, TracerZcoords, TracerExitAge, TracerIDs, TracerTimeIn = [],[],[],[],[],[]
             ResXcoords, ResYcoords, ResZcoords, ResIDs, ResTypes, ResExitAge, ResTimeIn, ResVals = [],[],[],[],[],[],[],[]
 
-            if motion == 'fluid' or motion == 'conveyor': n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+            if motion == 'fluid' or motion == 'conveyor':
+                n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
             if seedcom > 0:
                 # inflow of resources
                 ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nr, width, height, length, u0, D)
                 # immigration
-                SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IDs, ID, TimeIn, Qs, ResUseDict = bide.immigration(m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
+                SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IDs, ID, TimeIn, Qs, ResUseDict = bide.immigration(motion, m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, ResUseDict, nr, u0, alpha, D)
 
             ####################### REPLACE ENVIRONMENT ############################
             if D == 3: ax = fig.add_subplot(111, projection='3d')
             elif D == 2: ax = fig.add_subplot(111)
 
 ############## OPEN OUTPUT DATA FILE ###########################################
-OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
-OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
-OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
+OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/SimData.csv','w+')
+OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/RADs.csv','w+')
+OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/Species.csv','w+')
 
-OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/IndRTD.csv','w+')
-OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/TracerRTD.csv','w+')
-OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/ResRTD.csv','w+')
+OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/IndRTD.csv','w+')
+OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/TracerRTD.csv','w+')
+OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/ResRTD.csv','w+')
 
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
 print>>OUT1, 'RowID, sim, motion, D, ind.prod, biomass.prod, res.inflow, res.types, max.res.val, barrier.width, barrier.height, logseries.a, starting.seed, lower.limit, FlowRate, Width, Height, Viscosity, N, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint, tracer.particles, resource.particles'
@@ -360,11 +365,15 @@ Ts, Rs, PRODIs, PRODQs, Ns, RESTAUs, TRACERTAUs, INDTAUs, RESDENs, RESDIVs, RESR
 SpColorDict, GrowthDict, MaintDict, ResUseDict, ResColorDict, DispDict = {}, {}, {}, {}, {}, {}
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-LowerLimit, shift, sign, sim, BarrierWidth, BarrierHeight = 30, 0.0, 0.1, 0, 0.0, 0.0
+LowerLimit, shift, sign, sim = 30, 0.0, 0.1, 0
+
+left1, bottom1, left2, bottom2 = 0.2, 0.2, 0.6, 0.6
+BarrierWidth, BarrierHeight = 0.1, 0.2
+
 BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [],[],[],[]
-viscosity = 1 # unitless but required by an LBM model
+viscosity = 10 # unitless but required by an LBM model
 Rates = np.array([1.0, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05, 0.025, 0.01])  # inflow speeds
-u0 = Rates[0]  # initial in-flow speed
+u0 = Rates[2]  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
 fig = plt.figure(figsize=(12, 8))
@@ -377,15 +386,13 @@ if D == 2:
 
     if motion == 'fluid' or motion == 'conveyor':
         #####################  Lattice Boltzmann PARAMETERS  ###################
-        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
-        left, bottom = BarrierXcoords1[0], BarrierYcoords1[0]
-        BHeight = BarrierYcoords1[1] - bottom
-        BarrierImage1 = plt.bar(left, BHeight, 1, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
-
-        left, bottom = [BarrierXcoords2[0], BarrierYcoords2[0]]
-        BHeight = BarrierYcoords2[1] - bottom
-        BarrierImage2 = plt.bar(left, BHeight, 1, bottom, color = '0.3', edgecolor = '0.4', alpha=0.2)
+        #BarrierImage1 = plt.bar(left1*width, BarrierHeight*height, BarrierWidth*width, bottom1*height, color = '0.3', edgecolor = '0.4', alpha=0.2)
+        BarrierImage1 = plt.fill_between([left1*width, (left1+BarrierWidth)*width], bottom1*height, (bottom1+BarrierHeight)*height,
+                color ='0.3', alpha= '0.4', linewidths=0.5, edgecolor='0.2')
+        BarrierImage2 = plt.fill_between([left2*width, (left2+BarrierWidth)*width], bottom2*height, (bottom2+BarrierHeight)*height,
+                color ='0.3', alpha= '0.4', linewidths=0.5, edgecolor='0.2')
 
 elif D == 3:
     ax = fig.add_subplot(111, projection='3d')
