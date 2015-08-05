@@ -34,13 +34,13 @@ def get_color(ID, color_dict): # FUNCTION TO ASSIGN COLORS TO SPECIES
 
 
 
-def NewTracers(IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0, D):
+def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, length, u0, D):
 
     x = np.random.binomial(1, u0)
     if x == 1:
         TimeIn.append(0)
         Ycoords.append(float(np.random.uniform(0.4*height, 0.6*height)))
-        Xcoords.append(float(np.random.uniform(0.1*width, 0.5*width)))
+        Xcoords.append(float(np.random.uniform(0.05*width, 0.1*width)))
         Zcoords.append(float(np.random.uniform(0.4*length, 0.6*length)))
         IDs.append(0) # used to track the age of the tracer
 
@@ -70,7 +70,7 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                Xcoords.append(float(np.random.uniform(0.01*width, 0.6*width)))
+                Xcoords.append(float(np.random.uniform(0.05*width, 0.1*width)))
                 Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
 
 
@@ -78,7 +78,7 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
 
 
 
-def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
+def immigration(motion, numin, Species, Xcoords, Ycoords, Zcoords, width, height, length, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
 
     for m in range(numin):
         x = np.random.binomial(1, u0)
@@ -89,7 +89,7 @@ def immigration(numin, Species, Xcoords, Ycoords, Zcoords, width, height, length
             Species.append(prop)
 
             Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-            Xcoords.append(float(np.random.uniform(0.01*width, 0.6*width)))
+            Xcoords.append(float(np.random.uniform(0.05*width, 0.1*width)))
             Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
 
             IDs.append(ID)
