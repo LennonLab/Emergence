@@ -25,7 +25,8 @@ def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
     #motion = choice(['fluid', 'random_walk', 'unidirectional'])
-    motion = choice(['random_walk', 'unidirectional'])
+    #motion = choice(['random_walk', 'unidirectional'])
+    motion = 'fluid'
     D = choice([2, 2]) # number of spatial dimensions
 
     width, height = [choice([5, 10, 15, 20]), choice([5, 10, 15, 20])]
@@ -208,9 +209,9 @@ def nextFrame(arg):	# arg is the frame number
 
         SString = str(splist).strip('()')
         RADString = str(RAD).strip('()')
-        OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','a')
-        OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','a')
-        OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','a')
+        OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/SimData.csv','a')
+        OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/RADs.csv','a')
+        OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/Species.csv','a')
         print>>OUT1, ct1,',', sim,',', motion,',', D,',', prod_i,',', prod_q,',', r,',', nr,',', rmax,',', BarrierWidth,',', BarrierHeight,',', alpha,',', seedcom,',', stop,',', u0,',', width,',', height,',', viscosity,',', N,',', m,',', TracerTau,',', IndTau,',', ResDens,',', ResDiv,',', ResRich,',', S,',', ES,',', Ev,',', BP,',', SD,',', Nm,',', sk,',', Mu,',', Maint
         print>>OUT2, RADString
         print>>OUT3, SString
@@ -246,9 +247,9 @@ def nextFrame(arg):	# arg is the frame number
         elif D == 2: ax = fig.add_subplot(111)
 
 ############## OPEN OUTPUT DATA FILE ###########################################
-OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/SimData.csv','w+')
-OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/RADs.csv','w+')
-OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/Species.csv','w+')
+OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/SimData.csv','w+')
+OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/RADs.csv','w+')
+OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/Species.csv','w+')
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
 print>>OUT1, 'RowID, sim, motion, D, ind.prod, biomass.prod, res.inflow, res.types, max.res, barrier.width, barrier.height, logseries.a, starting.seed, stop.point, FlowRate, Width, Height, Viscosity, N, immigration.rate, particle.tau, cell.tau, resource.concentration, shannons.resource.diversity, resource.richness, S, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, avg.per.capita.growth, avg.per.capita.maint'
 #             ct1,   sim, motion, D, prod_i,   prod_q,       r,          nr,        rmax,    BarrierWidth,  BarrierHeight,  alpha,       seedcom,          stop,       u0,       width, height, viscosity, N, m,                TracerTau,    IndTau,ResDens,               ResDiv,                      ResRich,           S, ES,        Ev,    BP,            SD,         Nm,    sk,   Mu,                    Maint
