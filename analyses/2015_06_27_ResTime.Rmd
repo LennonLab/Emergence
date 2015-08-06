@@ -20,6 +20,7 @@ setwd("~/GitHub/hydrobide")
 require("vegan") 
 #install.packages("moments")
 require("moments")
+library(ggplot2)
 ```
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
@@ -64,24 +65,53 @@ num.resources <- sim.data$resource.particles
 ## We expected mean residence times for individuals, inert tracers, and resource particles to reflect ecosystem residence time.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-par(mfrow=c(2, 2))
 
-plot(h.tau, m.tau, xlab="Ecosystem residence time", log="xy",
-     ylab="Individual residence Time", col='darkmagenta')
+source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
 
-plot(h.tau, t.tau, xlab="Ecosystem residence time", log="xy",
-     ylab="Particle residence Time", col='grey')
 
-plot(h.tau, r.tau, xlab="Ecosystem residence time", log="xy",
-     ylab="Resource residence Time", col='darkcyan')
+png(filename = '~/GitHub/hydrobide/results/figs/ComparingResTimes.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
+
+#par(mfrow=c(2, 2))
+p1 <- ggplot(data=NULL, aes(x=h.tau, y=t.tau)) +
+  geom_point(color="cyan") +
+  labs(x= expression(tau), y="Residence Time") +
+  labs(title="Tracers") +
+  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 2000)) +
+  coord_fixed(ratio = 1.4) +
+  theme_black()
+
+p2 <- ggplot(data=NULL, aes(x=h.tau, y=m.tau)) +
+  geom_point(color="magenta") +
+  labs(x= expression(tau), y=" ") +
+  labs(title="Individuals") +
+  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 2000)) +
+  coord_fixed(ratio = 1.4) +
+  theme_black()
+
+p3 <- ggplot(data=NULL, aes(x=h.tau, y=r.tau)) +
+  geom_point(color="chartreuse") +
+  labs(x= expression(tau), y=" ") +
+  labs(title="Resources") +
+  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 200)) +
+  coord_fixed(ratio = 2.38) +
+  theme_black()
+
+
+multiplot(p1, p2, p3, cols=3)
+
+dev.off()
 ```
 
 
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
-par(mfrow=c(1, 2))
 
+png(filename = '~/GitHub/hydrobide/results/figs/NandS_vs_ResTime.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+
+par(mfrow=c(1, 2))
 num.sims <- max(sim.data$sim)
 colors <- rainbow(num.sims)
 
@@ -172,6 +202,9 @@ while (i < num.sims){
     lines(x, y, col=colors[i])
     }
 }
+
+dev.off()
+
 ```
 
 
@@ -211,6 +244,10 @@ num.resources <- sim.data$resource.particles
 ## We expected lower maintenance requirements at higher residence times, where individuals could grow quickly, scrambling to consume available resources, or have an overall slow life history.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+
+png(filename = '~/GitHub/hydrobide/results/figs/Growth_and_Maint.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+
 par(mfrow=c(1, 2))
 
 growth <- sim.data$avg.per.capita.growth
@@ -236,12 +273,17 @@ plot(h.tau, maint, xlab="Ecosystem residence time", log="xy",
      ylab="Maintenance", 
      main = "Per capita maintenance vs. Tau",
      col='darkolivegreen')
+
+dev.off()
 ```
 
 
 ## We hypothesized that aspects of diversity would be related to total abundance (N), reflecting the feasible set and the influence of residence time.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+png(filename = '~/GitHub/hydrobide/results/figs/Diversity_vs_N.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+
 par(mfrow=c(2, 2))
 
 plot(N, Skew, xlab="Total abundance", log="xy",
@@ -264,6 +306,7 @@ plot(N, S, xlab="Total abundance", log="xy",
      main = "S vs. N",
      col='indianred')
 
+dev.off()
 ```
 
 
@@ -320,6 +363,9 @@ close(con)
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
+png(filename = '~/GitHub/hydrobide/results/figs/RTDs.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+
 par(mfrow=c(2, 2))
 
 t.skews <- c()
@@ -373,11 +419,17 @@ for(rtd in ind.RTDs){
 #    }
 #  ct = ct + 1
 #}
+
+dev.off()
 ```
 
 # Increasing ecosystem residence time shifts the mean of the RTD to higher average values (older individuals). But, it also changes the skewness of the RTD from asymmetrically young to asymmetrically old. No significant effect is seen among tracers.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=6, fig.height=6}
+
+png(filename = '~/GitHub/hydrobide/results/figs/RTD_shifts.png',
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+
 par(mfrow=c(1, 1))
 
 plot(log(t.means), t.skews, col = 'grey', xlab='Mean of the RTD, i.e., avg. residence time', ylab='Skewness of the RTD', lwd=2, xlim = c(0,7), ylim = c(-1,2),
@@ -401,6 +453,8 @@ t.p <- round(summary(t.OLS)$coefficients[8], 2)
 abline(t.OLS, col = "grey", lw = 2)
 
 legend("topright", legend = c(paste("Tracers: slope=",t.slope,", p=",t.p), paste("Individuals: slope=",i.slope,", p=",i.p)), pch=19, bty = "n", col = c("grey", "darkmagenta"))
+
+dev.off()
 ```
 
 

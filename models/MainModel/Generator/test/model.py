@@ -410,5 +410,5 @@ Title = ['','']
 txt = fig.suptitle(' '.join(Title), fontsize = 12)
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=100, interval=40, blit=False) # 20000 frames is a long movie
-#plt.show()
-ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide.avi', bitrate=5000)
+plt.show()
+#ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide.avi', bitrate=5000)

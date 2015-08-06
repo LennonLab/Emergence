@@ -24,8 +24,8 @@ import bide
 def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    motion = choice(['fluid', 'random_walk', 'conveyor', 'unidirectional'])
-    motion = 'conveyor'
+    motion = choice(['fluid', 'random_walk', 'conveyor'])
+    motion = 'fluid'
     D = choice([2, 2]) # number of spatial dimensions
     width, height, length = [10, 10, 10]
 
@@ -246,5 +246,5 @@ Title = ['','']
 txt = fig.suptitle(' '.join(Title), fontsize = 12)
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=200, interval=80, blit=False) # 20000 frames is a long movie
-#plt.show()
-ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_06_0542_hydrobide_conveyor.avi', bitrate=20000)
+plt.show()
+#ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_06_0542_hydrobide_conveyor.avi', bitrate=20000)

@@ -1,6 +1,9 @@
 from __future__ import division
 import numpy as np
 
+""" This code was initially inspired and is almost entirely based on Dan
+Schroeder's http://physics.weber.edu/schroeder/fluids/, obtained in May 2014 """
+
 
 def SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2): # Lattice Boltzmann PARAMETERS
 
