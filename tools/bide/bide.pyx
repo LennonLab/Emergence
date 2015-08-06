@@ -46,7 +46,7 @@ def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, le
         else:
             Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
             Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
-            Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+            Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
     return [IDs, TimeIn, Xcoords, Ycoords, Zcoords]
 
@@ -75,7 +75,7 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
                 Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
-                Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+                Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
 
     return [Type, Vals, Xcoords, Ycoords, Zcoords, IDs, ID, TimeIn]
@@ -94,13 +94,13 @@ def immigration(motion, numin, Species, Xcoords, Ycoords, Zcoords, width, height
 
             if motion == 'random_walk':
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
+                Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
                 Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
                 Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
-                Zcoords.append(float(np.random.uniform(0.2*length, 0.8*length)))
+                Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
             IDs.append(ID)
             TimeIn.append(0)
