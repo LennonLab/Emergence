@@ -24,8 +24,8 @@ import bide
 def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    motion = choice(['fluid', 'random_walk'])
-    motion = 'fluid'
+    motion = choice(['fluid', 'random_walk', 'conveyor', 'unidirectional'])
+    motion = 'conveyor'
     D = choice([2, 2]) # number of spatial dimensions
     width, height, length = [10, 10, 10]
 
@@ -38,7 +38,7 @@ def get_rand_params():
 
     seedcom = 100 # size of starting community
     m = 1 # individuals immigrating per time step
-    r = 10 # resource particles flowing in per time step
+    r = 40 # resource particles flowing in per time step
     nr = 1 # maximum number of resources types
     rmax = 500 # maximum resource particle size
 
@@ -208,7 +208,7 @@ BarrierWidth, BarrierHeight = 0.1, 0.2
 BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [],[],[],[]
 viscosity = 10 # unitless but required by an LBM model
 Rates = np.array([1.0, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05, 0.025, 0.01])  # inflow speeds
-u0 = Rates[3]  # initial in-flow speed
+u0 = Rates[4]  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
 #fig = plt.figure(figsize=(12, 8))
@@ -220,15 +220,20 @@ if D == 2:
     tracer_scatImage = ax.scatter([0],[0], alpha=0)
     resource_scatImage = ax.scatter([0],[0], alpha=0)
 
-    if motion == 'fluid' or motion == 'conveyor':
+    if motion == 'fluid':
         #####################  Lattice Boltzmann PARAMETERS  ###################
         n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
-        #BarrierImage1 = plt.bar(left1*width, BarrierHeight*height, BarrierWidth*width, bottom1*height, color = '0.3', edgecolor = '0.4', alpha=0.2)
         BarrierImage1 = plt.fill_between([left1*width, (left1+BarrierWidth)*width], bottom1*height, (bottom1+BarrierHeight)*height,
                 color ='0.3', alpha= '0.4', linewidths=0.5, edgecolor='0.2')
         BarrierImage2 = plt.fill_between([left2*width, (left2+BarrierWidth)*width], bottom2*height, (bottom2+BarrierHeight)*height,
                 color ='0.3', alpha= '0.4', linewidths=0.5, edgecolor='0.2')
+
+    elif motion == 'conveyor':
+        #####################  Lattice Boltzmann PARAMETERS  ###################
+        BarrierWidth, BarrierHeight = 0.0, 0.0
+        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
+
 
 elif D == 3:
     ax = fig.add_subplot(111, projection='3d')
@@ -242,4 +247,4 @@ txt = fig.suptitle(' '.join(Title), fontsize = 12)
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=200, interval=80, blit=False) # 20000 frames is a long movie
 #plt.show()
-ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide_fluid.avi', bitrate=20000)
+ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_06_0542_hydrobide_conveyor.avi', bitrate=20000)
