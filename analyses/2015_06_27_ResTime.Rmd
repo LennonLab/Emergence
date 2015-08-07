@@ -72,8 +72,9 @@ source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
 png(filename = '~/GitHub/hydrobide/results/figs/ComparingResTimes.png',
       width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
 
-#par(mfrow=c(2, 2))
+
 p1 <- ggplot(data=NULL, aes(x=h.tau, y=t.tau)) +
+  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
   geom_point(color="cyan") +
   labs(x= expression(tau), y="Residence Time") +
   labs(title="Tracers") +
@@ -82,6 +83,7 @@ p1 <- ggplot(data=NULL, aes(x=h.tau, y=t.tau)) +
   theme_black()
 
 p2 <- ggplot(data=NULL, aes(x=h.tau, y=m.tau)) +
+  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
   geom_point(color="magenta") +
   labs(x= expression(tau), y=" ") +
   labs(title="Individuals") +
@@ -90,6 +92,7 @@ p2 <- ggplot(data=NULL, aes(x=h.tau, y=m.tau)) +
   theme_black()
 
 p3 <- ggplot(data=NULL, aes(x=h.tau, y=r.tau)) +
+  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
   geom_point(color="chartreuse") +
   labs(x= expression(tau), y=" ") +
   labs(title="Resources") +
@@ -99,7 +102,6 @@ p3 <- ggplot(data=NULL, aes(x=h.tau, y=r.tau)) +
 
 
 multiplot(p1, p2, p3, cols=3)
-
 dev.off()
 ```
 
@@ -107,104 +109,38 @@ dev.off()
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+  
+source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
 
 png(filename = '~/GitHub/hydrobide/results/figs/NandS_vs_ResTime.png',
-      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
 
-par(mfrow=c(1, 2))
 num.sims <- max(sim.data$sim)
 colors <- rainbow(num.sims)
 
-i <- 0
-while (i < num.sims){
+p1 <- ggplot(sim.data, aes(x=particle.tau, y=N, group=sim, colour=sim)) +
+  scale_color_gradient(high="cyan") +
+  geom_line() +
+  theme_black() +
+  labs(x= expression(tau), y="Individuals") +
+  labs(title="Total abundance") +
+  guides(colour=FALSE) + 
+  scale_x_log10(limits = c(10, 1000)) + 
+  scale_y_log10(limits = c(100, 10000)) +
+  coord_fixed(ratio = 1)
 
-  sim.sub <- subset(sim.data, sim == i)
-  i <- i + 1
-  print(i)
-  
-  height <- sim.sub$Height
-  width <- sim.sub$Width
-  flow.rate <- sim.sub$FlowRate
-  e.var <- sim.sub$e.var
-  e.simp <- sim.sub$simpson.e
-  avg.ab <- N/S
-  Skew <-sim.sub$skew
-  Nmax <- sim.sub$N.max
-  SimpD <- sim.sub$SD
+p2 <- ggplot(sim.data, aes(x=particle.tau, y=S, group=sim, colour=sim)) +
+  scale_color_gradient(high="chartreuse") +
+  geom_line() +
+  theme_black() +
+  labs(x= expression(tau), y="Species") +
+  labs(title="Numbers of species") +
+  guides(colour=FALSE) +
+  scale_x_log10(limits = c(10, 1000)) +
+  coord_fixed(ratio = .0345)
 
-  h.tau <- (height * width)/flow.rate
-
-  N <- sim.sub$N
-  S <- sim.sub$S
-  
-  x <- c()
-  y <- c()
-  ct <- 1
-  for (val in N){
-    if(is.nan(val) == FALSE && val > 0.1){
-      y <- c(y, val)
-      x <- c(x, h.tau[ct])
-      }
-    ct <- ct+1
-    }
-
-  if (i == 1){
-    plot(x, y, xlab="Ecosystem residence time", log="xy",
-    ylab="Total Abundance", xlim = c(20, 6000), ylim = c(10, 20000),
-    main = "N vs. Tau", col=colors[i])
-    lines(x, y, col=colors[i])
-    }
-  else{
-    points(x, y, col=colors[i])
-    lines(x, y, col=colors[i])
-    }
-  
-  }
-  
-i <- 0
-while (i < num.sims){
-
-  sim.sub <- subset(sim.data, sim == i)
-  i <- i + 1
-  
-  height <- sim.sub$Height
-  width <- sim.sub$Width
-  flow.rate <- sim.sub$FlowRate
-  e.var <- sim.sub$e.var
-  e.simp <- sim.sub$simpson.e
-  avg.ab <- N/S
-  Skew <-sim.sub$skew
-  Nmax <- sim.sub$N.max
-  SimpD <- sim.sub$SD
-
-  h.tau <- (height * width)/flow.rate
-  S <- sim.sub$S
-
-  x <- c()
-  y <- c()
-  ct <- 1
-  for (val in S){
-    if(is.nan(val) == FALSE && val > 0.1){
-      y <- c(y, val)
-      x <- c(x, h.tau[ct])
-      }
-    ct <- ct+1
-    }
-
-  if (i == 1){
-    plot(x, y, xlab="Ecosystem residence time", log="xy",
-    ylab="Species richness", xlim = c(20, 6000), ylim = c(2, 50),
-    main = "S vs. Tau", col=colors[i])
-    lines(x, y, col=colors[i])
-    }
-  else{
-    points(x, y, col=colors[i])
-    lines(x, y, col=colors[i])
-    }
-}
-
+multiplot(p1, p2, cols=2)
 dev.off()
-
 ```
 
 
@@ -246,34 +182,42 @@ num.resources <- sim.data$resource.particles
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
 
 png(filename = '~/GitHub/hydrobide/results/figs/Growth_and_Maint.png',
-      width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
-
-par(mfrow=c(1, 2))
+      width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
 
 growth <- sim.data$avg.per.capita.growth
-x <- c()
-y <- c()
+xs <- c()
+ys <- c()
 
 ct <- 1
 for (val in growth){
   if(is.nan(val) == FALSE && val > 0.1){
-    y <- c(y, val)
-    x <- c(x, h.tau[ct])
+    ys <- c(ys, val)
+    xs <- c(xs, h.tau[ct])
     }
   ct <- ct+1
   }
 
-plot(x, y, xlab="Ecosystem residence time", log="x",
-     ylab="growth rate", 
-     main = "Per capita growth vs. Tau",
-     col='dodgerblue')
+p1 <- ggplot(data=NULL, aes(x=xs, y=ys)) +
+  geom_point(colour="magenta") +
+  labs(x= expression(tau), y="Growth") +
+  labs(title="Growth rate") +
+  scale_x_log10(limits = c(20, 1000)) +
+  coord_fixed(ratio = 4) +
+  theme_black()
 
 maint <- (S*sim.data$avg.per.capita.maint)/N
-plot(h.tau, maint, xlab="Ecosystem residence time", log="xy",
-     ylab="Maintenance", 
-     main = "Per capita maintenance vs. Tau",
-     col='darkolivegreen')
 
+p2 <- ggplot(data=NULL, aes(x=h.tau, y=maint)) +
+  geom_point(colour="cyan") +
+  labs(x= expression(tau), y="Maintenance") +
+  labs(title="Maintenance") +
+  scale_x_log10(limits = c(20, 1000)) +
+  scale_y_log10() +
+  coord_fixed(ratio = .5) +
+  theme_black()
+
+
+multiplot(p1, p2, cols=2)
 dev.off()
 ```
 

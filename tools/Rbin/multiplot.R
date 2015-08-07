@@ -121,3 +121,12 @@ theme_black <- function(base_size = 12, base_family = "Helvetica") {
 }
 # Check that it is a complete theme
 attr(theme_black(), "complete")
+
+
+
+addlinetoplot <- function(varx, vary) { 
+  list(
+    geom_line(data=NULL, aes(x=varx, y=vary)), 
+    geom_point(data=NULL, aes(x=varx, y=vary))
+  )
+}
