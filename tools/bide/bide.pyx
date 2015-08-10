@@ -38,6 +38,8 @@ def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, le
 
     x = np.random.binomial(1, u0)
     if x == 1:
+        IDs.append(0)
+        TimeIn.append(0)
         if motion == 'random_walk':
             Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
             Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
@@ -45,7 +47,7 @@ def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, le
 
         else:
             Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-            Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
+            Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
             Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
     return [IDs, TimeIn, Xcoords, Ycoords, Zcoords]
@@ -55,7 +57,7 @@ def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, le
 def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
 
     for r in range(numr):
-        x = np.random.binomial(1, u0)
+        x = np.random.binomial(1, u0/2)
 
         if x == 1:
             rval = int(np.random.random_integers(1, rmax, 1))
@@ -74,7 +76,7 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
+                Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
                 Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
 
@@ -85,7 +87,7 @@ def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, 
 def immigration(motion, numin, Species, Xcoords, Ycoords, Zcoords, width, height, length, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict, nr, u0, alpha, D):
 
     for m in range(numin):
-        x = np.random.binomial(1, u0)
+        x = np.random.binomial(1, u0/2)
 
         if x == 1:
             prop = str(float(np.random.logseries(0.999, 1)))
@@ -94,18 +96,18 @@ def immigration(motion, numin, Species, Xcoords, Ycoords, Zcoords, width, height
 
             if motion == 'random_walk':
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
+                Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
                 Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
             else:
                 Ycoords.append(float(np.random.uniform(0.1*height, 0.9*height)))
-                Xcoords.append(float(np.random.uniform(0.1*width, 0.2*width)))
+                Xcoords.append(float(np.random.uniform(0.1*width, 0.9*width)))
                 Zcoords.append(float(np.random.uniform(0.1*length, 0.9*length)))
 
             IDs.append(ID)
             TimeIn.append(0)
             ID += 1
-            Q = float(np.random.uniform(0.1, 1.0))
+            Q = float(np.random.uniform(0.05, 0.5))
             Qs.append(Q)
 
             if prop not in color_dict:
@@ -113,16 +115,16 @@ def immigration(motion, numin, Species, Xcoords, Ycoords, Zcoords, width, height
                 color_dict = get_color(prop, color_dict)
 
                 # species growth rate
-                GrowthDict[prop] = np.random.uniform(0.1, 0.5)
+                GrowthDict[prop] = np.random.uniform(0.01, 0.1)
 
                 # species maintenance
                 MaintDict[prop] = np.random.uniform(0.001, 0.01)
 
                 # species active dispersal rate
-                DispDict[prop] = np.random.uniform(0, 0.2)
+                DispDict[prop] = np.random.uniform(0.01, 0.1)
 
                 # species resource use efficiency
-                ResUseDict[prop] = np.random.uniform(0.1, 1.0, nr)
+                ResUseDict[prop] = np.random.uniform(0.01, 1.0, nr)
 
     return [Species, Xcoords, Ycoords, Zcoords, MaintDict, GrowthDict, DispDict, color_dict, IDs, ID, TimeIn, Qs, ResUseDict]
 
@@ -402,7 +404,7 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
                 Z = Zcoords[i]
 
                 if speciation == 'yes':
-                    p = np.random.binomial(1, 0.01)
+                    p = np.random.binomial(1, 0.05)
                     if p == 1:
                         #print 'new species'
 
@@ -586,6 +588,8 @@ def nonfluid_movement(TypeOf, motion, Lists, ExitAge, TimeIn, Xcoords, Ycoords, 
 
         if pop == 'no':
             Xcoords[i], Ycoords[i], Zcoords[i] = X, Y, Z
+            TimeIn[i] = TimeIn[i]+1
+
         elif pop == 'yes':
             IDs.pop(i)
             ExitAge.append(TimeIn[i])
