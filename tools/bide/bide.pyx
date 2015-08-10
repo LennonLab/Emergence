@@ -57,7 +57,7 @@ def NewTracers(motion, IDs, Xcoords, Ycoords, Zcoords, TimeIn, width, height, le
 def ResIn(motion, Type, Vals, Xcoords, Ycoords, Zcoords, ID, IDs, TimeIn, numr, rmax, nr, width, height, length, u0, D):
 
     for r in range(numr):
-        x = np.random.binomial(1, u0)
+        x = np.random.binomial(1, u0/2)
 
         if x == 1:
             rval = int(np.random.random_integers(1, rmax, 1))
@@ -404,7 +404,7 @@ def reproduce(reproduction, speciation, SpeciesIDs, Qs, IDs, ID, TimeIn, Xcoords
                 Z = Zcoords[i]
 
                 if speciation == 'yes':
-                    p = np.random.binomial(1, 0.01)
+                    p = np.random.binomial(1, 0.05)
                     if p == 1:
                         #print 'new species'
 
