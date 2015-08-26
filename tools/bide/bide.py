@@ -1,9 +1,9 @@
 from __future__ import division
 from random import randint, choice
 import numpy as np
-import sys
-from math import modf
-import decimal
+#import sys
+#from math import modf
+#import decimal
 import time
 
 limit = 0.2
@@ -18,7 +18,7 @@ def GetRAD(vector):
     for val in unique:
         RAD.append(vector.count(val)) # the abundance of each Sp_
 
-    return RAD, unique # the rad and the Sp_ list
+    return RAD, unique # the rad and the specieslist
 
 
 def get_color(ID, colorD): # FUNCTION TO ASSIGN COLORS TO Sp_
@@ -114,19 +114,19 @@ def immigration(motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
             Qs.append(Q)
 
             if prop not in colorD:
-                # Sp_ color
+                # speciescolor
                 colorD = get_color(prop, colorD)
 
-                # Sp_ growth rate
+                # speciesgrowth rate
                 GD[prop] = np.random.uniform(0.01, 0.1)
 
-                # Sp_ maintenance
+                # speciesmaintenance
                 MD[prop] = np.random.uniform(0.001, 0.01)
 
-                # Sp_ active dispersal rate
+                # speciesactive dispersal rate
                 DispD[prop] = np.random.uniform(0.01, 0.1)
 
-                # Sp_ resource use efficiency
+                # speciesresource use efficiency
                 RD[prop] = np.random.uniform(0.01, 1.0, nr)
 
     return [Sp, Xs, Ys, Zs, MD, GD, DispD, colorD, IDs, ID, t_In, Qs, RD]
@@ -384,10 +384,12 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
             # The Individual
             ID = I_IDs.index(ind)
+            # The individual's cell quota
             Q = Qs[ID]
-            Sp_ = Sp_IDs[ID]
-            mu = GD[Sp_]
-            efficiency = RD[Sp_][R_type]
+            # the species
+            sp = Sp_IDs[ID]
+            mu = GD[sp]
+            efficiency = RD[sp][R_type]
             mu = mu * efficiency
 
             if R_val > (mu * Q): # Increase cell quota
@@ -453,22 +455,22 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                         t = time.clock()
                         spID = spID +' '+ str(t)
 
-                        # new Sp_ color
+                        # new speciescolor
                         colorD = get_color(spID, colorD)
 
-                        # new Sp_ growth rate
+                        # new speciesgrowth rate
                         p = np.random.binomial(0.25, 1)
                         GD[spID] = np.random.uniform(0.5, 1.0)
 
-                        # new Sp_ maintenance
+                        # new speciesmaintenance
                         p = np.random.binomial(0.25, 1)
                         MD[spID] = np.random.uniform(0.01, 0.1)
 
-                        # new Sp_ active dispersal rate
+                        # new speciesactive dispersal rate
                         p = np.random.binomial(0.25, 1)
                         DispD[spID] = np.random.uniform(0.0, 0.1)
 
-                        # new Sp_ resource use efficiencies
+                        # new speciesresource use efficiencies
                         p = np.random.binomial(0.25, 1)
                         RD[spID] = np.random.uniform(0.1, 1.0, nr)
 
@@ -531,7 +533,7 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                 # choose an individual at random
                 i1 = choice(range(len(box)))
                 ind1 = box.pop(i1)
-                # remove the Sp_ ID
+                # remove the speciesID
                 sp = spbox.pop(i1)
 
                 index1 = IDs.index(ind1)
@@ -545,7 +547,7 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                 if spbox.count(sp) > 1:
                     # choose an individual of the same Sp_
                     i2 = spbox.index(sp)
-                    # remove the Sp_ ID
+                    # remove the speciesID
                     spbox.pop(i2)
                     # remove the individual
                     box.pop(i2)
