@@ -68,22 +68,22 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 theme_black <- function(base_size = 12, base_family = "Helvetica") {
   theme(
-    line =               element_line(colour = "black", size = 0.5, linetype = 1,
+    line =               element_line(colour = "black", size = 1.5, linetype = 1,
                                       lineend = "butt"),
-    rect =               element_rect(fill = "white", colour = "black", size = 0.5, linetype = 1),
+    rect =               element_rect(fill = "white", colour = "black", size = 1.5, linetype = 1),
     text =               element_text(family = base_family, face = "plain",
                                       colour = "black", size = base_size,
-                                      hjust = 0.5, vjust = 0.5, angle = 0, lineheight = 0.9),
+                                      hjust = 0.5, vjust = 1.2, angle = 0, lineheight = 0.9),
     axis.text =          element_text(size = rel(0.8), colour = "white"),
     strip.text =         element_text(size = rel(0.8), colour = "white"),
     
     axis.line =          element_blank(),
     axis.text.x =        element_text(vjust = 1),
     axis.text.y =        element_text(hjust = 1),
-    axis.ticks =         element_line(colour = "white", size = 0.2),
+    axis.ticks =         element_line(colour = "white", size = 0.8),
     axis.title =         element_text(colour = "white"),
-    axis.title.x =       element_text(vjust = 0, size = rel(2.1)),
-    axis.title.y =       element_text(angle = 90),
+    axis.title.x =       element_text(vjust = -0.5, size = rel(2.8)),
+    axis.title.y =       element_text(angle = 90, size = rel(1.5)),
     axis.ticks.length =  unit(0.3, "lines"),
     axis.ticks.margin =  unit(0.5, "lines"),
     
