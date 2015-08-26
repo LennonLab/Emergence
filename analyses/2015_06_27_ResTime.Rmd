@@ -25,8 +25,8 @@ library(ggplot2)
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Load Data
-sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/SimData.csv")  
-sim.data <- subset(sim.data, motion == ' fluid ')
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_August/12_Aug/SimData.csv")  
+#sim.data <- subset(sim.data, motion == ' random_walk ')
 ```
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
@@ -50,6 +50,7 @@ avg.ab <- N/S
 Skew <-sim.data$skew
 Nmax <- sim.data$N.max
 SimpD <- sim.data$SD
+Whittaker.turnover <- sim.data$species.turnover
 
 res.inflow <- sim.data$res.inflow
 res.types <- sim.data$res.types
@@ -61,50 +62,13 @@ num.resources <- sim.data$resource.particles
 ```
 
 
-
-## We expected mean residence times for individuals, inert tracers, and resource particles to reflect ecosystem residence time.
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading files with plotting and diversity functions
 source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-
-
-png(filename = '~/GitHub/hydrobide/results/figs/ComparingResTimes.png',
-      width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
-
-
-p1 <- ggplot(data=NULL, aes(x=h.tau, y=t.tau)) +
-  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
-  geom_point(color="cyan") +
-  labs(x= expression(tau), y="Residence Time") +
-  labs(title="Tracers") +
-  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 2000)) +
-  coord_fixed(ratio = 1.4) +
-  theme_black()
-
-p2 <- ggplot(data=NULL, aes(x=h.tau, y=m.tau)) +
-  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
-  geom_point(color="magenta") +
-  labs(x= expression(tau), y=" ") +
-  labs(title="Individuals") +
-  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 2000)) +
-  coord_fixed(ratio = 1.4) +
-  theme_black()
-
-p3 <- ggplot(data=NULL, aes(x=h.tau, y=r.tau)) +
-  geom_abline(intercept = 0, slope=1, colour="white", lty=2) +
-  geom_point(color="chartreuse") +
-  labs(x= expression(tau), y=" ") +
-  labs(title="Resources") +
-  scale_x_log10(limits = c(10, 10000)) + scale_y_log10(limits = c(10, 200)) +
-  coord_fixed(ratio = 2.38) +
-  theme_black()
-
-
-multiplot(p1, p2, p3, cols=3)
-dev.off()
+source("~/GitHub/hydrobide/tools/Rbin/metrics.R")
 ```
 
+## We expected mean residence times for individuals, inert tracers, and resource particles to reflect ecosystem residence time.
 
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
 
@@ -118,26 +82,30 @@ png(filename = '~/GitHub/hydrobide/results/figs/NandS_vs_ResTime.png',
 num.sims <- max(sim.data$sim)
 colors <- rainbow(num.sims)
 
-p1 <- ggplot(sim.data, aes(x=particle.tau, y=N, group=sim, colour=sim)) +
+sim.data$N[sim.data$N<=0] <- 1
+sim.data$N[sim.data$S<=0] <- 1
+
+p1 <- ggplot(sim.data, aes(x=h.tau, y=N, group=sim, colour=sim)) +
   scale_color_gradient(high="cyan") +
-  geom_line() +
+  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
   theme_black() +
   labs(x= expression(tau), y="Individuals") +
   labs(title="Total abundance") +
   guides(colour=FALSE) + 
-  scale_x_log10(limits = c(10, 1000)) + 
-  scale_y_log10(limits = c(100, 10000)) +
-  coord_fixed(ratio = 1)
+  scale_x_log10() +
+  scale_y_log10() +
+  coord_fixed(ratio = .48)
 
-p2 <- ggplot(sim.data, aes(x=particle.tau, y=S, group=sim, colour=sim)) +
+p2 <- ggplot(sim.data, aes(x=h.tau, y=S, group=sim, colour=sim)) +
   scale_color_gradient(high="chartreuse") +
-  geom_line() +
+  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
   theme_black() +
-  labs(x= expression(tau), y="Species") +
-  labs(title="Numbers of species") +
+  labs(x= expression(tau), y="Number of species") +
+  labs(title="Species richness") +
   guides(colour=FALSE) +
-  scale_x_log10(limits = c(10, 1000)) +
-  coord_fixed(ratio = .0345)
+  scale_x_log10() +
+  scale_y_log10() +
+  coord_fixed(ratio = 0.8)
 
 multiplot(p1, p2, cols=2)
 dev.off()
@@ -148,34 +116,28 @@ dev.off()
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
   
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-
 png(filename = '~/GitHub/hydrobide/results/figs/EandB_vs_ResTime.png',
       width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
 
-sp.lists <- c()
-
-
-p1 <- ggplot(sim.data, aes(x=particle.tau, y=e.var, group=sim, colour=sim)) +
+p1 <- ggplot(sim.data, aes(x=h.tau, y=e.var, group=sim, colour=sim)) +
   scale_color_gradient(high="cyan") +
-  geom_line() +
+  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
   theme_black() +
   labs(x= expression(tau), y="Evar") +
   labs(title="Evenness") +
   guides(colour=FALSE) + 
-  scale_x_log10(limits = c(10, 1000)) + 
-  scale_y_log10(limits = c(100, 10000)) +
-  coord_fixed(ratio = 1)
+  scale_x_log10() + 
+  coord_fixed(ratio = 1.8)
 
-p2 <- ggplot(sim.data, aes(x=particle.tau, y=S, group=sim, colour=sim)) +
+p2 <- ggplot(sim.data, aes(x=h.tau, y=Whittaker.turnover, group=sim, colour=sim)) +
   scale_color_gradient(high="chartreuse") +
-  geom_line() +
+  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
   theme_black() +
   labs(x= expression(tau), y="Whittaker's") +
   labs(title="Species turnover") +
   guides(colour=FALSE) +
-  scale_x_log10(limits = c(10, 1000)) +
-  coord_fixed(ratio = .0345)
+  scale_x_log10() +
+  coord_fixed(ratio = 2.0)
 
 multiplot(p1, p2, cols=2)
 dev.off()
@@ -238,8 +200,8 @@ p1 <- ggplot(data=NULL, aes(x=xs, y=ys)) +
   geom_point(colour="magenta") +
   labs(x= expression(tau), y="Growth") +
   labs(title="Growth rate") +
-  scale_x_log10(limits = c(20, 1000)) +
-  coord_fixed(ratio = 4) +
+  scale_x_log10() +
+  coord_fixed(ratio = 5.3) +
   theme_black()
 
 maint <- (S*sim.data$avg.per.capita.maint)/N
@@ -248,9 +210,9 @@ p2 <- ggplot(data=NULL, aes(x=h.tau, y=maint)) +
   geom_point(colour="cyan") +
   labs(x= expression(tau), y="Maintenance") +
   labs(title="Maintenance") +
-  scale_x_log10(limits = c(20, 1000)) +
+  scale_x_log10() +
   scale_y_log10() +
-  coord_fixed(ratio = .5) +
+  coord_fixed(ratio = 0.34) +
   theme_black()
 
 
@@ -440,31 +402,8 @@ dev.off()
 
 
 
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-## Loading simulated RADs and species lists
 
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-source("~/GitHub/hydrobide/tools/Rbin/metrics.R")
-
-rad.list <- read.table("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/RADs.csv", 
-            header = FALSE, sep = ",", col.names = paste0("V", seq_len(1000)),
-            as.is = TRUE, skipNul = TRUE, fill = TRUE)
-rad.list[is.na(rad.list)] <- 0
-
-
-species.list <- c()
-r <- 0
-while(r < 61){
-  print(r)
-  myData <- list(read.csv("~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/Species.csv", 
-            header = FALSE, sep = ",", 
-            
-            skip=r, nrows=1))
-  species.list <- c(species.list, myData)
-  r <- r + 1
-  }
-
-sim.data$species.list <- species.list
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=6, fig.height=6}
 num.sims <- max(sim.data$sim) + 1
 
 i <- 0
@@ -476,9 +415,8 @@ while (i < num.sims){
   while(j <= length(sp.sub)){
     print(j)
     w.beta <- sp.turnover(sp.sub[j], sp.sub[j-1])
-    if(w.beta != -1){
-      sp.beta <- c(sp.beta, w.beta)
-      }
+    sp.beta <- c(sp.beta, w.beta)
+    }
     j <- j+1
     }
   i <- i+1
