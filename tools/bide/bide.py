@@ -1,7 +1,7 @@
 from __future__ import division
 from random import randint, choice
 import numpy as np
-#import sys
+import sys
 #from math import modf
 #import decimal
 import time
@@ -10,6 +10,27 @@ limit = 0.2
 
 def coord(d):
     return float(np.random.uniform(0.1*d, 0.9*d))
+
+
+def GetIndParam(means):
+    vals = []
+
+    if isinstance(means, float) or isinstance(means, int):
+        std = means/10.0
+        vals = np.random.normal(means, std)
+        if vals < 0.00001:
+            vals = 0.00001
+
+    else:
+        for val in means:
+            std = val/10.0
+            i = np.random.normal(val, std)
+            if i < 0.00001:
+                i = 0.00001
+            vals.append(i)
+
+    return vals
+
 
 
 def GetRAD(vector):
@@ -55,14 +76,27 @@ def NewTracers(motion, IDs, Xs, Ys, Zs, t_In, w, h, l, u0, D):
 
 
 def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
-        rmax, nr, w, h, l, u0, D):
+        rmax, nN, nP, nC, w, h, l, u0, D):
 
     for r in range(numr):
         x = np.random.binomial(1, u0/2)
 
         if x == 1:
             rval = int(np.random.random_integers(1, rmax, 1))
-            rtype = int(np.random.random_integers(0, nr-1, 1))
+            nr = choice(['N', 'P', 'C'])
+
+            if nr == 'N':
+                rtype = int(np.random.random_integers(0, nN-1, 1))
+                rtype = 'N'+str(rtype)
+
+            if nr == 'P':
+                rtype = int(np.random.random_integers(0, nP-1, 1))
+                rtype = 'P'+str(rtype)
+
+            if nr == 'C':
+                rtype = int(np.random.random_integers(0, nC-1, 1))
+                rtype = 'C'+str(rtype)
+
 
             Vals.append(rval)
             IDs.append(ID)
@@ -85,9 +119,8 @@ def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
 
 
 
-def immigration(motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
-        GD, DispD, colorD, IDs, ID, t_In, Qs, RD,
-        nr, u0, alpha, D):
+def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
+        GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, D, GList, MList, NList, PList, CList, DList):
 
     for m in range(numin):
         x = np.random.binomial(1, u0/2)
@@ -110,46 +143,80 @@ def immigration(motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
             IDs.append(ID)
             t_In.append(0)
             ID += 1
-            Q = float(np.random.uniform(0.05, 0.5))
-            Qs.append(Q)
+            Qn = float(np.random.uniform(0.05, 0.5))
+            Qp = float(np.random.uniform(0.05, 0.5))
+            Qc = float(np.random.uniform(0.05, 0.5))
+
+            Qs.append([Qn, Qp, Qc])
 
             if prop not in colorD:
                 # speciescolor
                 colorD = get_color(prop, colorD)
 
-                # speciesgrowth rate
-                GD[prop] = np.random.uniform(0.01, 0.1)
+                # species growth rate
+                GD[prop] = np.random.uniform(0.1, g_max)
 
-                # speciesmaintenance
-                MD[prop] = np.random.uniform(0.001, 0.01)
+                # species maintenance
+                MD[prop] = np.random.uniform(0.001, m_max)
 
-                # speciesactive dispersal rate
-                DispD[prop] = np.random.uniform(0.01, 0.1)
+                # species active dispersal rate
+                DispD[prop] = np.random.uniform(0.01, d_max)
 
-                # speciesresource use efficiency
-                RD[prop] = np.random.uniform(0.01, 1.0, nr)
+                # species Nitrogen use efficiency
+                N_RD[prop] = np.random.uniform(0.01, 1.0, nN)
 
-    return [Sp, Xs, Ys, Zs, MD, GD, DispD, colorD, IDs, ID, t_In, Qs, RD]
+                # species Phosphorus use efficiency
+                P_RD[prop] = np.random.uniform(0.01, 1.0, nP)
+
+                # species Carbon use efficiency
+                C_RD[prop] = np.random.uniform(0.01, 1.0, nC)
+
+            means = GD[prop]
+            i = GetIndParam(means)
+            GList.append(i)
+
+            means = MD[prop]
+            i = GetIndParam(means)
+            MList.append(i)
+
+            means = N_RD[prop]
+            i = GetIndParam(means)
+            NList.append(i)
+
+            means = P_RD[prop]
+            i = GetIndParam(means)
+            PList.append(i)
+
+            means = C_RD[prop]
+            i = GetIndParam(means)
+            CList.append(i)
+
+            means = DispD[prop]
+            i = GetIndParam(means)
+            DList.append(i)
+
+    return [Sp, Xs, Ys, Zs, MD, GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, GList, MList, NList, PList, CList, DList]
 
 
 
-def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
+def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
 
     Type, IDs, ID, Vals = [], [], int(), []
 
     if TypeOf == 'resource':
         Type, IDs, ID, Vals = List
     elif TypeOf == 'individual':
-        Type, IDs, ID, Vals, DispD = List
+        Type, IDs, ID, Vals, DispD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = List
     else:
         IDs = List
 
     if Xs == []:
-        if TypeOf == 'resource' or TypeOf == 'individual':
-            return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
-
-        elif TypeOf == 'tracer':
-            return [IDs, Xs, Ys, xAge, t_In]
+        if TypeOf == 'tracer':
+            return [IDs, Xs, Ys, Zs, xAge, t_In]
+        elif TypeOf == 'individual':
+            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        elif TypeOf == 'resource':
+            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
 
     ux = np.reshape(ux, (w*h)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (w*h)) # uy is the macroscopic y velocity
@@ -184,6 +251,7 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
             xAge.append(t_In[i])
             Xs.pop(i)
             Ys.pop(i)
+            Zs.pop(i)
             t_In.pop(i)
             IDs.pop(i)
 
@@ -191,14 +259,23 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
                 Type.pop(i)
                 Vals.pop(i)
 
+            if TypeOf == 'individual':
+                GrowthList.pop(i)
+                MaintList.pop(i)
+                N_RList.pop(i)
+                P_RList.pop(i)
+                C_RList.pop(i)
+                DispList.pop(i)
+
     ux = np.reshape(ux, (h, w))
     uy = np.reshape(uy, (h, w))
 
     if TypeOf == 'tracer':
-        return [IDs, Xs, Ys, xAge, t_In]
-    elif TypeOf == 'resource' or TypeOf == 'individual':
-        return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
-
+        return [IDs, Xs, Ys, Zs, xAge, t_In]
+    elif TypeOf == 'individual':
+        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    elif TypeOf == 'resource':
+        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
 
 
 
@@ -278,6 +355,12 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
             I_Xs.pop(j)
             I_Ys.pop(j)
             I_Zs.pop(j)
+            #GrowthList.pop(i)
+            #MaintList.pop(i)
+            #N_RList.pop(i)
+            #P_RList.pop(i)
+            #C_RList.pop(i)
+            #DispList.pop(i)
 
     List = [P_IDs, P_ID, P_t_In, P_Xs, P_Ys, P_Zs, Sp_IDs, Qs, I_IDs]
     List += [I_ID, I_t_In, I_Xs, I_Ys, I_Zs]
@@ -287,13 +370,18 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
 
 
 
-def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D):
+def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
-    if Sp_IDs == []: return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs]
+    if Sp_IDs == []:
+        return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
     for i, val in enumerate(Qs):
-        val -= MD[Sp_IDs[i]]  # maintanence influenced by Sp_
-        if val <= 0.01:   # starved
+
+        val[0] -= MD[Sp_IDs[i]]  # maintanence influenced by species id
+        val[1] -= MD[Sp_IDs[i]]
+        val[2] -= MD[Sp_IDs[i]]
+
+        if min(val) <= 0.01:   # starved
 
             Qs.pop(i)
             xAge.append(t_In[i])
@@ -303,21 +391,27 @@ def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D):
             Xs.pop(i)
             Ys.pop(i)
             Zs.pop(i)
+            GrowthList.pop(i)
+            MaintList.pop(i)
+            N_RList.pop(i)
+            P_RList.pop(i)
+            C_RList.pop(i)
+            DispList.pop(i)
 
         else: Qs[i] = val
 
-    return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs]
+    return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
 
 
 def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
         R_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs,
-        w, h, l, GD, RD, DispD, D):
+        w, h, l, GD, N_RD, P_RD, C_RD, DispD, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if not len(R_Types) or not len(Sp_IDs):
         List = [R_Types, R_Vals, R_IDs, R_ID, R_t_In, R_xAge, R_Xs]
         List += [R_Ys, R_Zs, Sp_IDs, Qs, I_IDs, I_ID, I_t_In]
-        List += [I_Xs, I_Ys, I_Zs]
+        List += [I_Xs, I_Ys, I_Zs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
         return List
 
     if D == 2:
@@ -379,22 +473,46 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
             # The food
             j = R_IDs.index(R_ID)
-            R_type = R_Types[j]
             R_val = R_Vals[j]
+            R_type = R_Types[j]
+
+            rtype = list(R_type)
+            R = rtype.pop(0)
+            rnum = int(''.join(rtype))
 
             # The Individual
             ID = I_IDs.index(ind)
             # The individual's cell quota
+
             Q = Qs[ID]
+            QN = Q[0]
+            QP = Q[1]
+            QC = Q[2]
+
             # the species
             sp = Sp_IDs[ID]
             mu = GD[sp]
-            efficiency = RD[sp][R_type]
+
+            Q = 0.0
+            efficiency = 0.0
+
+            if R == 'N':
+                efficiency = N_RD[sp][rnum]
+                Q = QN
+
+            if R == 'P':
+                efficiency = P_RD[sp][rnum]
+                Q = QP
+
+            if R == 'C':
+                efficiency = C_RD[sp][rnum]
+                Q = QC
+
             mu = mu * efficiency
 
             if R_val > (mu * Q): # Increase cell quota
                 R_val = R_val - (mu * Q)
-                Q = Q + (mu * Q)
+                Q += (mu * Q)
 
             else:
                 Q += R_val
@@ -417,26 +535,45 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
                 R_Ys.pop(j)
                 R_Zs.pop(j)
 
-            Qs[ID] = Q
+            if Q < 0.0:
+                print Q, QN, QP, QC
+                sys.exit()
+
+            if R == 'N':
+                Qs[ID] = [Q, QP, QC]
+            if R == 'P':
+                Qs[ID] = [QN, Q, QC]
+            if R == 'C':
+                Qs[ID] = [QN, QP, Q]
+
 
     List = [R_Types, R_Vals, R_IDs, R_ID, R_t_In, R_xAge, R_Xs, R_Ys]
-    List += [R_Zs,Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs]
+    List += [R_Zs,Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
     return List
 
 
 
 def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
-        h, l, GD, DispD, colorD, RD, MD, D, nr):
+        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
 
     if Sp_IDs == []:
-        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD]
+        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
 
     if repro == 'fission':
         for i, Q in enumerate(Qs):
-            p = np.random.binomial(1, Q)
+
+            pq = float(np.mean(Q))
+            p = np.random.binomial(1, pq)
+
             if p == 1: # individual is large enough to reproduce
-                Qs[i] = Q/2.0
-                Qs.append(Q/2.0)
+
+                QN = Q[0]
+                QP = Q[1]
+                QC = Q[2]
+
+                Qs[i] = [QN/2.0, QP/2.0, QC/2.0]
+                Qs.append([QN/2.0, QP/2.0, QC/2.0])
+
                 ID += 1
                 IDs.append(ID)
                 t_In.append(t_In[i])
@@ -449,7 +586,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                 if spec == 'yes':
                     p = np.random.binomial(1, 0.05)
                     if p == 1:
-                        #print 'new Sp_'
 
                         # speciate
                         t = time.clock()
@@ -471,8 +607,38 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                         DispD[spID] = np.random.uniform(0.0, 0.1)
 
                         # new speciesresource use efficiencies
-                        p = np.random.binomial(0.25, 1)
-                        RD[spID] = np.random.uniform(0.1, 1.0, nr)
+                        # Nitrogen
+                        N_RD[spID] = np.random.uniform(0.01, 1.0, nN)
+
+                        # Phosphorus
+                        P_RD[spID] = np.random.uniform(0.01, 1.0, nP)
+
+                        # Carbon
+                        C_RD[spID] = np.random.uniform(0.01, 1.0, nC)
+
+                means = GD[spID]
+                i = GetIndParam(means)
+                GList.append(i)
+
+                means = MD[spID]
+                i = GetIndParam(means)
+                MList.append(i)
+
+                means = N_RD[spID]
+                i = GetIndParam(means)
+                NList.append(i)
+
+                means = P_RD[spID]
+                i = GetIndParam(means)
+                PList.append(i)
+
+                means = C_RD[spID]
+                i = GetIndParam(means)
+                CList.append(i)
+
+                means = DispD[spID]
+                i = GetIndParam(means)
+                DList.append(i)
 
                 Sp_IDs.append(spID)
 
@@ -537,7 +703,8 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                 sp = spbox.pop(i1)
 
                 index1 = IDs.index(ind1)
-                q1 = Qs[index1]
+                q = Qs[index1]
+                q1 = np.mean(q)
 
                 p1 = np.random.binomial(1, q1)
                 # individual not large enough to reproduce
@@ -545,6 +712,11 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
 
                 # Find another of the same Sp_
                 if spbox.count(sp) > 1:
+
+                    QN = q[0]
+                    QP = q[1]
+                    QC = q[2]
+
                     # choose an individual of the same Sp_
                     i2 = spbox.index(sp)
                     # remove the speciesID
@@ -584,24 +756,33 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     Sp_IDs.append(sp)
 
 
-    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD]
+    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
 
 
 
-def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys,
-        Zs, w, h, l, u0, D):
+def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys, Zs, w, h, l,
+            u0, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     limit, distance, direction, pop = 0.1, 0, 0, 'no'
-    X, Y, Z = 0, 0, 0
+    x, y, z = 0, 0, 0
     IDs, Types, Vals = [], [], []
     DispD = {}
 
-    if TypeOf == 'tracer':
-        IDs = Lists
+    if TypeOf == 'resource':
+        Type, IDs, ID, Vals = Lists
     elif TypeOf == 'individual':
-        Types, IDs, Vals, DispD = Lists
-    elif TypeOf == 'resource':
-        Types, IDs, Vals = Lists
+        Type, IDs, ID, Vals, DispD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = Lists
+    else:
+        IDs = Lists
+
+    if Xs == []:
+        if TypeOf == 'tracer':
+            return [IDs, Xs, Ys, Zs, xAge, t_In]
+        elif TypeOf == 'individual':
+            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        elif TypeOf == 'resource':
+            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
+
 
     for i, val in enumerate(IDs):
 
@@ -612,7 +793,7 @@ def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys,
         else:
             distance = u0
 
-        X, Y, Z = Xs[i], Ys[i], Zs[i]
+        x, y, z = Xs[i], Ys[i], Zs[i]
 
         # go up or down
         #if TypeOf != 'resource':
@@ -621,7 +802,7 @@ def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys,
         if motion == 'random_walk':
             direction = np.random.uniform(-1, 1)
 
-        Y = Y + (direction * distance)
+        y = y + (direction * distance)
 
         # go forward or backward
         #if TypeOf != 'resource':
@@ -630,10 +811,12 @@ def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys,
         if motion == 'random_walk':
             direction = np.random.uniform(-1, 1)
 
-        X = X + (direction * distance)
+        x = x + (direction * distance)
 
-        if X > w - limit or X < limit: pop = 'yes'
-        elif Y > h - limit or Y < limit: pop = 'yes'
+        if x > w - limit or x < limit:
+            pop = 'yes'
+        elif y > h - limit or y < limit:
+            pop = 'yes'
 
         # go left or right
         if motion == 'unidirectional':
@@ -641,29 +824,37 @@ def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys,
         if motion == 'random_walk':
             direction = np.random.uniform(-1, 1)
 
-        Z = Z + (direction * distance)
+        z = z + (direction * distance)
 
-        if Z > l - limit or Z < limit: pop = 'yes'
+        if z > l - limit or z < limit: pop = 'yes'
 
         if pop == 'no':
-            Xs[i], Ys[i], Zs[i] = X, Y, Z
+            Xs[i], Ys[i], Zs[i] = x, y, z
             t_In[i] = t_In[i]+1
 
         elif pop == 'yes':
-            IDs.pop(i)
             xAge.append(t_In[i])
-            t_In.pop(i)
             Xs.pop(i)
             Ys.pop(i)
             Zs.pop(i)
+            t_In.pop(i)
+            IDs.pop(i)
 
-            if TypeOf == 'individual' or TypeOf == 'resource':
+            if TypeOf == 'resource' or TypeOf == 'individual':
+                Type.pop(i)
                 Vals.pop(i)
-                Types.pop(i)
+
+            if TypeOf == 'individual':
+                GrowthList.pop(i)
+                MaintList.pop(i)
+                N_RList.pop(i)
+                P_RList.pop(i)
+                C_RList.pop(i)
+                DispList.pop(i)
 
     if TypeOf == 'tracer':
-        Lists = IDs
-    elif TypeOf == 'individual' or TypeOf == 'resource':
-        Lists = [Types, IDs, Vals]
-
-    return [Lists, xAge, t_In, Xs, Ys, Zs]
+        return [IDs, Xs, Ys, Zs, xAge, t_In]
+    elif TypeOf == 'individual':
+        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    elif TypeOf == 'resource':
+        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]

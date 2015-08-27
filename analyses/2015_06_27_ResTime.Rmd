@@ -25,16 +25,16 @@ library(ggplot2)
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Load Data
-sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_August/12_Aug/SimData.csv")  
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/SimData.csv")  
 #sim.data <- subset(sim.data, motion == ' random_walk ')
 ```
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Assign Data
 sim <- sim.data$sim # the specific simulation run
-height <- sim.data$Height
-width <- sim.data$Width
-flow.rate <- sim.data$FlowRate
+height <- sim.data$height
+width <- sim.data$width
+flow.rate <- sim.data$flow.rate
 seed <- sim.data$starting.seed
 
 h.tau <- (height * width)/flow.rate
@@ -42,8 +42,8 @@ m.tau <- sim.data$individual.tau
 t.tau <- sim.data$particle.tau
 r.tau <- sim.data$resource.tau
 
-N <- sim.data$N
-S <- sim.data$S
+N <- sim.data$total.abundance
+S <- sim.data$species.richness
 e.var <- sim.data$e.var
 e.simp <- sim.data$simpson.e
 avg.ab <- N/S
@@ -53,12 +53,18 @@ SimpD <- sim.data$SD
 Whittaker.turnover <- sim.data$species.turnover
 
 res.inflow <- sim.data$res.inflow
-res.types <- sim.data$res.types
+N.res.types <- sim.data$N.res.types
+P.res.types <- sim.data$P.res.types
+C.res.types <- sim.data$C.res.types
 max.res.val <- sim.data$max.res.val
 
 res.conc <- sim.data$resource.concentration
 num.tracers <- sim.data$tracer.particles
 num.resources <- sim.data$resource.particles
+
+biomass.prod.N <- sim.data$biomass.prod.N
+biomass.prod.P <- sim.data$biomass.prod.P
+biomass.prod.C <- sim.data$biomass.prod.C
 ```
 
 
@@ -82,8 +88,10 @@ png(filename = '~/GitHub/hydrobide/results/figs/NandS_vs_ResTime.png',
 num.sims <- max(sim.data$sim)
 colors <- rainbow(num.sims)
 
-sim.data$N[sim.data$N<=0] <- 1
-sim.data$N[sim.data$S<=0] <- 1
+sim.data$total.abundance[sim.data$total.abundance<=0] <- 1
+N[N<=0] <- 1
+sim.data$species.richness[sim.data$species.richness<=0] <- 1
+S[S<=0] <- 1
 
 p1 <- ggplot(sim.data, aes(x=h.tau, y=N, group=sim, colour=sim)) +
   scale_color_gradient(high="cyan") +
@@ -201,10 +209,11 @@ p1 <- ggplot(data=NULL, aes(x=xs, y=ys)) +
   labs(x= expression(tau), y="Growth") +
   labs(title="Growth rate") +
   scale_x_log10() +
-  coord_fixed(ratio = 5.3) +
+  coord_fixed(ratio = 100) +
   theme_black()
 
-maint <- (S*sim.data$avg.per.capita.maint)/N
+#maint <- (S*sim.data$avg.per.capita.maint)/N
+maint <- sim.data$avg.per.capita.maint
 
 p2 <- ggplot(data=NULL, aes(x=h.tau, y=maint)) +
   geom_point(colour="cyan") +
@@ -212,7 +221,7 @@ p2 <- ggplot(data=NULL, aes(x=h.tau, y=maint)) +
   labs(title="Maintenance") +
   scale_x_log10() +
   scale_y_log10() +
-  coord_fixed(ratio = 0.34) +
+  coord_fixed(ratio = 8) +
   theme_black()
 
 
