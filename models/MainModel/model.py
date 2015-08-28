@@ -28,7 +28,7 @@ def get_rand_params():
     motion = choice(['fluid', 'random_walk'])
     D = choice([2, 2]) # number of spatial dimensions
 
-    width = choice([5, 6, 7, 8, 9, 10])
+    width = choice([10, 12, 14, 16, 18, 20])
     height = choice([5, 6, 7, 8, 9, 10])
     length = choice([5, 6, 7, 8, 9, 10])
 
@@ -41,17 +41,17 @@ def get_rand_params():
 
     seedcom = 1000 # size of starting community
     m = choice([1]) # individuals immigrating per time step
-    r = choice([50, 100, 150, 200, 250, 300, 350, 400, 450, 500]) # resource particles flowing in per time step
+    r = choice([450, 500, 550]) # resource particles flowing in per time step
 
-    nNi = choice([2, 4, 6, 8, 10]) # maximum number of Nitrogen types
-    nP = choice([2, 4, 6, 8, 10]) # maximum number of Phosphorus types
-    nC = choice([2, 4, 6, 8, 10]) # maximum number of Carbon types
+    nNi = choice([12, 14, 16, 18, 20]) # maximum number of Nitrogen types
+    nP = choice([12, 14, 16, 18, 20]) # maximum number of Phosphorus types
+    nC = choice([12, 14, 16, 18, 20]) # maximum number of Carbon types
 
-    rmax = choice([1000, 5000, 10000]) # maximum resource particle size
+    rmax = choice([5000, 10000, 15000]) # maximum resource particle size
 
-    gmax = choice([0.2, 0.3, 0.4, 0.5])
+    gmax = choice([0.2, 0.3, 0.4, 0.5, 0.6])
     dmax = choice([0.01, 0.05, 0.1, 0.5, 1.0])
-    maintmax = choice([0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002, 0.004, 0.006, 0.008])
+    maintmax = choice([0.0002, 0.0004, 0.0006, 0.0008, 0.001])
 
     #width, height = 10, 10
     #motion = 'fluid'
@@ -483,7 +483,7 @@ SpColorDict, GrowthDict, MaintDict, N_RD, P_RD, C_RD, ResColorDict, DispDict = {
 SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, ResColorList, DispList = [[],[],[],[],[],[],[],[]]
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-LowerLimit, shift, sign, sim = 30, 0.0, 0.1, 75
+LowerLimit, shift, sign, sim = 30, 0.0, 0.1, 111
 left1, bottom1, left2, bottom2 = 0.2, 0.2, 0.6, 0.6
 BarrierWidth, BarrierHeight = 0.0, 0.0
 
