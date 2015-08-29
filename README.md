@@ -12,7 +12,7 @@ The code in this repository was developed to test predictions how ecosystem resi
 
 * **Probabilistic:** Changes to particles, populations, and communities are brought about through random sampling. This reflects the stochastic nature of individual responses to environmental conditions, competition, predator-prey interactions, dispersal, etc. Making all processes probabilistic also always greater freedom in how patterns, dynamics, and combinations of traits arise.
 
-* **Eco-evolutionary:** HydroBIDE incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
+* **Eco-evolutionary:** HydroBIDE incorporates or will soon incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
 
 * **Self-assembling**
 The model is really a platform for modeling, because the user only sets the ranges of values for many parameters and processes the model can potentially include. But, when run, the model initiates with random combinations of parameters and processes, including:
@@ -77,14 +77,15 @@ Information on all particles, groups of particles, and the entire systems is tra
 7. inflowing resource concentration
 8. motion
 9. metacommunity diversity
-10. community max growth rate
-11. specific max growth rate
-12. community max maint
-13. specific max maint
+10. community max. growth rate
+11. specific max. growth rate
+12. community max. maintenance
+13. specific max. maintenance
 14. community active dispersal rate
 15. specific active dispersal rate
 16. community specific resource use efficiency
-17. Subpopulation variation
+17. Subpopulation variation in:
+	* Growth, maintenance, dispersal, and resource use
 18. n sources of Carbon
 19. m sources of Nitrogen
 20. p sources of Phosphorus
