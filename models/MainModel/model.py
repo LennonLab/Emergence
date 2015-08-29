@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 from random import choice
 from scipy import stats
 import numpy as np
+from numpy import sin, pi
 import sys
 import os
 import psutil
-import itertools
+#import itertools
 
 mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "tools/metrics")
@@ -31,6 +32,19 @@ def get_rand_params():
     width = choice([10, 12, 14, 16, 18, 20])
     height = choice([5, 6, 7, 8, 9, 10])
     length = choice([5, 6, 7, 8, 9, 10])
+
+    pulse = choice([0.1, 0.2, 0.4, 0.6, 0.8, 1.0])
+    flux = choice(['yes', 'no'])
+
+    # Sine wave: y(t) = A * sin(2*pi*f*t + phi)
+    # let phi = 0, that is, 0 amplitude at time 0
+    # For Residence time (tau):
+    #     tau = A * sin(2pi * f *t)
+    phase = choice([0, 1, 2, 4, 8, 16]) # 0 = in phase; 16 = entirely out of phase
+    amp = choice([0.1, 0.2, 0.4, 0.6, 0.8, 1.0]) # A
+    freq = choice([0.1, 0.08, 0.06, 0.04, 0.02, 0.01]) # f
+
+    disturb = choice([0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
 
     alpha = np.random.uniform(0.99, 0.999)
     reproduction = choice(['fission', 'sexual'])
@@ -58,11 +72,13 @@ def get_rand_params():
     reproduction = 'fission'
     speciation = 'yes'
     #rmax = 10000
+    flux = 'yes'
+    pulse = 'no'
     #r = 400
     #gmax = 0.2
     #maintmax = 0.0001
 
-    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax]
+    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb]
 
 
 
@@ -101,23 +117,28 @@ def nextFrame(arg):	# arg is the frame number
     global PRODNs, PRODPs, PRODCs
     global GrowthList, MaintList, N_RList, P_RList, C_RList, DispList
     global Gs, Ms, NRs, PRs, CRs, Ds
+    global amp, freq, flux, pulse, phase, disturb
 
     Lists = [GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, Qs, IndIDs]
     testlengths('individuals', 'any', Lists)
 
+    u1 = 0.0
+    if flux == 'yes':
+        u1 = u0 + u0*(amp * sin(2*pi * ct * freq + phase))
+
     for step in range(1): # adjust number of steps for smooth animation
         # inflow of tracers
-        TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(motion, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u0, D)
+        TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(motion, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u1, D)
 
         # inflow of resources
-        ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nNi, nP, nC, width, height, length, u0, D)
+        ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nNi, nP, nC, width, height, length, u1, D)
 
         # immigration
         if ct == 0:
-            SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, seedcom, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u0, alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+            SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, seedcom, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
         else:
 
-            SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, m,       SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u0, alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+            SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, m, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, width, height, length, MaintDict, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
         ct += 1
 
         if motion == 'fluid' or motion == 'conveyor':  # a 'conveyor' belt action wherein y-coordinates never change occurs when there is 0 turbulence
@@ -187,6 +208,11 @@ def nextFrame(arg):	# arg is the frame number
 
         # maintenance
         SpeciesIDs, Xcoords, Ycoords, Zcoords, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.maintenance(SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, IndExitAge, SpColorDict, MaintDict, IndIDs, IndTimeIn, Qs, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+
+        # disturbance
+        d = np.random.binomial(1, disturb)
+        if d == 1:
+            SpeciesIDs, Xcoords, Ycoords, Zcoords, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.decimate(SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, IndExitAge, SpColorDict, MaintDict, IndIDs, IndTimeIn, Qs, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
 
     if D == 3: ax = fig.add_subplot(111, projection='3d')
@@ -361,12 +387,12 @@ def nextFrame(arg):	# arg is the frame number
                 TracerRTD = str(TracerExitAge).strip('[]')
                 ResRTD = str(ResExitAge).strip('[]')
 
-                OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/SimData.csv','a+')
-                OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/RADs.csv','a+')
-                OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/Species.csv','a+')
-                OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/IndRTD.csv','a+')
-                OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/TracerRTD.csv','a+')
-                OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/ResRTD.csv','a+')
+                OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/SimData.csv','a+')
+                OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/RADs.csv','a+')
+                OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/Species.csv','a+')
+                OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/IndRTD.csv','a+')
+                OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/TracerRTD.csv','a+')
+                OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/ResRTD.csv','a+')
 
                 # RowID, sim, motion, dimensions, ind.production, biomass.prod.N
                 # biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types
@@ -393,6 +419,9 @@ def nextFrame(arg):	# arg is the frame number
                 # avg.per.capita.C.efficiency, avg.per.capita.active.dispersal
                 outlist += [fNR, fPR, fCR, fD]
 
+                # amplitude, flux, frequency, phase
+                outlist += [amp, flux, freq, phase]
+
                 outlist = str(outlist).strip('[]')
 
                 print>>OUT1, outlist
@@ -415,7 +444,7 @@ def nextFrame(arg):	# arg is the frame number
 
             if u0 == min(Rates):
                 SpColorDict, GrowthDict, MaintDict, N_RD, P_RD, C_RD, ResColorDict, DispDict = {}, {}, {}, {}, {}, {}, {}, {}
-                width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax = get_rand_params()
+                width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
 
 
                 sim += 1
@@ -435,6 +464,10 @@ def nextFrame(arg):	# arg is the frame number
             if motion == 'fluid' or motion == 'conveyor':
                 n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = LBM.SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2)
 
+            u1 = 0.0
+            if flux == 'yes':
+                u1 = u0 + u0*(amp * sin(2*pi * ct * freq + phase))
+
             # inflow of resources
             ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nNi, nP, nC, width, height, length, u0, D)
             # immigration
@@ -444,17 +477,16 @@ def nextFrame(arg):	# arg is the frame number
             if D == 3: ax = fig.add_subplot(111, projection='3d')
             elif D == 2: ax = fig.add_subplot(111)
 
-'''
 ############## OPEN OUTPUT DATA FILE ###########################################
-OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/SimData.csv','w')
-OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/RADs.csv','w')
-OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/Species.csv','w')
-OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/IndRTD.csv','w')
-OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/TracerRTD.csv','w')
-OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/ResRTD.csv','w')
+OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/SimData.csv','w')
+OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/RADs.csv','w')
+OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/Species.csv','w')
+OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/IndRTD.csv','w')
+OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/TracerRTD.csv','w')
+OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal'
+print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase'
 
 OUT1.close()
 OUT2.close()
@@ -462,10 +494,9 @@ OUT3.close()
 OUT4.close()
 OUT5.close()
 OUT6.close()
-'''
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax = get_rand_params()
+width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
 motion = 'fluid'
 #######################  Ind COMMUNITY PARAMETERS  #########################
 ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0,0,0,0,0,0,0,0,0,0,0,0
