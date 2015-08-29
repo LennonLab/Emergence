@@ -404,6 +404,39 @@ def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthL
 
 
 
+def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+
+    if Sp_IDs == []:
+        return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+
+    for i, val in enumerate(Qs):
+
+        d = np.random.binomial(1, 0.1)
+
+        if d == 1:   # starved
+
+            Qs.pop(i)
+            xAge.append(t_In[i])
+            t_In.pop(i)
+            Sp_IDs.pop(i)
+            IDs.pop(i)
+            Xs.pop(i)
+            Ys.pop(i)
+            Zs.pop(i)
+            GrowthList.pop(i)
+            MaintList.pop(i)
+            N_RList.pop(i)
+            P_RList.pop(i)
+            C_RList.pop(i)
+            DispList.pop(i)
+
+        else: Qs[i] = val
+
+    return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+
+
+
+
 def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
         R_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs,
         w, h, l, GD, N_RD, P_RD, C_RD, DispD, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):

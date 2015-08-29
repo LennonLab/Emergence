@@ -2,8 +2,8 @@
 Individual based modeling of ecological dynamics in complex systems.
 
 #Purpose
-Much of Earth’s biodiversity is at the mercy of currents. Environments that flow or turn over constrain the time that individuals have to grow and reproduce. This principle underpins the use of experimental and engineered bioreactors, where residence time (volume / flow rate) is used to control growth and biomass. 
-Though residence time is implicated as a driver of biodiversity in natural systems, it is unclear how residence time governs biodiversity when the many facets of ecological complexity can overwhelm the effect of a single variable. 
+Much of Earth’s biodiversity is at the mercy of currents. Environments that flow or turn over constrain growth and reproduction. This principle underpins experimental and engineered bioreactors, where residence time (volume / flow rate) is used to control growth and biomass. 
+While residence time is implicated as a driver of biodiversity in natural systems, it is unclear how residence time governs biodiversity when the many facets of ecological complexity can overwhelm the effect of a single variable.
 
 The code in this repository was developed to test predictions how ecosystem residence time constrains the size, assembly, and structure of ecological communities. The modeling is individual-based, probabilistic, eco-evolutionary, information intensive, and it self-assembles. Let's break that down...
 
@@ -12,7 +12,7 @@ The code in this repository was developed to test predictions how ecosystem resi
 
 * **Probabilistic:** Changes to particles, populations, and communities are brought about through random sampling. This reflects the stochastic nature of individual responses to environmental conditions, competition, predator-prey interactions, dispersal, etc. Making all processes probabilistic also always greater freedom in how patterns, dynamics, and combinations of traits arise.
 
-* **Eco-evolutionary:** HydroBIDE incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
+* **Eco-evolutionary:** HydroBIDE incorporates or will soon incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
 
 * **Self-assembling**
 The model is really a platform for modeling, because the user only sets the ranges of values for many parameters and processes the model can potentially include. But, when run, the model initiates with random combinations of parameters and processes, including:
@@ -27,6 +27,8 @@ The model is really a platform for modeling, because the user only sets the rang
 	* Rate of flow 
 	* Number and types of inflowing resources
 	* Regional (outside) community structure
+	* Aspects of fluctuating flow
+	* Ecological disturbance
 
 * **Data intensive** 
 Information on all particles, groups of particles, and the entire systems is tracked, recorded, or quantified through time.
@@ -75,17 +77,21 @@ Information on all particles, groups of particles, and the entire systems is tra
 7. inflowing resource concentration
 8. motion
 9. metacommunity diversity
-10. community max growth rate
-11. specific max growth rate
-12. community max maint
-13. specific max maint
+10. community max. growth rate
+11. specific max. growth rate
+12. community max. maintenance
+13. specific max. maintenance
 14. community active dispersal rate
 15. specific active dispersal rate
 16. community specific resource use efficiency
-17. Subpopulation variation
+17. Subpopulation variation in:
+	* Growth, maintenance, dispersal, and resource use
 18. n sources of Carbon
 19. m sources of Nitrogen
 20. p sources of Phosphorus
+21. Amplitude and frequency of fluctuating flow
+22. Pulsing flow
+23. Stochastic disturbance via decimation (randomly removing 1/10th of the community at random intervals)
 
 21. *speciation rate
 22. *interguild predation
