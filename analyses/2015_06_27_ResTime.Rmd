@@ -79,8 +79,6 @@ source("~/GitHub/hydrobide/tools/Rbin/metrics.R")
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
-  
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
 
 png(filename = '~/GitHub/hydrobide/results/figs/NandS_vs_ResTime.png',
       width = 700, height = 500, units = "px", pointsize = 17, bg = "black")
@@ -240,7 +238,7 @@ tracer.RTDs <- list()
 res.RTDs <- list()
 ind.RTDs <- list()
 
-inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/IndRTD.csv"
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/IndRTD.csv"
 con  <- file(inputFile, open = "r")
 ct = 1
 while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
@@ -254,7 +252,7 @@ while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, qui
 close(con)
 
 
-inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/TracerRTD.csv"
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/TracerRTD.csv"
 con  <- file(inputFile, open = "r")
 ct = 1
 while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
@@ -266,7 +264,7 @@ while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, qui
 close(con)
 
 
-inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_June/26_June/ResRTD.csv"
+inputFile <- "~/GitHub/hydrobide/results/simulated_data/2015_August/25_Aug/ResRTD.csv"
 con  <- file(inputFile, open = "r")
 ct = 1
 while (length(myLine <- scan(con, what="numeric", nlines=1, sep=',', skip=0, quiet=TRUE)) > 0 ){
@@ -346,6 +344,7 @@ dev.off()
 # Increasing ecosystem residence time shifts the mean of the RTD to higher average values (older individuals). But, it also changes the skewness of the RTD from asymmetrically young to asymmetrically old. No significant effect is seen among tracers.
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=6, fig.height=6}
+plot.new()
 
 png(filename = '~/GitHub/hydrobide/results/figs/RTD_shifts.png',
       width = 700, height = 500, units = "px", pointsize = 17, bg = "white")
