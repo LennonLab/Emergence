@@ -2,8 +2,8 @@
 Individual based modeling of ecological dynamics in complex systems.
 
 #Purpose
-Much of Earth’s biodiversity is at the mercy of currents. Environments that flow or turn over constrain the time that individuals have to grow and reproduce. This principle underpins the use of experimental and engineered bioreactors, where residence time (volume / flow rate) is used to control growth and biomass. 
-Though residence time is implicated as a driver of biodiversity in natural systems, it is unclear how residence time governs biodiversity when the many facets of ecological complexity can overwhelm the effect of a single variable. 
+Much of Earth’s biodiversity is at the mercy of currents. Environments that flow or turn over constrain growth and reproduction. This principle underpins experimental and engineered bioreactors, where residence time (volume / flow rate) is used to control growth and biomass. 
+While residence time is implicated as a driver of biodiversity in natural systems, it is unclear how residence time governs biodiversity when the many facets of ecological complexity can overwhelm the effect of a single variable.
 
 The code in this repository was developed to test predictions how ecosystem residence time constrains the size, assembly, and structure of ecological communities. The modeling is individual-based, probabilistic, eco-evolutionary, information intensive, and it self-assembles. Let's break that down...
 
@@ -27,6 +27,8 @@ The model is really a platform for modeling, because the user only sets the rang
 	* Rate of flow 
 	* Number and types of inflowing resources
 	* Regional (outside) community structure
+	* Aspects of fluctuating flow
+	* Ecological disturbance
 
 * **Data intensive** 
 Information on all particles, groups of particles, and the entire systems is tracked, recorded, or quantified through time.
@@ -86,6 +88,9 @@ Information on all particles, groups of particles, and the entire systems is tra
 18. n sources of Carbon
 19. m sources of Nitrogen
 20. p sources of Phosphorus
+21. Amplitude and frequency of fluctuating flow
+22. Pulsing flow
+23. Stochastic disturbance via decimation (randomly removing 1/10th of the community at random intervals)
 
 21. *speciation rate
 22. *interguild predation

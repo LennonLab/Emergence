@@ -41,7 +41,7 @@ def get_rand_params():
     # For Residence time (tau):
     #     tau = A * sin(2pi * f *t)
     phase = choice([0, 1, 2, 4, 8, 16]) # 0 = in phase; 16 = entirely out of phase
-    amp = choice([0.1, 0.2, 0.4, 0.6, 0.8, 1.0]) # A
+    amp = choice([0.1, 0.2, 0.3, 0.4, 0.5]) # A
     freq = choice([0.1, 0.08, 0.06, 0.04, 0.02, 0.01]) # f
 
     disturb = choice([0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
@@ -122,13 +122,18 @@ def nextFrame(arg):	# arg is the frame number
     Lists = [GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, SpeciesIDs, IndXcoords, IndYcoords, IndZcoords, Qs, IndIDs]
     testlengths('individuals', 'any', Lists)
 
-    u1 = 0.0
+    u1 = float(u0)
     if flux == 'yes':
+        # fluctuate flow rate according to randomly chosen values for:
+        # amplitude, frequency, and phase
+
         u1 = u0 + u0*(amp * sin(2*pi * ct * freq + phase))
+        if u1 > 1:
+            u1 == 1.0
 
     for step in range(1): # adjust number of steps for smooth animation
         # inflow of tracers
-        TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(motion, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u1, D)
+        TracerIDs, TracerTimeIn, TracerXcoords, TracerYcoords, TracerZcoords = bide.NewTracers(motion, TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerTimeIn, width, height, length, u0, D)
 
         # inflow of resources
         ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResIDs, ResID, ResTimeIn = bide.ResIn(motion, ResTypes, ResVals, ResXcoords, ResYcoords, ResZcoords, ResID, ResIDs, ResTimeIn, r, rmax, nNi, nP, nC, width, height, length, u1, D)
@@ -377,7 +382,7 @@ def nextFrame(arg):	# arg is the frame number
             SK = np.mean(SKs)
             WT = np.mean(WTs)
 
-            print sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(PRODI), 'WT:', round(WT,3), ':  flow:', u0, 'motion:',motion, ' MB:',int(round(mem))
+            print sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(PRODI), 'WT:', round(WT,3), ':  flow:', u0, 'motion:',motion, ' MB:',int(round(mem)),'  :  ', 'A:',amp, 'f:', freq, 'phi:', phase, 'decimate:', disturb
 
             if logdata == 'yes':
 
@@ -419,8 +424,8 @@ def nextFrame(arg):	# arg is the frame number
                 # avg.per.capita.C.efficiency, avg.per.capita.active.dispersal
                 outlist += [fNR, fPR, fCR, fD]
 
-                # amplitude, flux, frequency, phase
-                outlist += [amp, flux, freq, phase]
+                # amplitude, flux, frequency, phase, disturbance
+                outlist += [amp, flux, freq, phase, disturb]
 
                 outlist = str(outlist).strip('[]')
 
@@ -486,7 +491,7 @@ OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug
 OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase'
+print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
 
 OUT1.close()
 OUT2.close()
@@ -514,7 +519,7 @@ SpColorDict, GrowthDict, MaintDict, N_RD, P_RD, C_RD, ResColorDict, DispDict = {
 SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, ResColorList, DispList = [[],[],[],[],[],[],[],[]]
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-LowerLimit, shift, sign, sim = 30, 0.0, 0.1, 111
+LowerLimit, shift, sign, sim = 30, 0.0, 0.1, 2
 left1, bottom1, left2, bottom2 = 0.2, 0.2, 0.6, 0.6
 BarrierWidth, BarrierHeight = 0.0, 0.0
 
