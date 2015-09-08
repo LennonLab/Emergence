@@ -82,12 +82,12 @@ theme_black <- function(base_size = 12, base_family = "Helvetica") {
     axis.text.y =        element_text(hjust = 1),
     axis.ticks =         element_line(colour = "white", size = 0.8),
     axis.title =         element_text(colour = "white"),
-    axis.title.x =       element_text(vjust = -0.5, size = rel(2.8)),
+    axis.title.x =       element_text(vjust = -0.5, size = rel(1.5)),
     axis.title.y =       element_text(angle = 90, size = rel(1.5)),
     axis.ticks.length =  unit(0.3, "lines"),
     axis.ticks.margin =  unit(0.5, "lines"),
     
-    legend.background =  element_rect(colour = NA),
+    legend.background =  element_rect(colour = "black"),
     legend.margin =      unit(0.2, "cm"),
     legend.key =         element_rect(fill = "black", colour = "white"),
     legend.key.size =    unit(1.2, "lines"),
@@ -97,10 +97,11 @@ theme_black <- function(base_size = 12, base_family = "Helvetica") {
     legend.text.align =  NULL,
     legend.title =       element_text(size = rel(0.8), face = "bold", hjust = 0, colour = "white"),
     legend.title.align = NULL,
-    legend.position =    "right",
+    legend.position =    "none",
     legend.direction =   "vertical",
     legend.justification = "center",
     legend.box =         NULL,
+    #opts(legend.position = "none"),
     
     panel.background =   element_rect(fill = "black", colour = NA),
     panel.border =       element_rect(fill = NA, colour = "white"),
@@ -113,7 +114,7 @@ theme_black <- function(base_size = 12, base_family = "Helvetica") {
     strip.text.y =       element_text(angle = -90),
     
     plot.background =    element_rect(colour = "black", fill = "black"),
-    plot.title =         element_text(colour = "white", size = rel(2)),
+    plot.title =         element_text(colour = "white", size = rel(1.8)),
     plot.margin =        unit(c(1, 1, 0.5, 0.5), "lines"),
     
     complete = TRUE

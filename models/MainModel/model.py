@@ -33,15 +33,13 @@ def get_rand_params():
     height = choice([5, 6, 7, 8, 9, 10])
     length = choice([5, 6, 7, 8, 9, 10])
 
-    pulse = choice([0.1, 0.2, 0.4, 0.6, 0.8, 1.0])
+    pulse = choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     flux = choice(['yes', 'no'])
 
     # Sine wave: y(t) = A * sin(2*pi*f*t + phi)
-    # let phi = 0, that is, 0 amplitude at time 0
-    # For Residence time (tau):
-    #     tau = A * sin(2pi * f *t)
-    phase = choice([0, 1, 2, 4, 8, 16]) # 0 = in phase; 16 = entirely out of phase
-    amp = choice([0.1, 0.2, 0.3, 0.4, 0.5]) # A
+    # let phi = 0, meaning 0 amplitude at time 0
+    phase = choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) # 0 = in phase; 16 = entirely out of phase
+    amp = choice([0.05, 0.1, 0.2, 0.3, 0.4, 0.5]) # A
     freq = choice([0.1, 0.08, 0.06, 0.04, 0.02, 0.01]) # f
 
     disturb = choice([0.0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
@@ -49,36 +47,25 @@ def get_rand_params():
     alpha = np.random.uniform(0.99, 0.999)
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
-    predators = choice([0, 1, 2, 4, 8])
-    parasites = choice([0, 1, 2, 4, 8])
-    env_gradient = choice(['no', 'yes'])
 
-    seedcom = 1000 # size of starting community
+    seedcom = choice([100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]) # size of starting community
     m = choice([1]) # individuals immigrating per time step
-    r = choice([450, 500, 550]) # resource particles flowing in per time step
+    r = choice([50, 100, 150, 200, 250, 300, 350, 400, 450, 500]) # resource particles flowing in per time step
 
-    nNi = choice([12, 14, 16, 18, 20]) # maximum number of Nitrogen types
-    nP = choice([12, 14, 16, 18, 20]) # maximum number of Phosphorus types
-    nC = choice([12, 14, 16, 18, 20]) # maximum number of Carbon types
+    nNi = choice([1, 3, 6, 12, 14, 16, 18, 20]) # maximum number of Nitrogen types
+    nP = choice([1, 3, 6, 12, 14, 16, 18, 20]) # maximum number of Phosphorus types
+    nC = choice([1, 3, 6, 12, 14, 16, 18, 20]) # maximum number of Carbon types
 
-    rmax = choice([5000, 10000, 15000]) # maximum resource particle size
+    rmax = choice([1000, 5000, 10000, 15000]) # maximum resource particle size
 
-    gmax = choice([0.2, 0.3, 0.4, 0.5, 0.6])
-    dmax = choice([0.01, 0.05, 0.1, 0.5, 1.0])
-    maintmax = choice([0.0002, 0.0004, 0.0006, 0.0008, 0.001])
+    gmax = choice([0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
+    dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.4, 0.6, 0.8, 0.9])
+    maintmax = choice([0.0001, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002, 0.003, 0.004, 0.005])
 
-    #width, height = 10, 10
-    #motion = 'fluid'
     reproduction = 'fission'
     speciation = 'yes'
-    #rmax = 10000
-    flux = 'yes'
-    pulse = 'no'
-    #r = 400
-    #gmax = 0.2
-    #maintmax = 0.0001
 
-    return [width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb]
+    return [width, height, length, alpha, motion, D, reproduction, speciation, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb]
 
 
 
@@ -165,6 +152,7 @@ def nextFrame(arg):	# arg is the frame number
             # moving tracer particles
             if len(TracerIDs) > 0:
                 TracerIDs, TracerXcoords, TracerYcoords, TracerZcoords, TracerExitAge, TracerTimeIn = bide.fluid_movement('tracer', TracerIDs, TracerTimeIn, TracerExitAge, TracerXcoords, TracerYcoords, TracerZcoords, ux, uy, width, height, u0)
+
 
         elif motion == 'random_walk' or motion == 'unidirectional':
 
@@ -392,12 +380,12 @@ def nextFrame(arg):	# arg is the frame number
                 TracerRTD = str(TracerExitAge).strip('[]')
                 ResRTD = str(ResExitAge).strip('[]')
 
-                OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/SimData.csv','a+')
-                OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/RADs.csv','a+')
-                OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/Species.csv','a+')
-                OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/IndRTD.csv','a+')
-                OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/TracerRTD.csv','a+')
-                OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/ResRTD.csv','a+')
+                OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/SimData.csv','a+')
+                OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/RADs.csv','a+')
+                OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/Species.csv','a+')
+                OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/IndRTD.csv','a+')
+                OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/TracerRTD.csv','a+')
+                OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/ResRTD.csv','a+')
 
                 # RowID, sim, motion, dimensions, ind.production, biomass.prod.N
                 # biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types
@@ -449,7 +437,7 @@ def nextFrame(arg):	# arg is the frame number
 
             if u0 == min(Rates):
                 SpColorDict, GrowthDict, MaintDict, N_RD, P_RD, C_RD, ResColorDict, DispDict = {}, {}, {}, {}, {}, {}, {}, {}
-                width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
+                width, height, length, alpha, motion, D, reproduction, speciation, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
 
 
                 sim += 1
@@ -482,13 +470,14 @@ def nextFrame(arg):	# arg is the frame number
             if D == 3: ax = fig.add_subplot(111, projection='3d')
             elif D == 2: ax = fig.add_subplot(111)
 
+''''
 ############## OPEN OUTPUT DATA FILE ###########################################
-OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/SimData.csv','w')
-OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/RADs.csv','w')
-OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/Species.csv','w')
-OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/IndRTD.csv','w')
-OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/TracerRTD.csv','w')
-OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_August/28_Aug/ResRTD.csv','w')
+OUT1 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/SimData.csv','w')
+OUT2 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/RADs.csv','w')
+OUT3 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/Species.csv','w')
+OUT4 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/IndRTD.csv','w')
+OUT5 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/TracerRTD.csv','w')
+OUT6 = open(mydir + '/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties, physiological values, trait values, resource values
 print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
@@ -499,9 +488,10 @@ OUT3.close()
 OUT4.close()
 OUT5.close()
 OUT6.close()
+'''
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-width, height, length, alpha, motion, D, reproduction, speciation, predators, parasites, env_gradient, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
+width, height, length, alpha, motion, D, reproduction, speciation, seedcom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb = get_rand_params()
 motion = 'fluid'
 #######################  Ind COMMUNITY PARAMETERS  #########################
 ResDens, ResDiv, ResRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0,0,0,0,0,0,0,0,0,0,0,0
@@ -527,7 +517,6 @@ BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2 = [],[],[],[]
 viscosity = 10 # unitless but required by an LBM model
 
 Rates = np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.02, 0.01, 0.0075, 0.005])  # inflow speeds
-#Rates = np.array([1.0, 0.75, 0.25, 0.1, 0.075, 0.05, 0.025, 0.01, 0.0075, 0.005])  # inflow speeds
 u0 = Rates[0]  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
