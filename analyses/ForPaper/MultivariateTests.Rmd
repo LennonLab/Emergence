@@ -1,0 +1,186 @@
+---
+title: "Residence time, a master variable of ecology, physiology, and natural selection"
+author: "Ken Locey, Jay Lennon"
+date: "June, 2015"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/hydrobide") 
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+require("picante")
+require("ape")
+require("fossil")
+require("simba")
+require("reshape")
+
+#install.packages("vegan") 
+require("vegan") 
+#install.packages("moments")
+require("moments")
+library(ggplot2)
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading files with plotting and diversity functions
+source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
+source("~/GitHub/hydrobide/tools/Rbin/metrics.R")
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Load Data
+sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_August/29_Aug/SimData.csv")  
+sim.data$h.tau <- (sim.data$height * sim.data$width)/sim.data$flow.rate
+sim.data$total.abundance[sim.data$total.abundance<=0] <- 1
+sim.data$species.richness[sim.data$species.richness<=0] <- 1
+
+sim.data[is.na(sim.data)] <- 0
+```
+
+
+## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/NandS_vs_ResTime.png',
+      width = 1500, height = 1200, res=200, bg = "white")
+```
+
+## 7.) Variance partitioning: 
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=4}
+
+# Physical and metacommunity variables
+phys.dat <- as.matrix(subset(sim.data, 
+                      select = c(h.tau)))
+
+# Resource variables
+res.dat <- as.matrix(subset(sim.data, 
+                      select = c(resource.concentration,
+                      shannons.resource.diversity,
+                      resource.richness,
+                      resource.particles,
+                      avg.per.capita.growth,
+                      avg.per.capita.maint,
+                      avg.per.capita.N.efficiency,
+                      avg.per.capita.P.efficiency,
+                      avg.per.capita.C.efficiency,
+                      avg.per.capita.active.dispersal)))
+
+
+y.dat <- as.matrix(subset(sim.data, 
+                      select = c(total.abundance,
+                      species.richness,
+                      simpson.e,
+                      species.turnover)))
+
+rda.phys <- rda(y.dat ~ phys.dat)
+#rda.phys
+rda.res <- rda(y.dat ~ res.dat)
+#rda.res
+
+# Two explanatory matrices -- Hellinger-transform Y
+mod <- varpart(Y=y.dat, X=phys.dat, res.dat,  transfo="log")
+mod
+showvarparts(2)
+plot(mod)
+mtext("Variation partitioning")
+text(1.6, 0.6, "env") 
+text(-0.6, 0.6, "tau") 
+```
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=4}
+
+# Test fraction using RDA:
+phys.anova <- anova(rda.phys, step=200, perm.max=200)
+phys.anova
+
+res.anova <- anova(rda.res, step=200, perm.max=200)
+res.anova
+
+bio.anova <- anova(rda.bio, step=200, perm.max=200)
+bio.anova
+```
+
+
+### ii.  Constrained Ordination
+Another way we can test hypotheses with continuous data is to use **constrained ordination**, which is sometimes referred to as canonical ordination.
+Constrained ordination explores the relationships between two matrices: an **explanatory matrix** and a **response matrix**. 
+Canonical correspondence analysis (CCA) and redundancy analysis (RDA) are two types of constrained ordination.
+These techniques are based on the linear model framework and thus can be used to formally test hypotheses.
+Constrained ordination works by first conducting multivariate multiple linear regression followed either by correspondence analysis (CA) with CCA or Principal Components Analysis (PCA) with RDA, while using the matrix of fitted values to obtain a constrained ordination.
+A permutation test can then be used to test for overall significance. 
+
+Here, we will use environmental data to conduct a CCA on the fish assemblages of the Doubs River. 
+We will start by creating an explanatory matrix that contains water chemistry data.
+We will then use the `cca()` function from the `vegan` package.
+Note, we have to specify that we want the `cca` function in the `vegan` package because there are `cca` functions in both `vegan` and `ade4`!
+We will then use permutation tests to evaluate the significance of our model. 
+Finally, we will test the influence of each environmental variable on the constrained axes.
+
+```{r, results = "hide"}
+# Get Dominant members
+
+# Define Environmental Matrix
+#bio.dat
+#phys.dat
+#res.dat
+all.dat <- cbind(bio.dat, phys.dat, res.dat)
+# Conduct CCA 
+y.cca <- vegan::cca(y.dat ~ all.dat)
+
+# Permutation Tests
+anova(y.cca, by = "axis")
+cca.fit <- envfit(y.cca, all.dat, perm = 999)
+cca.fit
+
+# Calculate Explained Variation
+cca.explainvar1 <- round(y.cca$CCA$eig[1] / 
+                         sum(c(y.cca$CCA$eig, y.cca$CA$eig)), 3) * 100
+
+cca.explainvar2 <- round(y.cca$CCA$eig[2] / 
+                         sum(c(y.cca$CCA$eig, y.cca$CA$eig)), 3) * 100
+
+# Define Plot Parameters
+par(mar = c(5, 5, 4, 4) + 0.1)
+
+# Initiate Plot
+plot(scores(y.cca, display = "wa"), xlim = c(-3.5, 2), ylim = c(-3.2, 3.2),
+     xlab = paste("CCA 1 (", cca.explainvar1, "%)", sep = ""),
+     ylab = paste("CCA 2 (", cca.explainvar2, "%)", sep = ""),
+     pch = 16, cex = 2.0, type = "n", cex.lab = 1.5,
+     cex.axis = 1.2, axes = FALSE)
+
+# Add Axes
+axis(side = 1, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+axis(side = 2, labels = T, lwd.ticks = 2, cex.axis = 1.2, las = 1)
+abline(h = 0, v = 0, lty = 3)
+box(lwd = 2)
+
+# Add Points & Labels
+points(scores(y.cca, display = "wa"),
+       pch = 19, cex = 3, bg = "gray", col = "gray")
+text(scores(y.cca, display = "wa"), 
+     labels = row.names(scores(y.cca, display = "wa")))
+
+# Add Environmental Vectors
+vectors <- scores(active.cca, display = "bp")
+row.names(vectors) <- c("Depth", "Temp", "pH","DOC", "DON", "TDS", "Salinity")
+arrows(0, 0, vectors[,1] * 2, vectors[, 2] * 2, 
+       lwd = 2, lty = 1, length = 0.2, col = "red")
+text(vectors[,1] * 2, vectors[, 2] * 2, pos = 3, 
+     labels = row.names(vectors))
+axis(side = 3, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
+     at = pretty(range(vectors[, 1])) * 2, labels = pretty(range(vectors[, 1])))
+axis(side = 4, lwd.ticks=2, cex.axis=1.2, las = 1, col = "red", lwd = 2.2,
+     at = pretty(range(vectors[, 2])) * 2, labels = pretty(range(vectors[, 2])))
+```
+
