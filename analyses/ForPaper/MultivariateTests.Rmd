@@ -97,6 +97,36 @@ text(1.6, 0.6, "env")
 text(-0.6, 0.6, "tau") 
 ```
 
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=4}
+Nfit <- lm(log(sim.data$total.abundance) ~ h.tau)
+summary(Nfit)
+
+Sfit <- lm(log(sim.data$species.richness) ~ h.tau)
+summary(Sfit)
+
+Efit <- lm(sim.data$simpson.e ~ h.tau)
+summary(Efit)
+
+Bfit <- lm(sim.data$species.turnover ~ h.tau)
+summary(Bfit)
+
+x <- sim.data$total.abundance
+
+Nfit <- lm(log(sim.data$total.abundance) ~ x)
+summary(Nfit)
+
+Sfit <- lm(log(sim.data$species.richness) ~ x)
+summary(Sfit)
+
+Efit <- lm(sim.data$simpson.e ~ x)
+summary(Efit)
+
+Bfit <- lm(sim.data$species.turnover ~ x)
+summary(Bfit)
+```
+
+
 ```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=4}
 
 # Test fraction using RDA:
