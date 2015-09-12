@@ -5,7 +5,7 @@ import numpy as np
 Schroeder's http://physics.weber.edu/schroeder/fluids/, obtained in May 2014 """
 
 
-def SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, BarrierWidth, BarrierHeight, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2): # Lattice Boltzmann PARAMETERS
+def SetLattice(u0, viscosity, width, height, lefts, bottoms, barriers): # Lattice Boltzmann PARAMETERS
 
     four9ths = 4.0/9.0    # abbreviations for lattice-Boltzmann weight factors
     one9th   = 1.0/9.0
@@ -29,14 +29,15 @@ def SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, Bar
     barrier = np.zeros((height, width), bool)  # Initialize barriers
                                                # True wherever there's a barrier
 
-    barrier[bottom1*height: (bottom1+BarrierHeight)*height, left1*width: (left1+BarrierWidth)*width] = True
-    BarrierXcoords1 = [left1*width, (left1+BarrierWidth)*width]
-    BarrierYcoords1 = [bottom1*height, (bottom1+BarrierHeight)*height]
+    BarrierHeight = 0.1
+    BarrierWidth = 0.1
 
-    barrier[bottom2*height: (bottom2+BarrierHeight)*height, left2*width: (left2+BarrierWidth)*width] = True
-    BarrierXcoords2 = [left2*width, (left2+BarrierWidth)*width]
-    BarrierYcoords2 = [bottom2*height, (bottom2+BarrierHeight)*height]
+    for i in range(barriers):
 
+        left = lefts[i]
+        bottom = bottoms[i]
+
+        barrier[bottom*height: (bottom+BarrierHeight)*height, left*width: (left+BarrierWidth)*width] = True
 
     barrierN = np.roll(barrier,  1, axis=0)       # sites just north of barriers
     barrierS = np.roll(barrier, -1, axis=0)       # sites just south of barriers
@@ -47,7 +48,7 @@ def SetLattice(u0, viscosity, width, height, left1, bottom1, left2, bottom2, Bar
     barrierSE = np.roll(barrierS,  1, axis=1)
     barrierSW = np.roll(barrierS, -1, axis=1)
 
-    return [n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW, BarrierXcoords1, BarrierYcoords1, BarrierXcoords2, BarrierYcoords2]
+    return [n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, barrierN, barrierS, barrierE, barrierW, barrierNE, barrierNW, barrierSE, barrierSW]
 
 
 
@@ -61,7 +62,7 @@ def curl(ux, uy): # function to compute curl of the macroscopic velocity field
 
 
 def stream(args):
-    nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign = args
+    nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier = args
 
     # particle barriers
 
@@ -101,7 +102,7 @@ def stream(args):
     nSW[barrierSW] = nNE[barrier]
 
 
-    return [nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, shift, sign]
+    return [nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier]
 
 
 

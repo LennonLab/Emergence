@@ -27,81 +27,110 @@ library(ggplot2)
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Loading files with plotting and diversity functions
 source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-source("~/GitHub/hydrobide/tools/Rbin/metrics.R")
 ```
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Load Data
-sim.data <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_August/29_Aug/SimData.csv")  
-h.tau <- (sim.data$height * sim.data$width)/sim.data$flow.rate
-sim.data$total.abundance[sim.data$total.abundance<=0] <- 1
-sim.data$species.richness[sim.data$species.richness<=0] <- 1
+ dat <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/SimData.csv")  
+dat$h.tau <- (dat$height * dat$width)/dat$flow.rate
+dat$total.abundance[dat$total.abundance<=0] <- 1
+dat$species.richness[dat$species.richness<=0] <- 1
 
-sim.data.fluid <- subset(sim.data, motion == "fluid")
-h.tau.fluid <- (sim.data.fluid$height * sim.data.fluid$width)/sim.data.fluid$flow.rate
-sim.data.fluid$total.abundance[sim.data.fluid$total.abundance<=0] <- 1
-sim.data.fluid$species.richness[sim.data.fluid$species.richness<=0] <- 1
+dat$e.var[dat$e.var =="NaN"] <- 1
+dat$simpson.e[dat$simpson.e =="NaN"] <- 1
 
-sim.data.random_walk <- subset(sim.data, motion == "random_walk")
-h.tau.random_walk <- (sim.data.random_walk$height * sim.data.random_walk$width)/sim.data.random_walk$flow.rate
-sim.data.random_walk$total.abundance[sim.data.random_walk$total.abundance<=0] <- 1
-sim.data.random_walk$species.richness[sim.data.random_walk$species.richness<=0] <- 1
+f.dat <- subset(dat, motion == " fluid")
+r.dat <- subset(dat, motion == " random_walk")
 ```
 
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
 
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/NandS_vs_ResTime.png',
-      width = 1500, height = 1200, res=200, bg = "white")
 
-p1 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$total.abundance, 
-                           group=sim.data$sim, colour=sim.data$sim)) +
-  scale_color_gradient(high="cyan") +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
-  labs(x= expression(tau), y="Individuals") +
-  labs(title="Total abundance") +
-  guides(colour=FALSE) + 
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = .50)
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+#install.packages("ISLR")
+require(ISLR)
 
-p2 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$species.richness, 
-                           group=sim.data$sim, colour=sim.data$sim)) +
-  scale_color_gradient(high="chartreuse") +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
-  labs(x= expression(tau), y="Number of species") +
-  labs(title="Species richness") +
-  guides(colour=FALSE) +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1.0)
+fit <- lm(log10(f.dat$total.abundance) ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.N.2.r2 <- summary(fit)$adj.r.squared
+f.N.2.pVal <- anova(fit)$'Pr(>F)'[1]
 
-multiplot(p1, p2, cols=2)
-dev.off()
+fit <- lm(log10(f.dat$total.abundance) ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.N.3.r2 <- summary(fit)$adj.r.squared
+f.N.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$total.abundance) ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.N.2.r2 <- summary(fit)$adj.r.squared
+r.N.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$total.abundance) ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.N.3.r2 <- summary(fit)$adj.r.squared
+r.N.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(f.dat$species.richness) ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.S.2.r2 <- summary(fit)$adj.r.squared
+f.S.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(f.dat$species.richness) ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.S.3.r2 <- summary(fit)$adj.r.squared
+f.S.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$species.richness) ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.S.2.r2 <- summary(fit)$adj.r.squared
+r.S.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$species.richness) ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.S.3.r2 <- summary(fit)$adj.r.squared
+r.S.3.pVal <- anova(fit)$'Pr(>F)'[1]
 ```
 
 
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/NandS_vs_ResTime_ByMotion.png',
-    width = 1500, height = 1200, res=200, bg = "white")
 
-p1 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$total.abundance, 
-                           group=sim.data$sim, colour=sim.data$motion)) +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/NandS_vs_ResTime.png',
+      width = 1500, height = 1200, res=200, bg = "white")
+
+p1 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$total.abundance, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$total.abundance, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$total.abundance, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.N.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.N.3.r2,2))),
+      name = "") +
+  
+  
   labs(x= expression(tau), y="Individuals") +
   labs(title="Total abundance") +
-  guides(colour=FALSE) + 
   scale_x_log10() +
   scale_y_log10() +
+  theme(legend.position="top") +
   coord_fixed(ratio = .50)
 
-p2 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$species.richness, 
-                           group=sim.data$sim, colour=sim.data$motion)) +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
+p2 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$species.richness, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$species.richness, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$species.richness, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.S.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.S.3.r2,2))),
+      name = "") +
+    
   labs(x= expression(tau), y="Number of species") +
   labs(title="Species richness") +
-  guides(colour=FALSE) +
+  theme(legend.position="top") +
   scale_x_log10() +
   scale_y_log10() +
   coord_fixed(ratio = 1.0)
@@ -113,145 +142,88 @@ dev.off()
 
 ## We hypothesized that the realtionship species evenness (E) to residence time would be U-shaped, and that the relationship of species turnover (B) to residence time would be L-shaped.
 
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+fit <- lm(f.dat$e.var ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.ev.2.r2 <- summary(fit)$adj.r.squared
+f.ev.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$e.var ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.ev.3.r2 <- summary(fit)$adj.r.squared
+f.ev.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$e.var ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.ev.2.r2 <- summary(fit)$adj.r.squared
+r.ev.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$e.var ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.ev.3.r2 <- summary(fit)$adj.r.squared
+r.ev.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$species.turnover ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.to.2.r2 <- summary(fit)$adj.r.squared
+f.to.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$species.turnover ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.to.3.r2 <- summary(fit)$adj.r.squared
+f.to.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$species.turnover ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.to.2.r2 <- summary(fit)$adj.r.squared
+r.to.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$species.turnover ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.to.3.r2 <- summary(fit)$adj.r.squared
+r.to.3.pVal <- anova(fit)$'Pr(>F)'[1]
+```
+
+
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/EvennessAndTurnover_vs_ResTime.png',
-      width = 1500, height = 1200, res=200, bg = "white")
+png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/EvennessAndTurnover_vs_ResTime.png', width = 1500, height = 1200, res=200, bg = "white")
 
-p1 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$e.var, 
-                           group=sim.data$sim, colour=sim.data$sim)) +
-  scale_color_gradient(high="cyan") +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
-  labs(x= expression(tau), y="evenness") +
-  labs(title="Species evenness") +
-  guides(colour=FALSE) + 
-  scale_x_log10() +
-  coord_fixed(ratio = 2.5)
-
-p2 <- ggplot(sim.data, aes(x=h.tau, y=sim.data$species.turnover, 
-                           group=sim.data$sim, colour=sim.data$sim)) +
-  scale_color_gradient(high="chartreuse") +
-  geom_smooth(mapping=NULL, data=NULL, se=F, stat="smooth") +
-  labs(x= expression(tau), y="turnover") +
-  labs(title="Species turnover") +
-  guides(colour=FALSE) +
-  scale_x_log10() +
-  coord_fixed(ratio = 2.5)
-
-multiplot(p1, p2, cols=2)
-dev.off()
-```
-
-
-## We hypothesized that aspects of diversity would be related to total abundance (N), reflecting the feasible set and the influence of residence time.
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-
-lm_eqn <- function(df){
-    m <- lm(log(y) ~ log(x), df)
-    a = format(coef(m)[1], digits = 2) 
-    b = format(coef(m)[2], digits = 2) 
-    r2 = format(summary(m)$r.squared, digits = 3)
-    bquote('S = ' ~ .(a) ~ N^{.(b)})
-    }
-
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/Diversity_vs_N.png',
-      width = 1500, height = 1200, res=200, bg = "white")
-
-df <- data.frame(x=sim.data$total.abundance, y=sim.data$species.richness)
-p1 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$species.richness)) +
-  labs(title=lm_eqn(df)) +
-  geom_point(colour="snow3") +
-  geom_smooth(method='lm',colour="lawngreen", size=2) +
-  labs(x= "Total abundance", y="Species richness") +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1.6)
-
-df <- data.frame(x=sim.data$total.abundance, y=sim.data$e.var)
-p2 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$e.var)) +
-  labs(title=lm_eqn(df)) +
-  geom_point(colour="snow3") +
-  geom_smooth(method='lm', colour="lawngreen", size=2) +
-  labs(x= "Total abundance", y="Species evenness") +
-  scale_x_log10() +
-  scale_y_log10() +
-  ylim(0.01,1) +
-  coord_fixed(ratio = 4.3)
-
-multiplot(p1, p2, cols=2)
-dev.off()
-```
-
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-
-lm_eqn <- function(df){
-    m <- lm(log(y) ~ log(x), df, na.action=na.exclude)
-    a = format(coef(m)[1], digits = 2) 
-    b = format(coef(m)[2], digits = 2) 
-    r2 = format(summary(m)$r.squared, digits = 3)
-    bquote('S = ' ~ .(a) ~ N^{.(b)} ~.(r2))
-    }
-
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/Diversity_vs_N2.png',
-      width = 1500, height = 1200, res=200, bg = "white")
-
-df <- data.frame(x=sim.data$total.abundance, y=sim.data$N.max)
-p1 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$N.max)) +
-  labs(title=lm_eqn(df)) +
-  geom_point(colour="snow3") +
-  geom_smooth(method='lm',colour="lawngreen", size=2) +
-  labs(x= "Total abundance", y="Nmax") +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1)
-
-multiplot(p1, cols=1)
-dev.off()
-```
-
-
-```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=7}
-source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
-
-png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/Diversity_vs_N_ByMotion.png',
-      width = 1500, height = 1200, res=200, bg = "white")
-
-p1 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$species.richness,
-             group=sim.data$sim, colour=sim.data$motion)) +
-  geom_point() +
-  labs(x= "Total abundance", y="Species richness") +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1.55)
-
-p2 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$e.var,
-                           group=sim.data$sim, colour=sim.data$motion)) +
-  geom_point() +
-  labs(x= "Total abundance", y="Species evenness") +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 3.8)
-
-p3 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$N.max,
-                           group=sim.data$sim, colour=sim.data$motion)) +
-  geom_point() +
-  labs(x= "Total abundance", y="Dominance") +
-  scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1)
+p1 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$e.var, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$e.var, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
   
-p4 <- ggplot(sim.data, aes(x=sim.data$total.abundance, y=sim.data$skew,
-                           group=sim.data$sim, colour=sim.data$motion)) +
-  geom_point() +
-  labs(x= "Total abundance", y="Rarity") +
+  stat_smooth(aes(x=dat$h.tau, y=dat$e.var, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.ev.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.ev.3.r2,2))),
+      name = "") +
+  
+  labs(x= expression(tau), y="Evar") +
+  labs(title="Species evenness") +
   scale_x_log10() +
-  scale_y_log10() +
-  coord_fixed(ratio = 1.4)
+  ylim(0,1) +
+  theme(legend.position="top") +
+  coord_fixed(ratio = 2.0)
 
+p2 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$species.turnover, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$species.turnover, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$species.turnover, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.to.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.to.3.r2,2))),
+      name = "") +
+    
+  labs(x= expression(tau), y="Whittaker's") +
+  labs(title="Species turnover") +
+  scale_x_log10() +
+  ylim(0,1) +
+  theme(legend.position="top") +
+  coord_fixed(ratio = 2.0)
 
-multiplot(p1, p2, p3, p4, cols=2)
+multiplot(p1, p2, cols=2)
 dev.off()
 ```
