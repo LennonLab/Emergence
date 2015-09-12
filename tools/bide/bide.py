@@ -119,7 +119,7 @@ def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
 
 
 
-def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
+def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD,
         GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, D, GList, MList, NList, PList, CList, DList):
 
     for m in range(numin):
@@ -195,7 +195,7 @@ def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
             i = GetIndParam(means)
             DList.append(i)
 
-    return [Sp, Xs, Ys, Zs, MD, GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, GList, MList, NList, PList, CList, DList]
+    return [Sp, Xs, Ys, Zs, MD, EnvD, GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, GList, MList, NList, PList, CList, DList]
 
 
 
@@ -370,7 +370,7 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
 
 
 
-def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if Sp_IDs == []:
         return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
@@ -404,7 +404,7 @@ def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthL
 
 
 
-def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if Sp_IDs == []:
         return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
@@ -587,7 +587,7 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
 
 def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
-        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
+        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
 
     if Sp_IDs == []:
         return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
@@ -761,6 +761,7 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     q2 = Qs[index2]
 
                     p2 = np.random.binomial(1, q2)
+                    print 'p2: ',p2
                     # individual not large enough to reproduce
                     if p2 == 0: continue
 

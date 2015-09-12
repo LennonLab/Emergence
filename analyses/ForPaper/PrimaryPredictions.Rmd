@@ -40,8 +40,8 @@ dat$species.richness[dat$species.richness<=0] <- 1
 dat$e.var[dat$e.var =="NaN"] <- 1
 dat$simpson.e[dat$simpson.e =="NaN"] <- 1
 
-f.dat <- subset(dat, motion == "fluid")
-r.dat <- subset(dat, motion == "random_walk")
+f.dat <- subset(dat, motion == " fluid")
+r.dat <- subset(dat, motion == " random_walk")
 ```
 
 ## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
@@ -98,11 +98,11 @@ p1 <- ggplot()+
   
   stat_smooth(aes(x=dat$h.tau, y=dat$total.abundance, group=dat$motion, colour=dat$motion),
     data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
-    formula = y ~ poly(x,2), se=FALSE) +
+    formula = y ~ poly(x,3), se=FALSE) +
   
   scale_colour_manual(values = c("navy", "darkgreen"),
-      labels = c(paste("Fluid, r^2 = ",round(f.N.2.r2,2)),
-      paste("Non-fluid, r^2 = ",round(r.N.2.r2,2))),
+      labels = c(paste("Fluid, r^2 = ",round(f.N.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.N.3.r2,2))),
       name = "") +
   
   
@@ -121,11 +121,11 @@ p2 <- ggplot()+
   
   stat_smooth(aes(x=dat$h.tau, y=dat$species.richness, group=dat$motion, colour=dat$motion),
     data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
-    formula = y ~ poly(x,2), se=FALSE) +
+    formula = y ~ poly(x,3), se=FALSE) +
   
   scale_colour_manual(values = c("navy", "darkgreen"),
-      labels = c(paste("Fluid, r^2 = ",round(f.S.2.r2,2)),
-      paste("Non-fluid, r^2 = ",round(r.S.2.r2,2))),
+      labels = c(paste("Fluid, r^2 = ",round(f.S.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.S.3.r2,2))),
       name = "") +
     
   labs(x= expression(tau), y="Number of species") +
@@ -188,11 +188,11 @@ p1 <- ggplot()+
   
   stat_smooth(aes(x=dat$h.tau, y=dat$e.var, group=dat$motion, colour=dat$motion),
     data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
-    formula = y ~ poly(x,2), se=FALSE) +
+    formula = y ~ poly(x,3), se=FALSE) +
   
   scale_colour_manual(values = c("navy", "darkgreen"),
-      labels = c(paste("Fluid, r^2 = ",round(f.ev.2.r2,2)),
-      paste("Non-fluid, r^2 = ",round(r.ev.2.r2,2))),
+      labels = c(paste("Fluid, r^2 = ",round(f.ev.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.ev.3.r2,2))),
       name = "") +
   
   labs(x= expression(tau), y="Evar") +
@@ -210,11 +210,11 @@ p2 <- ggplot()+
   
   stat_smooth(aes(x=dat$h.tau, y=dat$species.turnover, group=dat$motion, colour=dat$motion),
     data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
-    formula = y ~ poly(x,2), se=FALSE) +
+    formula = y ~ poly(x,3), se=FALSE) +
   
   scale_colour_manual(values = c("navy", "darkgreen"),
-      labels = c(paste("Fluid, r^2 = ",round(f.to.2.r2,2)),
-      paste("Non-fluid, r^2 = ",round(r.to.2.r2,2))),
+      labels = c(paste("Fluid, r^2 = ",round(f.to.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.to.3.r2,2))),
       name = "") +
     
   labs(x= expression(tau), y="Whittaker's") +
