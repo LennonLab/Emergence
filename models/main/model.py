@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 #import mpl_toolkits.mplot3d
 #from mpl_toolkits.mplot3d import Axes3D
 
-from random import choice
+from random import choice, seed
 from scipy import stats
 import numpy as np
 from numpy import sin, pi
@@ -54,7 +54,7 @@ def get_rand_params():
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
 
-    seed = choice([1000]) # size of starting community
+    seedCom = choice([1000]) # size of starting community
     m = choice([1]) # m = individuals immigrating per time step
     r = choice([50, 100, 150, 200, 250, 300, 350, 400, 450, 500])
     # r = resource particles flowing in per time step
@@ -66,15 +66,10 @@ def get_rand_params():
     envgrads = []
     num_envgrads = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     for i in range(num_envgrads):
-        g = choice(['horizontal', 'vertical', 'aggregated'])
-        if g == 'aggregated':
-            x = np.random.uniform(0, width)
-            y = np.random.uniform(0, height)
-            envgrads.append([g, x, y])
-        else:
-            x = choice([0,1])
-            envgrads.append([g, x, 1-x])
 
+        x = np.random.uniform(0, width)
+        y = np.random.uniform(0, height)
+        envgrads.append([x, y])
 
     rmax = choice([1000, 5000, 10000, 15000]) # maximum resource particle size
 
@@ -83,9 +78,10 @@ def get_rand_params():
     maintmax = choice([0.0001, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002])
 
     reproduction = 'fission'
+    motion = 'random_walk'
 
     return [width, height, length, alpha, motion, D, reproduction, speciation, \
-            seed, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, \
+            seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, \
             flux, pulse, phase, disturb, envgrads, barriers]
 
 
@@ -107,8 +103,8 @@ def testlengths(TypeOf, function, Lists):
 
 def nextFrame(arg):	# arg is the frame number
 
-    plot_system = 'yes'
-    logdata = 'no'
+    plot_system = 'no'
+    logdata = 'yes'
     global width, height, length, Rates, u0, rho, ux, uy, n0, nN
     global nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD
     global P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier
@@ -122,7 +118,7 @@ def nextFrame(arg):	# arg is the frame number
 
     global bN, bS, bE, bW, bNE, bNW, bSE, bSW
     global ct1, Mu, Maint, motion, D, reproduction, speciation
-    global seed, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs
+    global seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs
     global RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit
     global prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs
     global RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs
@@ -161,8 +157,8 @@ def nextFrame(arg):	# arg is the frame number
             GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, \
             Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, \
             C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion,\
-            seed, SpeciesIDs, IndX, IndY, IndZ, width, \
-            height, length, MaintDict, EnvD, GrowthDict, DispDict, SpColorDict, \
+            seedCom, SpeciesIDs, IndX, IndY, IndZ, width, \
+            height, length, MaintDict, EnvD, envgrads, GrowthDict, DispDict, SpColorDict, \
             IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, \
             alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
@@ -173,7 +169,7 @@ def nextFrame(arg):	# arg is the frame number
             Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, \
             C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, \
             m, SpeciesIDs, IndX, IndY, IndZ, width, height, \
-            length, MaintDict, EnvD, GrowthDict, DispDict, SpColorDict, IndIDs, \
+            length, MaintDict, EnvD, envgrads, GrowthDict, DispDict, SpColorDict, IndIDs, \
             IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, alpha, \
             D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
         ct += 1
@@ -276,8 +272,17 @@ def nextFrame(arg):	# arg is the frame number
         GrowthList, MaintList, N_RList, P_RList, C_RList,\
         DispList = bide.reproduce(reproduction, speciation, SpeciesIDs, Qs,\
         IndIDs, IndID, IndTimeIn, IndX, IndY, IndZ, width, height, length,\
-        GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, D,\
+        GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, D,\
         nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+
+        SpeciesIDs, Qs, IndIDs, ID, TimeIn, X, Y, Z, GrowthDict, DispDict,\
+        GrowthList, MaintList, N_RList, P_RList, C_RList,\
+        DispList = bide.search(reproduction, speciation, SpeciesIDs, Qs,\
+        IndIDs, IndID, IndTimeIn, IndX, IndY, IndZ, width, height, length,\
+        GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, D,\
+        nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+
+
 
         TNQ2 = 0
         TPQ2 = 0
@@ -517,7 +522,7 @@ def nextFrame(arg):	# arg is the frame number
                 outlist += [rmax, gmax, maintmax, dmax, barriers]
 
                 # logseries.a, starting.seed, flow.rate, width, height,viscosity
-                outlist += [alpha, seed, u0, width, height, viscosity]
+                outlist += [alpha, seedCom, u0, width, height, viscosity]
 
                 # total.abundance, immigration.rate, resource.tau, particle.tau,
                 # individual.ta, resource.concentration, shannons.res.diversity
@@ -559,12 +564,14 @@ def nextFrame(arg):	# arg is the frame number
             ct1 += 1
             ct = 0
 
+            seed()
+
             if u0 == min(Rates):
                 SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, \
                 RColorDict, DispDict = {}, {}, {}, {}, {}, {}, {}, {}, {}
 
                 width, height, length, alpha, motion, D, reproduction, \
-                speciation, seed, m, r, nNi, nP, nC, rmax, gmax, maintmax, \
+                speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, \
                 dmax, amp, freq, flux, pulse, phase, disturb, envgrads, \
                 barriers = get_rand_params()
 
@@ -617,8 +624,8 @@ def nextFrame(arg):	# arg is the frame number
             SpeciesIDs, IndX, IndY, IndZ, MaintDict, EnvD, GrowthDict, DispDict,\
             SpColorDict, IndIDs, ID, TimeIn, Qs, N_RD, P_RD, C_RD, GrowthList,\
             MaintList, N_RList, P_RList, C_RList,\
-            DispList = bide.immigration(dmax, gmax, maintmax, motion, seed,\
-            SpeciesIDs, IndX, IndY, IndZ, width, height, length, MaintDict, EnvD, \
+            DispList = bide.immigration(dmax, gmax, maintmax, motion, seedCom,\
+            SpeciesIDs, IndX, IndY, IndZ, width, height, length, MaintDict, EnvD, envgrads, \
             GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs,\
             N_RD, P_RD, C_RD, nNi, nP, nC, u0, alpha, D, GrowthList, \
             MaintList, N_RList, P_RList, C_RList, DispList)
@@ -650,7 +657,7 @@ OUT6.close()
 
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-width, height, length, alpha, motion, D, reproduction, speciation, seed, m, r,\
+width, height, length, alpha, motion, D, reproduction, speciation, seedCom, m, r,\
 nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb,\
 envgrads, barriers = get_rand_params()
 
@@ -662,8 +669,8 @@ for b in range(barriers):
     bottoms.append(np.random.uniform(0.05, 0.95))
 
 #######################  Ind COMMUNITY PARAMETERS  #########################
-RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = 0,0,0,0,0,0,0,0,0,0,0,0
-ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = 0,0,0,0,0,0,0,0,0
+RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint = [0]*12
+ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = [0]*9
 
 RAD, splist, IndTimeIn, SpeciesIDs, IndX, IndY, IndZ, IndIDs, Qs, \
 IndExitAge, TX, TY, TZ, TExitAge, TIDs, TTimeIn, RX, RY, RZ, RIDs, RTypes,\

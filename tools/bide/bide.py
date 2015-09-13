@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 from random import randint, choice
 import numpy as np
@@ -119,7 +120,7 @@ def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
 
 
 
-def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD,
+def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD, envGs,
         GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, D, GList, MList, NList, PList, CList, DList):
 
     for m in range(numin):
@@ -161,6 +162,9 @@ def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
 
                 # species active dispersal rate
                 DispD[prop] = np.random.uniform(0.01, d_max)
+
+                # species environmental gradient optima
+                EnvD[prop] = np.random.uniform(0.0, 1.0, len(envGs))
 
                 # species Nitrogen use efficiency
                 N_RD[prop] = np.random.uniform(0.01, 1.0, nN)
@@ -235,15 +239,19 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
             index = len(uy) - 1
 
         k = 0
-        if TypeOf == 'individual': k = np.random.binomial(1, DispD[Type[i]])
+        if TypeOf == 'individual':
+            k = np.random.binomial(1, DispD[Type[i]])
 
         if k == 0:
             Xs[i] += ux[index]
             Ys[i] += uy[index]
 
         y = Ys[i]
-        if 0 > y: Ys[i] = 0
-        elif y > h: Ys[i] = h
+
+        if 0 > y:
+            Ys[i] = 0
+        elif y > h:
+            Ys[i] = h
 
         t_In[i] += 1
         if Xs[i] >= w - limit:
@@ -587,7 +595,7 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
 
 def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
-        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
+        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
 
     if Sp_IDs == []:
         return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
@@ -595,100 +603,122 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
     if repro == 'fission':
         for i, Q in enumerate(Qs):
 
-            pq = float(np.mean(Q))
+            pq = float(np.min(Q))
             p = np.random.binomial(1, pq)
 
             if p == 1: # individual is large enough to reproduce
 
-                QN = Q[0]
-                QP = Q[1]
-                QC = Q[2]
-
-                Qs[i] = [QN/2.0, QP/2.0, QC/2.0]
-                Qs.append([QN/2.0, QP/2.0, QC/2.0])
-
-                ID += 1
-                IDs.append(ID)
-                t_In.append(t_In[i])
                 spID = Sp_IDs[i]
-
                 X = Xs[i]
-                Y = Ys[i]
+            	Y = Ys[i]
                 Z = Zs[i]
 
-                if spec == 'yes':
-                    p = np.random.binomial(1, 0.05)
-                    if p == 1:
+                pg = []
+                sp_opts = EnvD[spID]
 
-                        # speciate
-                        t = time.clock()
-                        spID = spID +' '+ str(t)
+                for g, opt in enumerate(sp_opts):
 
-                        # new speciescolor
-                        colorD = get_color(spID, colorD)
+                    x, y = envGs[g]
+                    pg.append(1 - (abs(X - x)/max([X,x])))
+                    pg.append(1 - (abs(Y - y)/max([Y,y])))
 
-                        # new speciesgrowth rate
-                        p = np.random.binomial(0.25, 1)
-                        GD[spID] = np.random.uniform(0.5, 1.0)
 
-                        # new speciesmaintenance
-                        p = np.random.binomial(0.25, 1)
-                        MD[spID] = np.random.uniform(0.01, 0.1)
+                if np.mean(pg) > 1:
+                    print pg
+                    sys.exit()
 
-                        # new speciesactive dispersal rate
-                        p = np.random.binomial(0.25, 1)
-                        DispD[spID] = np.random.uniform(0.0, 0.1)
+                p = np.mean(pg)
+                p = np.random.binomial(1, p)
+                if p == 1: # the environment is suitable for reproduction
 
-                        # new speciesresource use efficiencies
-                        # Nitrogen
-                        N_RD[spID] = np.random.uniform(0.01, 1.0, nN)
+                    QN = Q[0]
+                    QP = Q[1]
+                    QC = Q[2]
 
-                        # Phosphorus
-                        P_RD[spID] = np.random.uniform(0.01, 1.0, nP)
+                    Qs[i] = [QN/2.0, QP/2.0, QC/2.0]
+                    Qs.append([QN/2.0, QP/2.0, QC/2.0])
 
-                        # Carbon
-                        C_RD[spID] = np.random.uniform(0.01, 1.0, nC)
+                    ID += 1
+                    IDs.append(ID)
+                    t_In.append(t_In[i])
 
-                means = GD[spID]
-                i = GetIndParam(means)
-                GList.append(i)
 
-                means = MD[spID]
-                i = GetIndParam(means)
-                MList.append(i)
+                    if spec == 'yes':
+                        p = np.random.binomial(1, 0.05)
+                        if p == 1:
 
-                means = N_RD[spID]
-                i = GetIndParam(means)
-                NList.append(i)
+                            # speciate
+                            t = time.clock()
+                            spID = spID +' '+ str(t)
 
-                means = P_RD[spID]
-                i = GetIndParam(means)
-                PList.append(i)
+                            # new speciescolor
+                            colorD = get_color(spID, colorD)
 
-                means = C_RD[spID]
-                i = GetIndParam(means)
-                CList.append(i)
+                            # new speciesgrowth rate
+                            p = np.random.binomial(0.25, 1)
+                            GD[spID] = np.random.uniform(0.5, 1.0)
 
-                means = DispD[spID]
-                i = GetIndParam(means)
-                DList.append(i)
+                            # new speciesmaintenance
+                            p = np.random.binomial(0.25, 1)
+                            MD[spID] = np.random.uniform(0.01, 0.1)
 
-                Sp_IDs.append(spID)
+                            # species environmental gradient optima
+                            EnvD[spID] = np.random.uniform(0.0, 1.0, len(envGs))
 
-                newX = float(np.random.uniform(X-0.5, X, 1))
-                if limit > newX: newX = 0
-                if newX > w - limit: newX = w - limit
-                Xs.append(newX)
+                            # new speciesactive dispersal rate
+                            p = np.random.binomial(0.25, 1)
+                            DispD[spID] = np.random.uniform(0.0, 0.1)
 
-                newY = float(np.random.uniform(Y-0.5, Y+0.5, 1))
-                if limit > newY: newY = 0
-                elif newY > h: newY = h - limit
-                Ys.append(newY)
+                            # new speciesresource use efficiencies
+                            # Nitrogen
+                            N_RD[spID] = np.random.uniform(0.01, 1.0, nN)
 
-                newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
-                if limit > newZ: newZ = 0
-                elif newZ > l: newZ = l - limit
-                Zs.append(newZ)
+                            # Phosphorus
+                            P_RD[spID] = np.random.uniform(0.01, 1.0, nP)
+
+                            # Carbon
+                            C_RD[spID] = np.random.uniform(0.01, 1.0, nC)
+
+                    means = GD[spID]
+                    i = GetIndParam(means)
+                    GList.append(i)
+
+                    means = MD[spID]
+                    i = GetIndParam(means)
+                    MList.append(i)
+
+                    means = N_RD[spID]
+                    i = GetIndParam(means)
+                    NList.append(i)
+
+                    means = P_RD[spID]
+                    i = GetIndParam(means)
+                    PList.append(i)
+
+                    means = C_RD[spID]
+                    i = GetIndParam(means)
+                    CList.append(i)
+
+                    means = DispD[spID]
+                    i = GetIndParam(means)
+                    DList.append(i)
+
+                    Sp_IDs.append(spID)
+
+                    newX = float(np.random.uniform(X-0.5, X, 1))
+                    if limit > newX: newX = 0
+                    if newX > w - limit: newX = w - limit
+                    Xs.append(newX)
+
+                    newY = float(np.random.uniform(Y-0.5, Y+0.5, 1))
+                    if limit > newY: newY = 0
+                    elif newY > h: newY = h - limit
+                    Ys.append(newY)
+
+                    newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
+                    if limit > newZ: newZ = 0
+                    elif newZ > l: newZ = l - limit
+                    Zs.append(newZ)
 
     elif repro == 'sexual':
 
@@ -788,7 +818,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     IDs.append(ID)
                     t_In.append(0)
                     Sp_IDs.append(sp)
-
 
     return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
 
@@ -892,3 +921,47 @@ def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys, Zs, w, h, l,
         return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
     elif TypeOf == 'resource':
         return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
+
+
+def search(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
+        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
+
+    if Sp_IDs == []:
+        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
+
+    for i, spID in enumerate(Sp_IDs):
+
+        X = Xs[i]
+        Y = Ys[i]
+        Z = Zs[i]
+
+        ex = []
+        ey = []
+        sp_opts = EnvD[spID]
+
+        for g, opt in enumerate(sp_opts):
+            x, y = envGs[g]
+            dist = DispD[spID]
+
+            if x > X:
+                X += dist
+
+            elif x < X:
+                X -= dist
+
+            if y > Y:
+                Y += dist
+
+            elif y < Y:
+                Y -= dist
+
+            if X > w: X = w
+            elif X < 0: X = 0
+            if Y > h: Y = h
+            elif Y < 0: Y = 0
+
+            Xs[i] = X
+            Ys[i] = Y
+
+
+    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
