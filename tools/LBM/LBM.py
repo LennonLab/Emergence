@@ -29,8 +29,8 @@ def SetLattice(u0, viscosity, width, height, lefts, bottoms, barriers): # Lattic
     barrier = np.zeros((height, width), bool)  # Initialize barriers
                                                # True wherever there's a barrier
 
-    BarrierHeight = 0.1
-    BarrierWidth = 0.1
+    BarrierHeight = 0.05
+    BarrierWidth = 0.05
 
     for i in range(barriers):
 

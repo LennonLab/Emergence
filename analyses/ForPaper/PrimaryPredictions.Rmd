@@ -20,6 +20,11 @@ setwd("~/GitHub/hydrobide")
 require("vegan") 
 #install.packages("moments")
 require("moments")
+#install.packages("IDPmisc", repos = "http://cran.cnr.Berkeley.edu")
+require(IDPmisc)
+#install.packages("ISLR")
+require(ISLR)
+
 library(ggplot2)
 ```
 
@@ -32,13 +37,9 @@ source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
 ## Load Data
- dat <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_September/7_Sept/SimData.csv")  
+ dat <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_September/12_Sept/SimData.csv")
+dat <- NaRV.omit(dat)
 dat$h.tau <- (dat$height * dat$width)/dat$flow.rate
-dat$total.abundance[dat$total.abundance<=0] <- 1
-dat$species.richness[dat$species.richness<=0] <- 1
-
-dat$e.var[dat$e.var =="NaN"] <- 1
-dat$simpson.e[dat$simpson.e =="NaN"] <- 1
 
 f.dat <- subset(dat, motion == " fluid")
 r.dat <- subset(dat, motion == " random_walk")
@@ -48,9 +49,6 @@ r.dat <- subset(dat, motion == " random_walk")
 
 
 ```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
-#install.packages("ISLR")
-require(ISLR)
-
 fit <- lm(log10(f.dat$total.abundance) ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
 f.N.2.r2 <- summary(fit)$adj.r.squared
 f.N.2.pVal <- anova(fit)$'Pr(>F)'[1]

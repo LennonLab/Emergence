@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 #import mpl_toolkits.mplot3d
 #from mpl_toolkits.mplot3d import Axes3D
 
-from random import choice, seed
+from random import choice
 from scipy import stats
 import numpy as np
 from numpy import sin, pi
@@ -14,7 +14,7 @@ import psutil
 #import itertools
 
 mydir = os.path.expanduser("~/")
-sys.path.append(mydir + "tools/metrics")
+sys.path.append(mydir + "GitHub/hydrobide/tools/metrics")
 import metrics
 sys.path.append(mydir + "GitHub/hydrobide/tools/LBM")
 import LBM
@@ -26,17 +26,13 @@ import bide
 def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.pyx """
 
-    #motion = choice(['fluid', 'random_walk', 'conveyor', 'search'])
     motion = choice(['fluid', 'random_walk'])
     D = choice([2, 2]) # number of spatial dimensions
 
-    width = choice([10, 12, 14, 16, 18, 20])
+    width = choice([10, 15, 20])
     height = choice([5, 6, 7, 8, 9, 10])
     length = choice([5, 6, 7, 8, 9, 10])
-
-    barriers = choice([2, 4, 6, 8, 16, 32])
-    barriers = 4
-    #if motion == 'conveyor': barriers = 0
+    barriers = choice([1, 2, 3, 4])
 
     pulse = choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     flux = choice(['yes'])
@@ -48,37 +44,49 @@ def get_rand_params():
     phase = choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     # 0 = in phase; 16 = entirely out of phase
 
-    disturb = choice([0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1])
+    disturb = choice([0.0001])#, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1])
 
     alpha = np.random.uniform(0.99, 0.999)
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
 
-    seedCom = choice([1000]) # size of starting community
-    m = choice([1]) # m = individuals immigrating per time step
-    r = choice([50, 100, 150, 200, 250, 300, 350, 400, 450, 500])
+    seedCom = choice([100]) # size of starting community
+    m = choice([0.0, 0.0001, 0.0005, 0.001, 0.005]) # m = probability of immigration
+    r = choice([200, 400, 600, 800, 1000])
     # r = resource particles flowing in per time step
 
-    nNi = choice([1, 3, 6, 12, 14, 16, 18, 20]) # max number of Nitrogen types
-    nP = choice([1, 3, 6, 12, 14, 16, 18, 20]) # max number of Phosphorus types
-    nC = choice([1, 3, 6, 12, 14, 16, 18, 20]) # max number of Carbon types
+    nNi = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) # max number of Nitrogen types
+    nP = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) # max number of Phosphorus types
+    nC = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) # max number of Carbon types
 
     envgrads = []
     num_envgrads = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    #num_envgrads = 1
     for i in range(num_envgrads):
 
         x = np.random.uniform(0, width)
         y = np.random.uniform(0, height)
         envgrads.append([x, y])
 
-    rmax = choice([1000, 5000, 10000, 15000]) # maximum resource particle size
+    rmax = choice([10000, 20000, 40000, 80000, 100000]) # maximum resource particle size
 
-    gmax = choice([0.08, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8])
-    dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.4, 0.6, 0.8, 0.9])
+    gmax = choice([0.1, 0.2, 0.4, 0.6, 0.8])
+    dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
     maintmax = choice([0.0001, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002])
 
+    #m = 0
+    speciation = 'yes'
+    #maintmax = 0.0000001
     reproduction = 'fission'
-    motion = 'random_walk'
+    #width = 20
+    #height = 5
+    #num_envgrads = 10
+    #barriers = 1
+    #r = 1000
+    #gmax = 0.1
+    #rmax = 1
+    dmax = 0.0000000001
+    motion = 'fluid'
 
     return [width, height, length, alpha, motion, D, reproduction, speciation, \
             seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, \
@@ -100,12 +108,13 @@ def testlengths(TypeOf, function, Lists):
 
 
 ######### Function called for each successive animation frame ##################
+nz = 0
 
 def nextFrame(arg):	# arg is the frame number
 
     plot_system = 'no'
     logdata = 'yes'
-    global width, height, length, Rates, u0, rho, ux, uy, n0, nN
+    global width, height, length, Rates, u0, rho, ux, uy, n0, nN, nz
     global nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD
     global P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier
     global gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge
@@ -118,7 +127,7 @@ def nextFrame(arg):	# arg is the frame number
 
     global bN, bS, bE, bW, bNE, bNW, bSE, bSW
     global ct1, Mu, Maint, motion, D, reproduction, speciation
-    global seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs
+    global seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos
     global RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit
     global prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs
     global RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs
@@ -153,22 +162,34 @@ def nextFrame(arg):	# arg is the frame number
 
         # immigration
         if ct == 0:
+            if u0 > 1.0:
+                print 'from immigration in model.py, line 166:', u0
+                sys.exit()
+
+            im = 1
+            if u0 > 1.0:
+                print 'from immigration in model.py, line 171:', u0
+                sys.exit()
+
             SpeciesIDs, IndX, IndY, IndZ, MaintDict, EnvD, \
             GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, \
             Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, \
             C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion,\
-            seedCom, SpeciesIDs, IndX, IndY, IndZ, width, \
+            seedCom, im, SpeciesIDs, IndX, IndY, IndZ, width, \
             height, length, MaintDict, EnvD, envgrads, GrowthDict, DispDict, SpColorDict, \
             IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, \
             alpha, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
         else:
+            if u0 > 1.0:
+                print 'from immigration in model.py, line 184:', u0
+                sys.exit()
 
             SpeciesIDs, IndX, IndY, IndZ, MaintDict, EnvD, \
             GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, \
             Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, \
             C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, \
-            m, SpeciesIDs, IndX, IndY, IndZ, width, height, \
+            seedCom, m, SpeciesIDs, IndX, IndY, IndZ, width, height, \
             length, MaintDict, EnvD, envgrads, GrowthDict, DispDict, SpColorDict, IndIDs, \
             IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, alpha, \
             D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -283,7 +304,6 @@ def nextFrame(arg):	# arg is the frame number
         nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
 
-
         TNQ2 = 0
         TPQ2 = 0
         TCQ2 = 0
@@ -307,6 +327,7 @@ def nextFrame(arg):	# arg is the frame number
 
         # disturbance
         d = np.random.binomial(1, disturb)
+        d = 0
         if d == 1:
             SpeciesIDs, X, Y, Z, IndExitAge, IndIDs, IndTimeIn, Qs,\
             GrowthList, MaintList, N_RList, P_RList, C_RList,\
@@ -315,8 +336,11 @@ def nextFrame(arg):	# arg is the frame number
             D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
 
-    if D == 3: ax = fig.add_subplot(111, projection='3d')
-    else: ax = fig.add_subplot(111)
+    if D == 3:
+        ax = fig.add_subplot(111, projection='3d')
+    else:
+        ax = fig.add_subplot(111)
+
     plt.tick_params(axis='both', which='both', bottom='off', top='off',
                 left='off', right='off', labelbottom='off', labelleft='off')
 
@@ -332,6 +356,7 @@ def nextFrame(arg):	# arg is the frame number
     txt.set_text(' '.join(Title))
     ax.set_ylim(0, height)
     ax.set_xlim(0, width)
+
     if D == 3:
         ax.set_zlim(0,length)
 
@@ -372,14 +397,21 @@ def nextFrame(arg):	# arg is the frame number
 
     plt.draw()
 
-    if u0 >= 0.75: LowerLimit = 80
-    elif u0 >= 0.5: LowerLimit = 10
-    elif u0 >= 0.1: LowerLimit = 4
-    elif u0 > 0.025: LowerLimit = 2
-    else: LowerLimit = 2
+    #if len(Ns) >=1:
+    #    LowerLimit = 1
+
+    #if N == 0:
+    #    nz += 1
+
+    #if nz < 10:
+    LowerLimit = 1 + (u0 * 100)
+    #elif nz >= 10:
+    #    nz = 0
+    #    LowerLimit = 0
 
     # Record model values and reset, or not
-    if len(TExitAge) >= LowerLimit or ct > 100:
+    if len(TExitAge) >= LowerLimit or ct >= 100:
+
         ct = 95
 
         PRODIs.append(PRODI)
@@ -411,6 +443,7 @@ def nextFrame(arg):	# arg is the frame number
         Rs.append(R)
 
         if N == 0:
+
             Ns.append(0)
             Ss.append(0)
 
@@ -434,8 +467,13 @@ def nextFrame(arg):	# arg is the frame number
 
             if len(Ns) > 1:
                 wt = metrics.WhittakersTurnover(splist, splist2)
+                jc = metrics.jaccard(splist, splist2)
+                so = metrics.sorensen(splist, splist2)
+
                 splist2 = list(splist)
                 WTs.append(wt)
+                Jcs.append(jc)
+                Sos.append(so)
 
             Nm, BP = [max(RAD), Nm/N]
             NMAXs.append(Nm)
@@ -491,6 +529,9 @@ def nextFrame(arg):	# arg is the frame number
             NMAX = np.mean(NMAXs)
             SK = np.mean(SKs)
             WT = np.mean(WTs)
+            Jc = np.mean(Jcs)
+            So = np.mean(Sos)
+
 
             print sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', \
             int(PRODI), 'WT:', round(WT,3), ':  flow:', u0, 'motion:',motion, \
@@ -518,7 +559,7 @@ def nextFrame(arg):	# arg is the frame number
                                                                     nNi, nP, nC]
 
                 # max.res.val, max.growth.rate, max.met.maint,
-                # max.active.dispersal, barrier.width, barrier.height
+                # max.active.dispersal, barriers
                 outlist += [rmax, gmax, maintmax, dmax, barriers]
 
                 # logseries.a, starting.seed, flow.rate, width, height,viscosity
@@ -535,7 +576,7 @@ def nextFrame(arg):	# arg is the frame number
 
                 # speciation, species.turnover, avg.per.capita.growth,
                 # avg.per.capita.maint'
-                outlist += [speciation, WT, fG, fM]
+                outlist += [speciation, WT, Jc, So, fG, fM]
 
                 # avg.per.capita.N.efficiency, avg.per.capita.P.efficiency
                 # avg.per.capita.C.efficiency, avg.per.capita.active.dispersal
@@ -560,11 +601,8 @@ def nextFrame(arg):	# arg is the frame number
                 OUT5.close()
                 OUT6.close()
 
-        if len(Ns) >= 2:
             ct1 += 1
             ct = 0
-
-            seed()
 
             if u0 == min(Rates):
                 SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, \
@@ -581,8 +619,8 @@ def nextFrame(arg):	# arg is the frame number
                 print '\n'
 
             for i in range(barriers):
-                lefts.append(np.random.uniform(0.05, .95))
-                bottoms.append(np.random.uniform(0.05, 0.95))
+                lefts.append(np.random.uniform(0.2, .8))
+                bottoms.append(np.random.uniform(0.2, 0.8))
 
             Rates = np.roll(Rates, -1, axis=0)
             u0 = Rates[0]  # initial in-flow speed
@@ -591,7 +629,8 @@ def nextFrame(arg):	# arg is the frame number
             INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs,\
                     SKs, MUs, MAINTs = [list([]) for _ in xrange(22)]
 
-            RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint,WT = [0]*13
+            RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, WT,\
+                    Jc, So = [0]*15
 
             SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, \
                     RColorList, DispList = [list([]) for _ in xrange(8)]
@@ -599,17 +638,17 @@ def nextFrame(arg):	# arg is the frame number
             IndTimeIn, SpeciesIDs, IndX, IndY, IndZ, IndIDs,\
                     Qs, IndExitAge, splist2 = [list([]) for _ in xrange(9)]
 
-            TX, TY, TZ, TExitAge,\
-            TIDs, TTimeIn, WTs = [list([]) for _ in xrange(7)]
+            TX, TY, TZ, TExitAge, TIDs, TTimeIn, WTs, Jcs, \
+                Sos = [list([]) for _ in xrange(9)]
 
             RX, RY, RZ, RIDs, RTypes, \
             RExitAge, RTimeIn, RVals = [list([]) for _ in xrange(8)]
 
             if motion == 'fluid' or motion == 'conveyor':
                 n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy,\
-                bN, bS, bE, bW, bNE, bNW, bSE, bSW, BarrierX1, BarrierY1,\
-                BarrierX2, BarrierY2 = LBM.SetLattice(u0, viscosity, width, \
+                bN, bS, bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, width, \
                 height, lefts, bottoms, barriers)
+
 
             u1 = 0.0
             if flux == 'yes':
@@ -621,10 +660,15 @@ def nextFrame(arg):	# arg is the frame number
             nC, width, height, length, u0, D)
 
             # immigration
+            im = 1
+            if u0 > 1.0:
+                print 'from immigration in model.py, line 662:', u0
+                sys.exit()
+
             SpeciesIDs, IndX, IndY, IndZ, MaintDict, EnvD, GrowthDict, DispDict,\
             SpColorDict, IndIDs, ID, TimeIn, Qs, N_RD, P_RD, C_RD, GrowthList,\
             MaintList, N_RList, P_RList, C_RList,\
-            DispList = bide.immigration(dmax, gmax, maintmax, motion, seedCom,\
+            DispList = bide.immigration(dmax, gmax, maintmax, motion, seedCom, im,\
             SpeciesIDs, IndX, IndY, IndZ, width, height, length, MaintDict, EnvD, envgrads, \
             GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs,\
             N_RD, P_RD, C_RD, nNi, nP, nC, u0, alpha, D, GrowthList, \
@@ -646,7 +690,7 @@ OUT6 = open(GenPath + '2015_September/12_Sept/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties
 # physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barrier.width, barrier.height, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, species.turnover, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
+print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
 
 OUT1.close()
 OUT2.close()
@@ -654,7 +698,6 @@ OUT3.close()
 OUT4.close()
 OUT5.close()
 OUT6.close()
-
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
 width, height, length, alpha, motion, D, reproduction, speciation, seedCom, m, r,\
@@ -676,7 +719,7 @@ RAD, splist, IndTimeIn, SpeciesIDs, IndX, IndY, IndZ, IndIDs, Qs, \
 IndExitAge, TX, TY, TZ, TExitAge, TIDs, TTimeIn, RX, RY, RZ, RIDs, RTypes,\
 RExitAge, RTimeIn, RVals, Gs, Ms, NRs, PRs, CRs, Ds, Ts, Rs, PRODIs, PRODNs,\
 PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs,\
-BPs, SDs, NMAXs, SKs, MUs, MAINTs, WTs, splist2 = [list([]) for _ in xrange(54)]
+BPs, SDs, NMAXs, SKs, MUs, MAINTs, WTs, Jcs, Sos, splist2 = [list([]) for _ in xrange(56)]
 
 
 SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, RColorDict, \
@@ -686,7 +729,7 @@ SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, \
         DispList = [list([]) for _ in xrange(8)]
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-LowerLimit, sim = 30, 2
+LowerLimit, sim = 30, 1
 left1, bottom1, left2, bottom2 = 0.2, 0.2, 0.6, 0.6
 
 BarrierX1, BarrierY1, BarrierX2, BarrierY2 = [],[],[],[]
@@ -694,6 +737,9 @@ viscosity = 10 # unitless but required by an LBM model
 
 Rates = np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1, 0.09, 0.08, \
             0.07, 0.06, 0.05, 0.04, 0.02, 0.01, 0.0075, 0.005])  # inflow speeds
+
+Rates = np.array([1.0, 0.8, 0.6, 0.4, 0.2, 0.1, 0.08, 0.06, 0.04, 0.02,\
+                    0.01, 0.008, 0.006, 0.004, 0.002, 0.001])
 u0 = Rates[0]  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
