@@ -106,28 +106,33 @@ def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
             ID += 1
 
             if motion == 'random_walk':
-                Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
-                Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
+                Ys.append(float(np.random.uniform(0.1*h, 0.99*h)))
+                Xs.append(float(np.random.uniform(0.1*w, 0.99*w)))
+                Zs.append(float(np.random.uniform(0.1*l, 0.99*l)))
 
             else:
-                Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
-                Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
+                Ys.append(float(np.random.uniform(0.1*h, 0.99*h)))
+                Xs.append(float(np.random.uniform(0.1*w, 0.99*w)))
+                Zs.append(float(np.random.uniform(0.1*l, 0.99*l)))
 
 
     return [Type, Vals, Xs, Ys, Zs, IDs, ID, t_In]
 
 
 
-def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD, envGs,
+def immigration(d_max, g_max, m_max, motion, seed, ip, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD, envGs,
         GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, D, GList, MList, NList, PList, CList, DList):
 
-    for m in range(numin):
-        x = np.random.binomial(1, u0/2)
+    if u0 > 1.0:
+        u0 = 1.0
+        #print 'from immigration in bide.py, line 127:', u0
+        #sys.exit()
+
+    for m in range(seed):
+        x = np.random.binomial(1, u0*ip)
 
         if x == 1:
-            prop = str(float(np.random.logseries(0.999, 1)))
+            prop = str(float(np.random.logseries(alpha, 1)))
 
             Sp.append(prop)
 
@@ -144,9 +149,9 @@ def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
             IDs.append(ID)
             t_In.append(0)
             ID += 1
-            Qn = float(np.random.uniform(0.05, 0.5))
-            Qp = float(np.random.uniform(0.05, 0.5))
-            Qc = float(np.random.uniform(0.05, 0.5))
+            Qn = float(np.random.uniform(0.1, 1))
+            Qp = float(np.random.uniform(0.1, 1))
+            Qc = float(np.random.uniform(0.1, 1))
 
             Qs.append([Qn, Qp, Qc])
 
@@ -161,10 +166,15 @@ def immigration(d_max, g_max, m_max, motion, numin, Sp, Xs, Ys, Zs, w, h, l, MD,
                 MD[prop] = np.random.uniform(0.001, m_max)
 
                 # species active dispersal rate
-                DispD[prop] = np.random.uniform(0.01, d_max)
+                DispD[prop] = np.random.uniform(0.0, d_max)
 
                 # species environmental gradient optima
-                EnvD[prop] = np.random.uniform(0.0, 1.0, len(envGs))
+                glist = []
+                for g in envGs:
+                    x = np.random.uniform(0.0, w)
+                    y = np.random.uniform(0.0, h)
+                    glist.append([x,y])
+                EnvD[prop] = glist
 
                 # species Nitrogen use efficiency
                 N_RD[prop] = np.random.uniform(0.01, 1.0, nN)
@@ -248,12 +258,15 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
 
         y = Ys[i]
 
-        if 0 > y:
-            Ys[i] = 0
-        elif y > h:
-            Ys[i] = h
+        if 0.0 > y:
+            Ys[i] = 0.0
+        elif y >= h:
+            Ys[i] = h - 0.0
 
         t_In[i] += 1
+        if Xs[i] <= 0:
+            Xs[i] = 0.0
+
         if Xs[i] >= w - limit:
 
             xAge.append(t_In[i])
@@ -603,7 +616,7 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
     if repro == 'fission':
         for i, Q in enumerate(Qs):
 
-            pq = float(np.min(Q))
+            pq = float(np.mean(Q))
             p = np.random.binomial(1, pq)
 
             if p == 1: # individual is large enough to reproduce
@@ -623,7 +636,7 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     pg.append(1 - (abs(Y - y)/max([Y,y])))
 
 
-                if np.mean(pg) > 1:
+                if np.mean(pg) > 1 or np.mean(pg) < 0:
                     print pg
                     sys.exit()
 
@@ -663,7 +676,12 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                             MD[spID] = np.random.uniform(0.01, 0.1)
 
                             # species environmental gradient optima
-                            EnvD[spID] = np.random.uniform(0.0, 1.0, len(envGs))
+                            glist = []
+                            for g in envGs:
+                                x = np.random.uniform(0.0, w)
+                                y = np.random.uniform(0.0, h)
+                                glist.append([x,y])
+                            EnvD[spID] = glist
 
                             # new speciesactive dispersal rate
                             p = np.random.binomial(0.25, 1)
@@ -935,13 +953,11 @@ def search(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
         Y = Ys[i]
         Z = Zs[i]
 
-        ex = []
-        ey = []
         sp_opts = EnvD[spID]
 
         for g, opt in enumerate(sp_opts):
-            x, y = envGs[g]
-            dist = DispD[spID]
+            x, y = opt
+            dist = 0.1*DispD[spID]
 
             if x > X:
                 X += dist
