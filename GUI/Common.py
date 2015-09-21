@@ -2,18 +2,19 @@ from matplotlib.pyplot import Figure
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wx import NavigationToolbar2Wx
 
-from enthought.traits.api import *
-from enthought.traits.ui.api import View,UItem, Item, Group, Heading, Label, \
+import traitsui.api
+from traitsui.api import View,UItem, Item, Group, Heading, Label, \
         HSplit, Handler, CheckListEditor, EnumEditor, TableEditor, \
         ListEditor, Tabbed, VGroup, HGroup, RangeEditor, Spring, spring
 
-from enthought.traits.ui.menu import NoButtons
-#from enthought.traits.api import Any, Instance
-from enthought.traits.ui.wx.editor import Editor
-from enthought.traits.ui.wx.basic_editor_factory import BasicEditorFactory
+from traitsui.api import NoButtons
+from traitsui.wx.editor import Editor
+from traitsui.wx.basic_editor_factory import BasicEditorFactory
+
+from traits.api import HasTraits
 
 import numpy as np
-from enthought.enable.api import ColorTrait
+from enable.api import ColorTrait
 
 from matplotlib import *
 import os

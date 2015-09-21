@@ -1,5 +1,8 @@
 from Common import *
 
+import traits.api
+from traits.api import HasTraits
+
 class FirstCalc(HasTraits):
 
     # Add Traits objects
@@ -67,7 +70,7 @@ class FirstCalc(HasTraits):
 
     def _rangeplotx_changed(self):
         figure.clear()
-        y 
+        y
         ax = figure.add_subplot(111)
         ax = self.main.display.axes[0]
         ax.plot(xtmp,ytmp,color=self.main.markercolor,
@@ -90,5 +93,3 @@ class FirstCalc(HasTraits):
     def __init__(self, main, **kwargs):
         HasTraits.__init__(self)
         self.main = main
-        
-    

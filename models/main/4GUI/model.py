@@ -22,9 +22,7 @@ sys.path.append(mydir + "GitHub/hydrobide/tools/bide")
 import bide
 
 
-def run_model(fig):
-
-    def get_rand_params():
+def get_rand_params():
         """ Get random model parameter values. Others are chosen in bide.pyx """
 
         motion = choice(['fluid', 'random_walk'])
@@ -94,8 +92,7 @@ def run_model(fig):
                 flux, pulse, phase, disturb, envgrads, barriers]
 
 
-
-    def testlengths(TypeOf, function, Lists):
+def testlengths(TypeOf, function, Lists):
         vals = []
         for List in Lists:
             vals.append(len(List))
@@ -108,12 +105,11 @@ def run_model(fig):
 
 
 
-    ######### Function called for each successive animation frame ##################
-    nz = 0
 
-    def nextFrame(arg):	# arg is the frame number
+nz = 0
+def anim(arg):
 
-        plot_system = 'no'
+        plot_system = 'yes'
         logdata = 'yes'
         global width, height, length, Rates, u0, rho, ux, uy, n0, nN, nz
         global nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD
@@ -744,35 +740,15 @@ def run_model(fig):
     u0 = Rates[0]  # initial in-flow speed
 
     ############### INITIALIZE GRAPHICS ############################################
-    #fig = plt.figure(figsize=(12, 8))
 
-    if D == 2:
-        ax = fig.add_subplot(111) # initiate first plot
-        ax = fig.axes[0]
+    Ind_scatImage = ax.scatter([0],[0], alpha=0)
+    tracer_scatImage = ax.scatter([0],[0], alpha=0)
+    resource_scatImage = ax.scatter([0],[0], alpha=0)
 
-        Ind_scatImage = ax.scatter([0],[0], alpha=0)
-        tracer_scatImage = ax.scatter([0],[0], alpha=0)
-        resource_scatImage = ax.scatter([0],[0], alpha=0)
-
-        if motion == 'fluid' or motion == 'conveyor':
-            #####################  Lattice Boltzmann PARAMETERS  ###################
-            n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, \
-            bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, \
-            width, height, lefts, bottoms, barriers)
-
-    elif D == 3:
-        ax = fig.add_subplot(111, projection='3d')
-        Ind_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
-        tracer_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
-        resource_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
-        plt.tick_params(axis='both', which='both', bottom='off', top='off',
-                    left='off', right='off', labelbottom='off', labelleft='off')
-
-    Title = ['','']
-    txt = fig.suptitle(' '.join(Title), fontsize = 12)
-
-    ani = animation.FuncAnimation(fig, nextFrame, frames=110, interval=40, blit=False) # 20000 frames is a long movie
-    plt.show()
-    #ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide.avi', bitrate=5000)
+    if motion == 'fluid' or motion == 'conveyor':
+        #####################  Lattice Boltzmann PARAMETERS  ###################
+        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, \
+        bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, \
+        width, height, lefts, bottoms, barriers)
 
     return

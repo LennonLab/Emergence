@@ -1,10 +1,12 @@
-
 from firstcalc import FirstCalc
 from secondcalc import SecondCalc
 
 from tvtk.pyface.scene_editor import SceneEditor
 from mayavi.tools.mlab_scene_model import MlabSceneModel
 from mayavi.core.ui.mayavi_scene import MayaviScene
+
+import traits.api
+from traits.api import HasTraits
 
 from Common import *
 
@@ -41,6 +43,8 @@ class ApplicationMain(HasTraits):
         figure = Figure()
         ax = figure.add_subplot(111)
         ax = figure.axes[0]
+
+        f = mlab.gcf()
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_xlim(0,1)
