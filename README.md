@@ -1,6 +1,8 @@
 #complexity: A state of being intricate
 
-Individual based modeling of ecological and evolutionary dynamics in complex systems.
+Individual based modeling of ecological and evolutionary dynamics in complex systems. 
+
+### Author: Kenneth J. Locey
 
 #Purpose
 The code in this repository was developed to simulate individual-based, probabilistic, eco-evolutionary, information intensive models. Let's break that down...
