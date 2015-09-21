@@ -1,18 +1,16 @@
-#HydroBIDE
-Individual based modeling of ecological dynamics in complex systems.
+#complexity: A state of being intricate
+
+Individual based modeling of ecological and evolutionary dynamics in complex systems.
 
 #Purpose
-Much of Earth’s biodiversity is at the mercy of currents. Environments that flow or turn over constrain growth and reproduction. This principle underpins experimental and engineered bioreactors, where residence time (volume / flow rate) is used to control growth and biomass. 
-While residence time is implicated as a driver of biodiversity in natural systems, it is unclear how residence time governs biodiversity when the many facets of ecological complexity can overwhelm the effect of a single variable.
-
-The code in this repository was developed to test predictions how ecosystem residence time constrains the size, assembly, and structure of ecological communities. The modeling is individual-based, probabilistic, eco-evolutionary, information intensive, and it self-assembles. Let's break that down...
+The code in this repository was developed to simulate individual-based, probabilistic, eco-evolutionary, information intensive models. Let's break that down...
 
 ###Nomenclature
 * **Individual-based:** Every particle is simulated. Particles can be organisms, resources, inert tracers, or dispersal barriers.
 
 * **Probabilistic:** Changes to particles, populations, and communities are brought about through random sampling. This reflects the stochastic nature of individual responses to environmental conditions, competition, predator-prey interactions, dispersal, etc. Making all processes probabilistic also always greater freedom in how patterns, dynamics, and combinations of traits arise.
 
-* **Eco-evolutionary:** HydroBIDE incorporates or will soon incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
+* **Eco-evolutionary:** Incorporates or will soon incorporate principles and processes from community ecology, biogeography, ecological niche and resource limitation theory, trade-offs from life history theory, population genetics, ecosystem science and nutrient stoichiometry, mass-balance, ecological and evolutionary neutral and nearly-neutral theory, and of course, the theory of evolution by natural selection.
 
 * **Self-assembling**
 The model is really a platform for modeling, because the user only sets the ranges of values for many parameters and processes the model can potentially include. But, when run, the model initiates with random combinations of parameters and processes, including:
@@ -33,7 +31,7 @@ The model is really a platform for modeling, because the user only sets the rang
 * **Data intensive** 
 Information on all particles, groups of particles, and the entire systems is tracked, recorded, or quantified through time.
 
-## Data the HydroBIDE tracks
+## Data that complexity tracks
 **The following is tracked on every organism:**
 
 * time in the system
@@ -102,6 +100,6 @@ Information on all particles, groups of particles, and the entire systems is tra
 ***Still building**
 
 ## Using simulated data in R
-Though coded in Python (and sometimes in Cython for speed), the output of hydrobide can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the **analyses** folder.
+Though coded in Python (and sometimes in Cython for speed), the output of complexity can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the **analyses** folder.
 
 
