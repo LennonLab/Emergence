@@ -1,8 +1,6 @@
 from __future__ import division
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-#import mpl_toolkits.mplot3d
-#from mpl_toolkits.mplot3d import Axes3D
 
 from random import choice
 from scipy import stats
@@ -11,7 +9,6 @@ from numpy import sin, pi
 import sys
 import os
 import psutil
-#import itertools
 
 mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "GitHub/hydrobide/tools/metrics")
@@ -22,8 +19,10 @@ sys.path.append(mydir + "GitHub/hydrobide/tools/bide")
 import bide
 
 
-def get_rand_params():
-        """ Get random model parameter values. Others are chosen in bide.pyx """
+def run_model():
+
+    def get_rand_params():
+        """ Get random model parameter values. Others are chosen in bide.py """
 
         motion = choice(['fluid', 'random_walk'])
         D = choice([2, 2]) # number of spatial dimensions
@@ -73,6 +72,7 @@ def get_rand_params():
         dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
         maintmax = choice([0.0001, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002])
 
+        # TO EXPLORE A SINGLE SET OF VALUES FOR MODEL PARAMETERS
         #m = 0
         speciation = 'yes'
         #maintmax = 0.0000001
@@ -92,7 +92,8 @@ def get_rand_params():
                 flux, pulse, phase, disturb, envgrads, barriers]
 
 
-def testlengths(TypeOf, function, Lists):
+
+    def testlengths(TypeOf, function, Lists):
         vals = []
         for List in Lists:
             vals.append(len(List))
@@ -105,11 +106,12 @@ def testlengths(TypeOf, function, Lists):
 
 
 
+    ######### Function called for each successive animation frame ##################
+    nz = 0
 
-nz = 0
-def anim(arg):
+    def nextFrame(arg):	# arg is the frame number
 
-        plot_system = 'yes'
+        plot_system = 'no'
         logdata = 'yes'
         global width, height, length, Rates, u0, rho, ux, uy, n0, nN, nz
         global nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD
@@ -740,15 +742,35 @@ def anim(arg):
     u0 = Rates[0]  # initial in-flow speed
 
     ############### INITIALIZE GRAPHICS ############################################
+    fig = plt.figure(figsize=(12, 8))
 
-    Ind_scatImage = ax.scatter([0],[0], alpha=0)
-    tracer_scatImage = ax.scatter([0],[0], alpha=0)
-    resource_scatImage = ax.scatter([0],[0], alpha=0)
+    if D == 2:
+        ax = fig.add_subplot(111) # initiate first plot
+        ax = fig.axes[0]
 
-    if motion == 'fluid' or motion == 'conveyor':
-        #####################  Lattice Boltzmann PARAMETERS  ###################
-        n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, \
-        bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, \
-        width, height, lefts, bottoms, barriers)
+        Ind_scatImage = ax.scatter([0],[0], alpha=0)
+        tracer_scatImage = ax.scatter([0],[0], alpha=0)
+        resource_scatImage = ax.scatter([0],[0], alpha=0)
+
+        if motion == 'fluid' or motion == 'conveyor':
+            #####################  Lattice Boltzmann PARAMETERS  ###################
+            n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, \
+            bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, \
+            width, height, lefts, bottoms, barriers)
+
+    elif D == 3:
+        ax = fig.add_subplot(111, projection='3d')
+        Ind_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
+        tracer_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
+        resource_scatImage = ax.scatter([0],[0],[0], alpha=0.0)
+        plt.tick_params(axis='both', which='both', bottom='off', top='off',
+                    left='off', right='off', labelbottom='off', labelleft='off')
+
+    Title = ['','']
+    txt = fig.suptitle(' '.join(Title), fontsize = 12)
+
+    ani = animation.FuncAnimation(fig, nextFrame, frames=110, interval=40, blit=False) # 20000 frames is a long movie
+    plt.show()
+    #ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide.avi', bitrate=5000)
 
     return
