@@ -1,6 +1,6 @@
-#complexity: A state of being intricate
+#hydrobide
 
-Individual based modeling of ecological and evolutionary dynamics in complex systems. 
+Individual based modeling of ecological and evolutionary dynamics in complex fluid and non-fluid systems. 
 
 ### Author: Kenneth J. Locey
 
