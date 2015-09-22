@@ -33,7 +33,7 @@ The model is really a platform for modeling, because the user only sets the rang
 * **Data intensive** 
 Information on all particles, groups of particles, and the entire systems is tracked, recorded, or quantified through time.
 
-## Data that complexity tracks
+## Data that hydrobide tracks
 **The following is tracked on every organism:**
 
 * time in the system
@@ -102,6 +102,6 @@ Information on all particles, groups of particles, and the entire systems is tra
 ***Still building**
 
 ## Using simulated data in R
-Though coded in Python (and sometimes in Cython for speed), the output of complexity can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the **analyses** folder.
+Though coded in Python (and sometimes in Cython for speed), the output of hydrobide can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the **analyses** folder.
 
 
