@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from random import choice
 from scipy import stats
 import numpy as np
-from numpy import sin, pi
+from numpy import sin, pi, mean
 import sys
 import os
 #import psutil
@@ -25,7 +25,7 @@ def nextFrame(arg):
 
     """ Function called for each successive animation frame; arg is the frame number """
 
-    global width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs,PRs,CRs,Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
+    global width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs, PRs, CRs, Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
 
     ct += 1
     plot_system = 'no'
@@ -60,6 +60,15 @@ def nextFrame(arg):
     # Search for resources
     SpeciesIDs, Qs, IndIDs, ID, TimeIn, X, Y, GrowthDict, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.search(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
+    p1, PRODI, PRODN, PRODC, PRODP, TNQ1, TPQ1, TCQ1 = 0, 0, 0, 0, 0, 0, 0, 0
+
+    if len(Qs) > 0:
+        p1 = len(Qs)
+        for q in Qs:
+            TNQ1 += q[0]
+            TPQ1 += q[1]
+            TCQ1 += q[2]
+
     # Consume
     RTypes, RVals, RIDs, RID, RTimeIn, RExitAge, RX, RY,  SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.consume(RTypes, RVals, RIDs, RID, RX, RY,  RTimeIn, RExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, N_RD, P_RD, C_RD, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
@@ -68,6 +77,20 @@ def nextFrame(arg):
 
     # maintenance
     SpeciesIDs, X, Y, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.maintenance(SpeciesIDs, IndX, IndY,  IndExitAge, SpColorDict, MaintDict, EnvD, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+
+    TNQ2, TPQ2, TCQ2 = 0, 0, 0
+
+    if len(Qs) > 0:
+        for q in Qs:
+            TNQ2 += q[0]
+            TPQ2 += q[1]
+            TCQ2 += q[2]
+
+        PRODI = len(IndIDs) - p1
+
+    PRODN = TNQ2 - TNQ1
+    PRODP = TPQ2 - TPQ1
+    PRODC = TCQ2 - TCQ1
 
     # disturbance
     if np.random.binomial(1, disturb) == 1: SpeciesIDs, X, Y, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.decimate(SpeciesIDs, IndX, IndY,  IndExitAge, SpColorDict, MaintDict, EnvD, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -95,7 +118,7 @@ def nextFrame(arg):
         sizelist = []
         for i, val in enumerate(SpeciesIDs):
             colorlist.append(SpColorDict[val])
-            sizelist.append(np.mean(Qs[i]) * 1000)
+            sizelist.append(mean(Qs[i]) * 1000)
 
         resource_scatImage = ax.scatter(RX, RY, s = RVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.7)
 
@@ -108,14 +131,15 @@ def nextFrame(arg):
     if len(TExitAge) >= LowerLimit or ct >= 100:
         ct = 95
 
-        PRODIs.append(0)
-        PRODNs.append(0)
-        PRODPs.append(0)
-        PRODCs.append(0)
+        PRODIs.append(PRODI)
+        PRODNs.append(PRODN)
+        PRODPs.append(PRODP)
+        PRODCs.append(PRODC)
 
-        RTAUs.append(np.mean(RExitAge))
-        INDTAUs.append(np.mean(IndExitAge))
-        TTAUs.append(np.mean(TExitAge))
+        if len(RExitAge) > 0: RTAUs.append(mean(RExitAge))
+        if len(IndExitAge) > 0: INDTAUs.append(mean(IndExitAge))
+        if len(TExitAge) > 0: TTAUs.append(mean(TExitAge))
+
         RExitAge, IndExitAge, TExitAge = [], [], []
 
         # Examining the resource RAD
@@ -124,6 +148,7 @@ def nextFrame(arg):
             RDens = len(RTypes)/(height*width)
             RDiv = float(metrics.Shannons_H(RRAD))
             RRich = len(Rlist)
+
 
         RDENs.append(RDens)
         RDIVs.append(RDiv)
@@ -174,16 +199,17 @@ def nextFrame(arg):
             sk = stats.skew(RAD)
             SKs.append(sk)
 
-            Gs.append(np.mean(GrowthList))
-            Ms.append(np.mean(MaintList))
-            Ds.append(np.mean(DispList))
+            Gs.append(mean(GrowthList))
+            Ms.append(mean(MaintList))
+            Ds.append(mean(DispList))
 
             means = [sum(x)/len(x) for x in zip(*N_RList)]
-            NRs.append(np.mean(means))
+            NRs.append(mean(means))
             means = [sum(x)/len(x) for x in zip(*P_RList)]
-            PRs.append(np.mean(means))
+            PRs.append(mean(means))
             means = [sum(x)/len(x) for x in zip(*C_RList)]
-            CRs.append(np.mean(means))
+            CRs.append(mean(means))
+
 
         #process = psutil.Process(os.getpid())
         #mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)
@@ -191,15 +217,7 @@ def nextFrame(arg):
 
         if len(Ns) >= 2:
 
-
-            fG, fM, fNR, fPR, fCR, fD, T, R, PRODI, PRODN, PRODP, PRODC, N, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, WT, Jc, So = [0]*29
-
-            temp_list1 = [fG, fM, fNR, fPR, fCR, fD, T, R, PRODI, PRODN, PRODP, PRODC, N, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, WT, Jc, So]
-            temp_list2 = [Gs, Ms, NRs, PRs, CRs, Ds, Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, WTs, Jcs, Sos]
-
-            for i, ls in enumerate(temp_list2): temp_list1[i] = np.mean(ls)
-
-            print sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(PRODI), 'WT:', round(WT,3), ':  flow:', u0, 'motion:',motion#, ' MB:',int(round(mem))
+            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), ' pI:', int(mean(PRODIs)), 'WT:', round(mean(WTs),3), ':  flow:', u0#, ' MB:',int(round(mem))
 
             SString = str(splist).strip('()')
             RADString = str(RAD).strip('()')
@@ -214,7 +232,7 @@ def nextFrame(arg):
             OUT5 = open(GenPath + 'examples/TracerRTD.csv','a')
             OUT6 = open(GenPath + 'examples/ResRTD.csv','a')
 
-            outlist = [ct1, sim, motion, PRODI, PRODN, PRODP, PRODC, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, T, R, speciation, WT, Jc, So, fG, fM, fNR, fPR, fCR, fD, amp, flux, freq, phase, disturb]
+            outlist = [ct1, sim, motion, mean(PRODIs), mean(PRODNs), mean(PRODPs), mean(PRODCs), r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, mean(RTAUs), mean(TTAUs), mean(INDTAUs), mean(RDENs), mean(RDIVs), mean(RRICHs), mean(Ss), mean(ESs), mean(EVs), mean(BPs), mean(SDs), mean(NMAXs), mean(SKs), T, R, speciation, mean(WTs), mean(Jcs), mean(Sos), mean(Gs), mean(Ms), mean(NRs), mean(PRs), mean(CRs), mean(Ds), amp, flux, freq, phase, disturb]
             outlist = str(outlist).strip('[]')
 
             print>>OUT1, outlist
@@ -270,7 +288,7 @@ OUT6 = open(GenPath + 'examples/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties
 # physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
+print>>OUT1, 'RowID, sim, motion, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
 
 OUT1.close()
 OUT2.close()
