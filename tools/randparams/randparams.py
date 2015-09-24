@@ -12,7 +12,7 @@ def get_rand_params():
 
     width = choice([10, 15, 20])
     height = choice([5, 6, 7, 8, 9, 10])
-    barriers = choice([1, 2, 3, 4])
+    barriers = choice([1])
 
     pulse = choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     flux = choice(['yes'])
@@ -61,23 +61,12 @@ def get_rand_params():
     #height = 5
     #num_envgrads = 10
     #barriers = 1
-    #r = 1000
-    #gmax = 0.1
-    #rmax = 1
+    r = 100
+    gmax = 0.1
+    rmax = 1000
     dmax = 0.0000000001
     motion = 'fluid'
 
     return [width, height, alpha, motion, reproduction, speciation, \
             seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, \
             flux, pulse, phase, disturb, envgrads, barriers]
-
-
-
-def testlengths(TypeOf, function, Lists):
-    vals = []
-    for List in Lists:
-        vals.append(len(List))
-    if min(vals) != max(vals):
-        print '\n'+TypeOf+': '+function+', lists have different lengths:', vals
-        sys.exit()
-    return

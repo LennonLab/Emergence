@@ -518,6 +518,11 @@ def jaccard(seq1, seq2):
 
 
 def sorensen(seq1, seq2):
+
+    if len(seq1) == 0 and len(seq2) == 0:
+      return 0
+    elif len(seq1) == 0 or len(seq2) == 0:
+      return 1.0
     """ Obtained from: https://github.com/doukremt/distance/blob/master/distance/_simpledists.py
         on Sept 8 2015
 
@@ -546,4 +551,5 @@ def WhittakersTurnover(site1, site2):
   s     = len(gamma)                                   # Gamma richness
   abar = np.mean([len(set1), len(set2)])   # Mean sample richness
   bw   = s/abar - 1
+
   return bw

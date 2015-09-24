@@ -60,6 +60,15 @@ def nextFrame(arg):
     # Search for resources
     SpeciesIDs, Qs, IndIDs, ID, TimeIn, X, Y, GrowthDict, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.search(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
+    p1, PRODI, PRODN, PRODC, PRODP, TNQ1, TPQ1, TCQ1 = 0, 0, 0, 0, 0, 0, 0, 0
+
+    if len(Qs) > 0:
+        p1 = len(Qs)
+        for q in Qs:
+            TNQ1 += q[0]
+            TPQ1 += q[1]
+            TCQ1 += q[2]
+
     # Consume
     RTypes, RVals, RIDs, RID, RTimeIn, RExitAge, RX, RY,  SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.consume(RTypes, RVals, RIDs, RID, RX, RY,  RTimeIn, RExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, N_RD, P_RD, C_RD, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
@@ -68,6 +77,20 @@ def nextFrame(arg):
 
     # maintenance
     SpeciesIDs, X, Y, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.maintenance(SpeciesIDs, IndX, IndY,  IndExitAge, SpColorDict, MaintDict, EnvD, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
+
+    TNQ2, TPQ2, TCQ2 = 0, 0, 0
+
+    if len(Qs) > 0:
+        for q in Qs:
+            TNQ2 += q[0]
+            TPQ2 += q[1]
+            TCQ2 += q[2]
+
+        PRODI = len(IndIDs) - p1
+
+    PRODN = TNQ2 - TNQ1
+    PRODP = TPQ2 - TPQ1
+    PRODC = TCQ2 - TCQ1
 
     # disturbance
     if np.random.binomial(1, disturb) == 1: SpeciesIDs, X, Y, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.decimate(SpeciesIDs, IndX, IndY,  IndExitAge, SpColorDict, MaintDict, EnvD, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -108,14 +131,15 @@ def nextFrame(arg):
     if len(TExitAge) >= LowerLimit or ct >= 100:
         ct = 95
 
-        PRODIs.append(0)
-        PRODNs.append(0)
-        PRODPs.append(0)
-        PRODCs.append(0)
+        PRODIs.append(PRODI)
+        PRODNs.append(PRODN)
+        PRODPs.append(PRODP)
+        PRODCs.append(PRODC)
 
-        RTAUs.append(mean(RExitAge))
-        INDTAUs.append(mean(IndExitAge))
-        TTAUs.append(mean(TExitAge))
+        if len(RExitAge) > 0: RTAUs.append(mean(RExitAge))
+        if len(IndExitAge) > 0: INDTAUs.append(mean(IndExitAge))
+        if len(TExitAge) > 0: TTAUs.append(mean(TExitAge))
+
         RExitAge, IndExitAge, TExitAge = [], [], []
 
         # Examining the resource RAD
@@ -124,6 +148,7 @@ def nextFrame(arg):
             RDens = len(RTypes)/(height*width)
             RDiv = float(metrics.Shannons_H(RRAD))
             RRich = len(Rlist)
+
 
         RDENs.append(RDens)
         RDIVs.append(RDiv)
@@ -185,13 +210,14 @@ def nextFrame(arg):
             means = [sum(x)/len(x) for x in zip(*C_RList)]
             CRs.append(mean(means))
 
+
         #process = psutil.Process(os.getpid())
         #mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)
         # return the memory usage in MB
 
         if len(Ns) >= 2:
 
-            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), ' pI:', int(mean(PRODIs)), 'WT:', round(mean(WTs),3), ':  flow:', u0, #, ' MB:',int(round(mem))
+            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), ' pI:', int(mean(PRODIs)), 'WT:', round(mean(WTs),3), ':  flow:', u0#, ' MB:',int(round(mem))
 
             SString = str(splist).strip('()')
             RADString = str(RAD).strip('()')
@@ -262,7 +288,7 @@ OUT6 = open(GenPath + 'examples/ResRTD.csv','w')
 
 # printing physical variables, residence times, community diversity properties
 # physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, dimensions, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
+print>>OUT1, 'RowID, sim, motion, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
 
 OUT1.close()
 OUT2.close()
