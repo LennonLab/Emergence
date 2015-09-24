@@ -21,6 +21,32 @@ sys.path.append(mydir + "GitHub/hydrobide/tools/randparams")
 import randparams as rp
 
 
+
+
+GenPath = mydir + '/GitHub/hydrobide/results/simulated_data/'
+
+############## OPEN OUTPUT DATA FILE ###########################################
+OUT1 = open(GenPath + 'examples/SimData.csv','w')
+OUT2 = open(GenPath + 'examples/RADs.csv','w')
+OUT3 = open(GenPath + 'examples/Species.csv','w')
+OUT4 = open(GenPath + 'examples/IndRTD.csv','w')
+OUT5 = open(GenPath + 'examples/TracerRTD.csv','w')
+OUT6 = open(GenPath + 'examples/ResRTD.csv','w')
+
+# printing physical variables, residence times, community diversity properties
+# physiological values, trait values, resource values
+print>>OUT1, 'RowID, motion, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
+
+OUT1.close()
+OUT2.close()
+OUT3.close()
+OUT4.close()
+OUT5.close()
+OUT6.close()
+
+
+
+
 def nextFrame(arg):
 
     """ Function called for each successive animation frame; arg is the frame number """
@@ -60,14 +86,9 @@ def nextFrame(arg):
     # Search for resources
     SpeciesIDs, Qs, IndIDs, ID, TimeIn, X, Y, GrowthDict, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.search(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
-    p1, PRODI, PRODN, PRODC, PRODP, TNQ1, TPQ1, TCQ1 = 0, 0, 0, 0, 0, 0, 0, 0
+    PRODI, PRODN, PRODC, PRODP = 0, 0, 0, 0
 
-    if len(Qs) > 0:
-        p1 = len(Qs)
-        for q in Qs:
-            TNQ1 += q[0]
-            TPQ1 += q[1]
-            TCQ1 += q[2]
+    p1, TNQ1, TPQ1, TCQ1 = metrics.getprod(Qs)
 
     # Consume
     RTypes, RVals, RIDs, RID, RTimeIn, RExitAge, RX, RY,  SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.consume(RTypes, RVals, RIDs, RID, RX, RY,  RTimeIn, RExitAge, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, N_RD, P_RD, C_RD, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -78,16 +99,9 @@ def nextFrame(arg):
     # maintenance
     SpeciesIDs, X, Y, IndExitAge, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.maintenance(SpeciesIDs, IndX, IndY,  IndExitAge, SpColorDict, MaintDict, EnvD, IndIDs, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
 
-    TNQ2, TPQ2, TCQ2 = 0, 0, 0
+    p2, TNQ2, TPQ2, TCQ2 = metrics.getprod(Qs)
 
-    if len(Qs) > 0:
-        for q in Qs:
-            TNQ2 += q[0]
-            TPQ2 += q[1]
-            TCQ2 += q[2]
-
-        PRODI = len(IndIDs) - p1
-
+    PRODI = p2 - p1
     PRODN = TNQ2 - TNQ1
     PRODP = TPQ2 - TPQ1
     PRODC = TCQ2 - TCQ1
@@ -110,7 +124,7 @@ def nextFrame(arg):
     ax.set_xlim(0, width)
 
     if plot_system == 'yes':
-        ##### PLOTTING THE SYSTEM ############################################
+        ##### PLOTTING THE SYSTEM ##############################################
         resource_scatImage.remove()
         tracer_scatImage.remove()
         Ind_scatImage.remove()
@@ -232,7 +246,7 @@ def nextFrame(arg):
             OUT5 = open(GenPath + 'examples/TracerRTD.csv','a')
             OUT6 = open(GenPath + 'examples/ResRTD.csv','a')
 
-            outlist = [ct1, sim, motion, mean(PRODIs), mean(PRODNs), mean(PRODPs), mean(PRODCs), r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, mean(RTAUs), mean(TTAUs), mean(INDTAUs), mean(RDENs), mean(RDIVs), mean(RRICHs), mean(Ss), mean(ESs), mean(EVs), mean(BPs), mean(SDs), mean(NMAXs), mean(SKs), T, R, speciation, mean(WTs), mean(Jcs), mean(Sos), mean(Gs), mean(Ms), mean(NRs), mean(PRs), mean(CRs), mean(Ds), amp, flux, freq, phase, disturb]
+            outlist = [sim, motion, mean(PRODIs), mean(PRODNs), mean(PRODPs), mean(PRODCs), r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, mean(RTAUs), mean(TTAUs), mean(INDTAUs), mean(RDENs), mean(RDIVs), mean(RRICHs), mean(Ss), mean(ESs), mean(EVs), mean(BPs), mean(SDs), mean(NMAXs), mean(SKs), T, R, speciation, mean(WTs), mean(Jcs), mean(Sos), mean(Gs), mean(Ms), mean(NRs), mean(PRs), mean(CRs), mean(Ds), amp, flux, freq, phase, disturb]
             outlist = str(outlist).strip('[]')
 
             print>>OUT1, outlist
@@ -252,7 +266,7 @@ def nextFrame(arg):
             ct1 += 1
             ct = 0
             SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, RColorDict, DispDict = {}, {}, {}, {}, {}, {}, {}, {}, {}
-            width, height, alpha, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb, envgrads, barriers = rp.get_rand_params()
+            width, height, alpha, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb, envgrads, barriers, Rates = rp.get_rand_params()
             sim += 1
             alpha = np.random.uniform(0.99, 0.999)
 
@@ -276,29 +290,9 @@ def nextFrame(arg):
             ax = fig.add_subplot(111)
 
 
-GenPath = mydir + '/GitHub/hydrobide/results/simulated_data/'
-
-############## OPEN OUTPUT DATA FILE ###########################################
-OUT1 = open(GenPath + 'examples/SimData.csv','w')
-OUT2 = open(GenPath + 'examples/RADs.csv','w')
-OUT3 = open(GenPath + 'examples/Species.csv','w')
-OUT4 = open(GenPath + 'examples/IndRTD.csv','w')
-OUT5 = open(GenPath + 'examples/TracerRTD.csv','w')
-OUT6 = open(GenPath + 'examples/ResRTD.csv','w')
-
-# printing physical variables, residence times, community diversity properties
-# physiological values, trait values, resource values
-print>>OUT1, 'RowID, sim, motion, ind.production, biomass.prod.N, biomass.prod.P, biomass.prod.C, res.inflow, N.types, P.types, C.types, max.res.val, max.growth.rate, max.met.maint, max.active.dispersal, barriers, logseries.a, starting.seed, flow.rate, width, height, viscosity, total.abundance, immigration.rate, resource.tau, particle.tau, individual.tau, resource.concentration, shannons.resource.diversity, resource.richness, species.richness, simpson.e, e.var, berger.parker, inv.simp.D, N.max, skew, tracer.particles, resource.particles, speciation, Whittakers.turnover, Jaccards.dissimilarity, Sorensens.dissimilarity, avg.per.capita.growth, avg.per.capita.maint, avg.per.capita.N.efficiency, avg.per.capita.P.efficiency, avg.per.capita.C.efficiency, avg.per.capita.active.dispersal, amplitude, flux, frequency, phase, disturbance'
-
-OUT1.close()
-OUT2.close()
-OUT3.close()
-OUT4.close()
-OUT5.close()
-OUT6.close()
 
 ################ DIMENSIONAL & MODEL CONSTANTS ##################################
-width, height, alpha, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb, envgrads, barriers = rp.get_rand_params()
+width, height, alpha, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb, envgrads, barriers, Rates = rp.get_rand_params()
 lefts, bottoms = [], []
 
 for b in range(barriers):
@@ -315,7 +309,6 @@ SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispL
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
 LowerLimit, sim, left1, bottom1, left2, bottom2 = 30, 1, 0.2, 0.2, 0.6, 0.6
 viscosity = 10 # unitless but required by an LBM model
-Rates = np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.02, 0.01, 0.0075, 0.005])  # inflow speeds
 u0 = choice(Rates)  # initial in-flow speed
 
 ############### INITIALIZE GRAPHICS ############################################
