@@ -56,28 +56,20 @@ def get_color(ID, colorD): # FUNCTION TO ASSIGN COLORS TO Sp_
 
 
 
-def NewTracers(motion, IDs, Xs, Ys, Zs, t_In, w, h, l, u0, D):
+def NewTracers(motion, IDs, Xs, Ys, t_In, w, h, u0):
 
     x = np.random.binomial(1, u0)
     if x == 1:
         IDs.append(0)
         t_In.append(0)
-        if motion == 'random_walk':
-            Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
-            Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-            Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
+        Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
+        Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
 
-        else:
-            Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
-            Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-            Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
-
-    return [IDs, t_In, Xs, Ys, Zs]
+    return [IDs, t_In, Xs, Ys]
 
 
 
-def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
-        rmax, nN, nP, nC, w, h, l, u0, D):
+def ResIn(motion, Type, Vals, Xs, Ys, ID, IDs, t_In, numr, rmax, nN, nP, nC, w, h, u0):
 
     for r in range(numr):
         x = np.random.binomial(1, u0/2)
@@ -108,25 +100,22 @@ def ResIn(motion, Type, Vals, Xs, Ys, Zs, ID, IDs, t_In, numr,
             if motion == 'random_walk':
                 Ys.append(float(np.random.uniform(0.1*h, 0.99*h)))
                 Xs.append(float(np.random.uniform(0.1*w, 0.99*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.99*l)))
 
             else:
                 Ys.append(float(np.random.uniform(0.1*h, 0.99*h)))
                 Xs.append(float(np.random.uniform(0.1*w, 0.99*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.99*l)))
 
 
-    return [Type, Vals, Xs, Ys, Zs, IDs, ID, t_In]
+    return [Type, Vals, Xs, Ys, IDs, ID, t_In]
 
 
 
-def immigration(d_max, g_max, m_max, motion, seed, ip, Sp, Xs, Ys, Zs, w, h, l, MD, EnvD, envGs,
-        GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, D, GList, MList, NList, PList, CList, DList):
+def immigration(d_max, g_max, m_max, motion, seed, ip, Sp, Xs, Ys, w, h, MD, EnvD, envGs,
+        GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, nN, nP, nC, u0, alpha, GList, MList, NList, PList, CList, DList):
 
     if u0 > 1.0:
         u0 = 1.0
-        #print 'from immigration in bide.py, line 127:', u0
-        #sys.exit()
+
 
     for m in range(seed):
         x = np.random.binomial(1, u0*ip)
@@ -139,12 +128,10 @@ def immigration(d_max, g_max, m_max, motion, seed, ip, Sp, Xs, Ys, Zs, w, h, l, 
             if motion == 'random_walk':
                 Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
                 Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
 
             else:
                 Ys.append(float(np.random.uniform(0.1*h, 0.9*h)))
                 Xs.append(float(np.random.uniform(0.1*w, 0.9*w)))
-                Zs.append(float(np.random.uniform(0.1*l, 0.9*l)))
 
             IDs.append(ID)
             t_In.append(0)
@@ -209,11 +196,11 @@ def immigration(d_max, g_max, m_max, motion, seed, ip, Sp, Xs, Ys, Zs, w, h, l, 
             i = GetIndParam(means)
             DList.append(i)
 
-    return [Sp, Xs, Ys, Zs, MD, EnvD, GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, GList, MList, NList, PList, CList, DList]
+    return [Sp, Xs, Ys, MD, EnvD, GD, DispD, colorD, IDs, ID, t_In, Qs, N_RD, P_RD, C_RD, GList, MList, NList, PList, CList, DList]
 
 
 
-def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
+def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
 
     Type, IDs, ID, Vals = [], [], int(), []
 
@@ -226,11 +213,11 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
 
     if Xs == []:
         if TypeOf == 'tracer':
-            return [IDs, Xs, Ys, Zs, xAge, t_In]
+            return [IDs, Xs, Ys, xAge, t_In]
         elif TypeOf == 'individual':
-            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+            return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
         elif TypeOf == 'resource':
-            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
+            return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
 
     ux = np.reshape(ux, (w*h)) # ux is the macroscopic x velocity
     uy = np.reshape(uy, (w*h)) # uy is the macroscopic y velocity
@@ -272,7 +259,6 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
             xAge.append(t_In[i])
             Xs.pop(i)
             Ys.pop(i)
-            Zs.pop(i)
             t_In.pop(i)
             IDs.pop(i)
 
@@ -292,40 +278,32 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, Zs, ux, uy, w, h, u0):
     uy = np.reshape(uy, (h, w))
 
     if TypeOf == 'tracer':
-        return [IDs, Xs, Ys, Zs, xAge, t_In]
+        return [IDs, Xs, Ys, xAge, t_In]
     elif TypeOf == 'individual':
-        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
     elif TypeOf == 'resource':
-        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
+        return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
 
 
 
 
 
-def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
-        Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs, w, h, l, D):
+def predation(P_IDs, P_ID, P_Xs, P_Ys, P_t_In, I_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, w, h):
 
     I_Boxes, P_Boxes = [], []
     if not len(P_IDs):
-        List = [P_IDs, P_ID, P_t_In, P_Xs, P_Ys, P_Zs, Sp_IDs, Qs]
-        List += [I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs]
+        List = [P_IDs, P_ID, P_t_In, P_Xs, P_Ys, Sp_IDs, Qs]
+        List += [I_IDs, I_ID, I_t_In, I_Xs, I_Ys]
         return List
 
-    if D == 2:
-        I_Boxes, P_Boxes = [[list([]) for _ in xrange(w*h)]]*2
-    elif D == 3:
-        I_Boxes, P_Boxes = [[list([]) for _ in xrange(w*h*l)]]*2
+    I_Boxes, P_Boxes = [[list([]) for _ in xrange(w*h)]]*2
 
     index = 0
     for i, val in enumerate(I_IDs):
         rX = int(round(I_Xs[i]))
         rY = int(round(I_Ys[i]))
-        rZ = int(round(I_Zs[i]))
 
-        if D == 2:
-            index = int(round(rX + (rY * w)))
-        elif D == 3:
-            index = int(round((rY * l * w) + (rX * l) + rZ))
+        index = int(round(rX + (rY * w)))
 
         if index > len(I_Boxes) - 1:
             index = len(I_Boxes) - 1
@@ -337,12 +315,8 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
     for i, val in enumerate(P_IDs):
         rX = int(round(P_Xs[i]))
         rY = int(round(P_Ys[i]))
-        rZ = int(round(P_Zs[i]))
 
-        if D == 2:
-            index = int(round(rX + (rY * w)))
-        elif D == 3:
-            index = int(round((rY * l * w) + (rX * l) + rZ))
+        index = int(round(rX + (rY * w)))
 
         if index > len(P_Boxes) - 1:
             index = len(P_Boxes) - 1
@@ -375,7 +349,6 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
             I_IDs.pop(j)
             I_Xs.pop(j)
             I_Ys.pop(j)
-            I_Zs.pop(j)
             #GrowthList.pop(i)
             #MaintList.pop(i)
             #N_RList.pop(i)
@@ -383,18 +356,18 @@ def predation(P_IDs, P_ID, P_Xs, P_Ys, P_Zs, P_t_In, I_xAge, Sp_IDs,
             #C_RList.pop(i)
             #DispList.pop(i)
 
-    List = [P_IDs, P_ID, P_t_In, P_Xs, P_Ys, P_Zs, Sp_IDs, Qs, I_IDs]
-    List += [I_ID, I_t_In, I_Xs, I_Ys, I_Zs]
+    List = [P_IDs, P_ID, P_t_In, P_Xs, P_Ys, Sp_IDs, Qs, I_IDs]
+    List += [I_ID, I_t_In, I_Xs, I_Ys]
     return List
 
 
 
 
 
-def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+def maintenance(Sp_IDs, Xs, Ys, xAge, colorD, MD, EnvD, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if Sp_IDs == []:
-        return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        return [Sp_IDs, Xs, Ys, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
     for i, val in enumerate(Qs):
 
@@ -411,7 +384,6 @@ def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  G
             IDs.pop(i)
             Xs.pop(i)
             Ys.pop(i)
-            Zs.pop(i)
             GrowthList.pop(i)
             MaintList.pop(i)
             N_RList.pop(i)
@@ -421,14 +393,14 @@ def maintenance(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  G
 
         else: Qs[i] = val
 
-    return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    return [Sp_IDs, Xs, Ys, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
 
 
-def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+def decimate(Sp_IDs, Xs, Ys, xAge, colorD, MD, EnvD, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if Sp_IDs == []:
-        return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        return [Sp_IDs, Xs, Ys, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
     for i, val in enumerate(Qs):
 
@@ -443,7 +415,6 @@ def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  Grow
             IDs.pop(i)
             Xs.pop(i)
             Ys.pop(i)
-            Zs.pop(i)
             GrowthList.pop(i)
             MaintList.pop(i)
             N_RList.pop(i)
@@ -453,39 +424,28 @@ def decimate(Sp_IDs, Xs, Ys, Zs, xAge, colorD, MD, EnvD, IDs, t_In, Qs, D,  Grow
 
         else: Qs[i] = val
 
-    return [Sp_IDs, Xs, Ys, Zs, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    return [Sp_IDs, Xs, Ys, xAge, IDs, t_In, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
 
 
 
 
-def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
-        R_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs,
-        w, h, l, GD, N_RD, P_RD, C_RD, DispD, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
+def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_t_In, R_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, w, h, GD, N_RD, P_RD, C_RD, DispD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
     if not len(R_Types) or not len(Sp_IDs):
         List = [R_Types, R_Vals, R_IDs, R_ID, R_t_In, R_xAge, R_Xs]
-        List += [R_Ys, R_Zs, Sp_IDs, Qs, I_IDs, I_ID, I_t_In]
-        List += [I_Xs, I_Ys, I_Zs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        List += [R_Ys, Sp_IDs, Qs, I_IDs, I_ID, I_t_In]
+        List += [I_Xs, I_Ys, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
         return List
 
-    if D == 2:
-        I_Boxes = [list([]) for _ in xrange(w*h)]
-        R_Boxes = [list([]) for _ in xrange(w*h)]
-
-    elif D == 3:
-        I_Boxes = [list([]) for _ in xrange(w*h*l)]
-        R_Boxes = [list([]) for _ in xrange(w*h*l)]
+    I_Boxes = [list([]) for _ in xrange(w*h)]
+    R_Boxes = [list([]) for _ in xrange(w*h)]
 
     index = 0
     for i, val in enumerate(I_IDs):
         rX = int(round(I_Xs[i]))
         rY = int(round(I_Ys[i]))
-        rZ = int(round(I_Zs[i]))
 
-        if D == 2:
-            index = int(round(rX + (rY * w)))
-        elif D == 3:
-            index = int(round((rY * l * w) + (rX * l) + rZ))
+        index = int(round(rX + (rY * w)))
 
         if index > len(I_Boxes) - 1:
             index = len(I_Boxes) - 1
@@ -499,12 +459,7 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
         rX = int(round(R_Xs[i]))
         rY = int(round(R_Ys[i]))
-        rZ = int(round(R_Zs[i]))
-
-        if D == 2:
-            index = int(round(rX + (rY * w)))
-        elif D == 3:
-            index = int(round((rY * l * w) + (rX * l) + rZ))
+        index = int(round(rX + (rY * w)))
 
         if index > len(R_Boxes) - 1:
             index = len(R_Boxes) - 1
@@ -587,7 +542,7 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
                 R_IDs.pop(j)
                 R_Xs.pop(j)
                 R_Ys.pop(j)
-                R_Zs.pop(j)
+
 
             if Q < 0.0:
                 print Q, QN, QP, QC
@@ -602,16 +557,15 @@ def consume(R_Types, R_Vals, R_IDs, R_ID, R_Xs, R_Ys, R_Zs, R_t_In,
 
 
     List = [R_Types, R_Vals, R_IDs, R_ID, R_t_In, R_xAge, R_Xs, R_Ys]
-    List += [R_Zs,Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, I_Zs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    List += [Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
     return List
 
 
 
-def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
-        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
+def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, w, h, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, nN, nP, nC, GList, MList, NList, PList, CList, DList):
 
     if Sp_IDs == []:
-        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
+        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, GD, DispD, GList, MList, NList, PList, CList, DList]
 
     if repro == 'fission':
         for i, Q in enumerate(Qs):
@@ -624,7 +578,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                 spID = Sp_IDs[i]
                 X = Xs[i]
             	Y = Ys[i]
-                Z = Zs[i]
 
                 pg = []
                 sp_opts = EnvD[spID]
@@ -658,44 +611,60 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
 
                     if spec == 'yes':
                         p = np.random.binomial(1, 0.05)
+
                         if p == 1:
 
                             # speciate
                             t = time.clock()
-                            spID = spID +' '+ str(t)
+                            spID_new = spID +' '+ str(t)
 
                             # new speciescolor
-                            colorD = get_color(spID, colorD)
+                            colorD = get_color(spID_new, colorD)
 
-                            # new speciesgrowth rate
-                            p = np.random.binomial(0.25, 1)
-                            GD[spID] = np.random.uniform(0.5, 1.0)
+                            # new species growth rate
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: GD[spID_new] = np.random.uniform(0.5, 1.0)
+                            else: GD[spID_new] = GD[spID]
 
                             # new speciesmaintenance
-                            p = np.random.binomial(0.25, 1)
-                            MD[spID] = np.random.uniform(0.01, 0.1)
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: MD[spID_new] = np.random.uniform(0.01, 0.1)
+                            else: MD[spID_new] = MD[spID]
 
                             # species environmental gradient optima
                             glist = []
-                            for g in envGs:
-                                x = np.random.uniform(0.0, w)
-                                y = np.random.uniform(0.0, h)
+                            for j, g in enumerate(envGs):
+                                p = np.random.binomial(1, 0.25)
+                                if p == 1:
+                                    x = np.random.uniform(0.0, w)
+                                    y = np.random.uniform(0.0, h)
+                                else:
+                                    x = EnvD[spID][j][0]
+                                    y = EnvD[spID][j][1]
+
                                 glist.append([x,y])
-                            EnvD[spID] = glist
+                            EnvD[spID_new] = glist
 
                             # new speciesactive dispersal rate
-                            p = np.random.binomial(0.25, 1)
-                            DispD[spID] = np.random.uniform(0.0, 0.1)
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: DispD[spID_new] = np.random.uniform(0.0, 0.1)
+                            else: DispD[spID_new] = DispD[spID]
 
                             # new speciesresource use efficiencies
                             # Nitrogen
-                            N_RD[spID] = np.random.uniform(0.01, 1.0, nN)
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: N_RD[spID_new] = np.random.uniform(0.01, 1.0, nN)
+                            else: N_RD[spID_new] = N_RD[spID]
 
                             # Phosphorus
-                            P_RD[spID] = np.random.uniform(0.01, 1.0, nP)
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: P_RD[spID_new] = np.random.uniform(0.01, 1.0, nP)
+                            else: P_RD[spID_new] = P_RD[spID]
 
                             # Carbon
-                            C_RD[spID] = np.random.uniform(0.01, 1.0, nC)
+                            p = np.random.binomial(1, 0.25)
+                            if p == 1: C_RD[spID_new] = np.random.uniform(0.01, 1.0, nC)
+                            else: C_RD[spID_new] = C_RD[spID]
 
                     means = GD[spID]
                     i = GetIndParam(means)
@@ -733,10 +702,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     elif newY > h: newY = h - limit
                     Ys.append(newY)
 
-                    newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
-                    if limit > newZ: newZ = 0
-                    elif newZ > l: newZ = l - limit
-                    Zs.append(newZ)
 
     elif repro == 'sexual':
 
@@ -757,12 +722,8 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
             spID = Sp_IDs[i]
             rX = int(round(Xs[i]))
             rY = int(round(Ys[i]))
-            rZ = int(round(Zs[i]))
 
-            if D == 2:
-                index = int(round(rX + (rY * w)))
-            elif D == 3:
-                index = int(round((rY * l * w) + (rX * l) + rZ))
+            index = int(round(rX + (rY * w)))
 
             if index > len(I_Boxes) - 1:
                 index = len(I_Boxes) - 1
@@ -809,7 +770,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     q2 = Qs[index2]
 
                     p2 = np.random.binomial(1, q2)
-                    print 'p2: ',p2
                     # individual not large enough to reproduce
                     if p2 == 0: continue
 
@@ -818,7 +778,6 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
 
                     X = Xs[i2]
                     Y = Ys[i2]
-                    Z = Zs[i2]
 
                     newX = float(np.random.uniform(X-0.5, X+0.5, 1))
                     if limit > newX: newX = 0
@@ -828,130 +787,25 @@ def reproduce(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
                     if limit > newY: newY = 0
                     elif newY > h: newY = h - limit
 
-                    newZ = float(np.random.uniform(Z-0.5, Z+0.5, 1))
-                    if limit > newZ: newZ = 0
-                    elif newZ > l: newZ = l - limit
-
                     ID += 1
                     IDs.append(ID)
                     t_In.append(0)
                     Sp_IDs.append(sp)
 
-    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
+    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, GD, DispD, GList, MList, NList, PList, CList, DList]
 
 
 
-def nonfluid_movement(TypeOf, motion, Lists, xAge, t_In, Xs, Ys, Zs, w, h, l,
-            u0, D, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList):
 
-    limit, distance, direction, pop = 0.1, 0, 0, 'no'
-    x, y, z = 0, 0, 0
-    IDs, Types, Vals = [], [], []
-    DispD = {}
-
-    if TypeOf == 'resource':
-        Type, IDs, ID, Vals = Lists
-    elif TypeOf == 'individual':
-        Type, IDs, ID, Vals, DispD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = Lists
-    else:
-        IDs = Lists
-
-    if Xs == []:
-        if TypeOf == 'tracer':
-            return [IDs, Xs, Ys, Zs, xAge, t_In]
-        elif TypeOf == 'individual':
-            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
-        elif TypeOf == 'resource':
-            return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
-
-
-    for i, val in enumerate(IDs):
-
-        # get distance
-        if TypeOf == 'individual':
-            distance = u0
-            #np.random.uniform(0, 0.5) #u0 * DispD[Types[i]]
-        else:
-            distance = u0
-
-        x, y, z = Xs[i], Ys[i], Zs[i]
-
-        # go up or down
-        #if TypeOf != 'resource':
-        if motion == 'unidirectional':
-            direction = np.random.uniform(-1, 1)
-        if motion == 'random_walk':
-            direction = np.random.uniform(-1, 1)
-
-        y = y + (direction * distance)
-
-        # go forward or backward
-        #if TypeOf != 'resource':
-        if motion == 'unidirectional':
-            direction = np.random.uniform(1, 1)
-        if motion == 'random_walk':
-            direction = np.random.uniform(-1, 1)
-
-        x = x + (direction * distance)
-
-        if x > w - limit or x < limit:
-            pop = 'yes'
-        elif y > h - limit or y < limit:
-            pop = 'yes'
-
-        # go left or right
-        if motion == 'unidirectional':
-            direction = np.random.uniform(-0.5, 1.5)
-        if motion == 'random_walk':
-            direction = np.random.uniform(-1, 1)
-
-        z = z + (direction * distance)
-
-        if z > l - limit or z < limit: pop = 'yes'
-
-        if pop == 'no':
-            Xs[i], Ys[i], Zs[i] = x, y, z
-            t_In[i] = t_In[i]+1
-
-        elif pop == 'yes':
-            xAge.append(t_In[i])
-            Xs.pop(i)
-            Ys.pop(i)
-            Zs.pop(i)
-            t_In.pop(i)
-            IDs.pop(i)
-
-            if TypeOf == 'resource' or TypeOf == 'individual':
-                Type.pop(i)
-                Vals.pop(i)
-
-            if TypeOf == 'individual':
-                GrowthList.pop(i)
-                MaintList.pop(i)
-                N_RList.pop(i)
-                P_RList.pop(i)
-                C_RList.pop(i)
-                DispList.pop(i)
-
-    if TypeOf == 'tracer':
-        return [IDs, Xs, Ys, Zs, xAge, t_In]
-    elif TypeOf == 'individual':
-        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
-    elif TypeOf == 'resource':
-        return [Type, Xs, Ys, Zs, xAge, IDs, ID, t_In, Vals]
-
-
-def search(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
-        h, l, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, D, nN, nP, nC, GList, MList, NList, PList, CList, DList):
+def search(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys,  w, h, GD, DispD, colorD, N_RD, P_RD, C_RD, MD, EnvD, envGs, nN, nP, nC, GList, MList, NList, PList, CList, DList):
 
     if Sp_IDs == []:
-        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
+        return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, GD, DispD, GList, MList, NList, PList, CList, DList]
 
     for i, spID in enumerate(Sp_IDs):
 
         X = Xs[i]
         Y = Ys[i]
-        Z = Zs[i]
 
         sp_opts = EnvD[spID]
 
@@ -980,4 +834,4 @@ def search(repro, spec, Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, w,
             Ys[i] = Y
 
 
-    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, Zs, GD, DispD, GList, MList, NList, PList, CList, DList]
+    return [Sp_IDs, Qs, IDs, ID, t_In, Xs, Ys, GD, DispD, GList, MList, NList, PList, CList, DList]
