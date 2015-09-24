@@ -3,18 +3,8 @@ import sys
 import numpy as np
 from scipy import stats
 from scipy.stats import gaussian_kde
-import mpmath as mpm
 from scipy.optimize import fsolve
-import re
-import random
-import os
 import math
-
-mydir = os.path.expanduser("~/GitHub/rare-bio")
-data = os.path.expanduser("~/data")
-
-################################################################################
-#### Section of evenness indices and descriptive statistical functions #########
 
 
 ############### RARITY #########################################################
@@ -553,3 +543,22 @@ def WhittakersTurnover(site1, site2):
   bw   = s/abar - 1
 
   return bw
+
+
+
+def getprod(Qs):
+
+    N, P, C = 0, 0, 0
+
+    if len(Qs) == 0:
+        return [0, N, P, C]
+
+    if len(Qs) > 0:
+        for q in Qs:
+            N += q[0]
+            P += q[1]
+            C += q[2]
+
+        p1 = len(Qs)
+
+        return [p1, N, P, C]
