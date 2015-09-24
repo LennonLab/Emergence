@@ -25,7 +25,7 @@ Because studying complexity doesn't have to be complicated.
 The ODD protocol is an accepted standard for describing individual-based models.
 We descibe **simplex** as close as reasonable according to an ODD protocol.
 
-Grimm, V. *et al*. (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. **198,** 115-126. **Pay-wall**
+Grimm, V. *et al*. (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. **198,** 115-126. *not OA*
 
 ## Using simulated data in R
 Though coded in Python (and sometimes in Cython for speed), the output of **simplex** can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the analyses folder.
