@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from random import choice
 from scipy import stats
 import numpy as np
-from numpy import sin, pi
+from numpy import sin, pi, mean
 import sys
 import os
 #import psutil
@@ -25,7 +25,7 @@ def nextFrame(arg):
 
     """ Function called for each successive animation frame; arg is the frame number """
 
-    global width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs,PRs,CRs,Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
+    global width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs, PRs, CRs, Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
 
     ct += 1
     plot_system = 'no'
@@ -95,7 +95,7 @@ def nextFrame(arg):
         sizelist = []
         for i, val in enumerate(SpeciesIDs):
             colorlist.append(SpColorDict[val])
-            sizelist.append(np.mean(Qs[i]) * 1000)
+            sizelist.append(mean(Qs[i]) * 1000)
 
         resource_scatImage = ax.scatter(RX, RY, s = RVals, c = 'w', edgecolor = 'SpringGreen', lw = 0.6, alpha=0.7)
 
@@ -113,9 +113,9 @@ def nextFrame(arg):
         PRODPs.append(0)
         PRODCs.append(0)
 
-        RTAUs.append(np.mean(RExitAge))
-        INDTAUs.append(np.mean(IndExitAge))
-        TTAUs.append(np.mean(TExitAge))
+        RTAUs.append(mean(RExitAge))
+        INDTAUs.append(mean(IndExitAge))
+        TTAUs.append(mean(TExitAge))
         RExitAge, IndExitAge, TExitAge = [], [], []
 
         # Examining the resource RAD
@@ -174,16 +174,16 @@ def nextFrame(arg):
             sk = stats.skew(RAD)
             SKs.append(sk)
 
-            Gs.append(np.mean(GrowthList))
-            Ms.append(np.mean(MaintList))
-            Ds.append(np.mean(DispList))
+            Gs.append(mean(GrowthList))
+            Ms.append(mean(MaintList))
+            Ds.append(mean(DispList))
 
             means = [sum(x)/len(x) for x in zip(*N_RList)]
-            NRs.append(np.mean(means))
+            NRs.append(mean(means))
             means = [sum(x)/len(x) for x in zip(*P_RList)]
-            PRs.append(np.mean(means))
+            PRs.append(mean(means))
             means = [sum(x)/len(x) for x in zip(*C_RList)]
-            CRs.append(np.mean(means))
+            CRs.append(mean(means))
 
         #process = psutil.Process(os.getpid())
         #mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)
@@ -191,15 +191,7 @@ def nextFrame(arg):
 
         if len(Ns) >= 2:
 
-
-            fG, fM, fNR, fPR, fCR, fD, T, R, PRODI, PRODN, PRODP, PRODC, N, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, WT, Jc, So = [0]*29
-
-            temp_list1 = [fG, fM, fNR, fPR, fCR, fD, T, R, PRODI, PRODN, PRODP, PRODC, N, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, WT, Jc, So]
-            temp_list2 = [Gs, Ms, NRs, PRs, CRs, Ds, Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, WTs, Jcs, Sos]
-
-            for i, ls in enumerate(temp_list2): temp_list1[i] = np.mean(ls)
-
-            print sim, ' N:', int(round(N)), 'S:', int(round(S)), ' pI:', int(PRODI), 'WT:', round(WT,3), ':  flow:', u0, 'motion:',motion#, ' MB:',int(round(mem))
+            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), ' pI:', int(mean(PRODIs)), 'WT:', round(mean(WTs),3), ':  flow:', u0, #, ' MB:',int(round(mem))
 
             SString = str(splist).strip('()')
             RADString = str(RAD).strip('()')
@@ -214,7 +206,7 @@ def nextFrame(arg):
             OUT5 = open(GenPath + 'examples/TracerRTD.csv','a')
             OUT6 = open(GenPath + 'examples/ResRTD.csv','a')
 
-            outlist = [ct1, sim, motion, PRODI, PRODN, PRODP, PRODC, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, RTAU, TTAU, INDTAU, RDENS, RDIV, RRICH, S, ES, EV, BP, SD, NMAX, SK, T, R, speciation, WT, Jc, So, fG, fM, fNR, fPR, fCR, fD, amp, flux, freq, phase, disturb]
+            outlist = [ct1, sim, motion, mean(PRODIs), mean(PRODNs), mean(PRODPs), mean(PRODCs), r, nNi, nP, nC, rmax, gmax, maintmax, dmax, barriers, alpha, seedCom, u0, width, height, viscosity, N, m, mean(RTAUs), mean(TTAUs), mean(INDTAUs), mean(RDENs), mean(RDIVs), mean(RRICHs), mean(Ss), mean(ESs), mean(EVs), mean(BPs), mean(SDs), mean(NMAXs), mean(SKs), T, R, speciation, mean(WTs), mean(Jcs), mean(Sos), mean(Gs), mean(Ms), mean(NRs), mean(PRs), mean(CRs), mean(Ds), amp, flux, freq, phase, disturb]
             outlist = str(outlist).strip('[]')
 
             print>>OUT1, outlist
