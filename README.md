@@ -1,4 +1,4 @@
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Tetrahedron-4-3D-balls.png" width="100" height="100" />
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Tetrahedron-4-3D-balls.png" style="float: right;" width="100" height="100" />
 
 #simplex
 Because studying complexity doesn't have to be complicated. 
