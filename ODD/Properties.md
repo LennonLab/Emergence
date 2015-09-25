@@ -22,37 +22,14 @@
 	* Ecological disturbance
 
 ## Data that simplex tracks
-**The following is tracked on every organism:**
 
-* time each particle spends in the system (aka residence time)
-* species ID
-* individual ID
-* 2D spatial location
-* closest available resources and competitors
-* levels of 3 endogenous resources (resource specific cell quotas).
-* species specific metabolic maintenance cost
-* individual-level metabolic maintenance cost
-* species-level maximum dispersal rate
-* individual-level maximum dispersal rate
-* species-specific maximum theoretical growth rate
-* pedigree, i.e., direct lineage 
-* species-specific resource use efficiency, for each resource
-* products of individual-level metabolism
 
 **The following is tracked on every resource particle:**
 
-* time in the system
-* particle ID
-* 2D spatial location
-* whether the particle is Nitrogen, Carbon, or Phosphorus
-* what type of Nitrogen, Carbon, or Phosphorus the resource is
-* size of the particle
 
 **The following is tracked on inert tracers:**
 
-* time in the system
-* location in three dimension
-* particle ID
+
 
 **Model variables:**
 
