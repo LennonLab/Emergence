@@ -13,7 +13,6 @@ Because studying complexity doesn't have to be complicated.
 
 3. simplex provides quantitative tools to perform statistical analyses.
 
-
 ##Suggested software
 **simplex** was developed on the free Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
 
