@@ -184,7 +184,6 @@ def simpsons_dom(sad): # ALSO CONSIDERED A DOMINANCE MEASURE
     if sum(sad) == 0:
         return 'NaN'
 
-    sad = filter(lambda a: a != 0, sad)
 
     D = 0.0
     N = sum(sad)
@@ -203,71 +202,113 @@ def e_shannon(sad):
 
     sad = filter(lambda a: a != 0, sad)
 
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+
     H = Shannons_H(sad)
     S = len(sad)
     return H/np.log(S)
 
 
 
-def simplest_gini(x):
-        """Return computed Gini coefficient of inequality.
-        This function was found at http://econpy.googlecode.com/svn/trunk/pytrix/utilities.py """
+def simplest_gini(sad):
+    """Return computed Gini coefficient of inequality.
+    This function was found at:
+    http://econpy.googlecode.com/svn/trunk/pytrix/utilities.py """
 
-        #note: follows basic formula
-        #see: `calc_gini2`
-        #contact: aisaac AT american.edu
+    #note: follows basic formula
+    #see: `calc_gini2`
+    #contact: aisaac AT american.edu
 
-        x = sorted(x)  # increasing order
-        n = len(x)
-        G = sum(xi * (i+1) for i,xi in enumerate(x))
-        G = 2.0*G/(n*sum(x)) #2*B
-        return G - 1 - (1./n)
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+    sad = sorted(sad)  # increasing order
+    n = len(sad)
+    G = sum(xi * (i+1) for i,xi in enumerate(sad))
+    G = 2.0*G/(n*sum(sad)) #2*B
+    return G - 1 - (1.0/n)
 
 
 
-def gini_sample(SADs):
+def gini_sample(sads):
     """ Compute Gini's coefficient for each macrostate in a random sample """
+
     Gs = []
-    for sad in SADs:
+    for sad in sads:
         G = simplest_gini(sad)
         Gs.append(G)
     return Gs
 
 
-def e_Mcintosh(SAD):
+def e_Mcintosh(sad):
 
-    SAD = filter(lambda a: a != 0, SAD)
+    sad = filter(lambda a: a != 0, sad)
 
-    S = len(SAD)
-    N = sum(SAD)
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+    S = len(sad)
+    N = sum(sad)
     sum_n = 0
-    for n in SAD: sum_n += n**2
+    for n in sad: sum_n += n**2
     U = np.sqrt(sum_n)
     E = (N - U)/(N - (N/np.sqrt(S)))
     return E
 
 
-def e_pielou(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
 
-    S = len(SAD)
-    N = float(sum(SAD))
-    H = 0
-    for p in SAD:
-        H += -(p/N)*np.log(p/N)
-    J = H/np.log(S)
-    return J
+def EQ(sad):
 
+    sad = filter(lambda a: a != 0, sad)
 
+    if sum(sad) <= 0:
+        return 'NaN'
 
-def EQ(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
 
-    SAD.reverse()
-    S = len(SAD)
+    sad = filter(lambda a: a != 0, sad)
 
-    y_list = np.log(SAD).tolist()
+    if sum(sad) == 0:
+        return 'NaN'
+    sad.reverse()
+    S = len(sad)
+
+    y_list = np.log(sad).tolist()
     x_list = []
+
     for rank in range(1, S+1):
         x_list.append((rank)/S)
 
@@ -278,25 +319,50 @@ def EQ(SAD):
 
 
 
-def NHC(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
+def NHC(sad):
 
-    SAD.sort()
-    SAD.reverse()
-    x_list = range(1,len(SAD)+1)
-    y_list = np.log(SAD)
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+    sad.sort()
+    sad.reverse()
+    x_list = range(1,len(sad)+1)
+    y_list = np.log(sad)
     slope,intercept,r_value,p_value,std_err = stats.linregress(x_list, y_list)
 
     return slope
 
 
-def e_heip(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
+def e_heip(sad):
+    sad = filter(lambda a: a != 0, sad)
 
-    S = len(SAD)
-    N = float(sum(SAD))
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+    S = len(sad)
+    N = float(sum(sad))
     H = 0.0
-    for p in SAD:
+    for p in sad:
         if p < 1.0:
             print 'p < 1.0', p
             sys.exit()
@@ -307,14 +373,14 @@ def e_heip(SAD):
 
 
 
-def e_simpson(SAD): # based on 1/D, not 1 - D
-    SAD = filter(lambda a: a != 0, SAD)
+def e_simpson(sad): # based on 1/D, not 1 - D
+    sad = filter(lambda a: a != 0, sad)
 
     D = 0.0
-    N = sum(SAD)
-    S = len(SAD)
+    N = sum(sad)
+    S = len(sad)
 
-    for x in SAD:
+    for x in sad:
         D += (x*x) / (N*N)
 
     E = round((1.0/D)/S, 4)
@@ -324,19 +390,12 @@ def e_simpson(SAD): # based on 1/D, not 1 - D
     return E
 
 
-def berger_parker(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
 
-    bp = max(SAD)/sum(SAD)
-    return bp
+def e_var(sad):
+    sad = filter(lambda a: a != 0, sad)
 
-
-
-def e_var(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
-
-    P = np.log(SAD)
-    S = len(SAD)
+    P = np.log(sad)
+    S = len(sad)
     mean = np.mean(P)
     X = 0
     for x in P:
@@ -349,33 +408,33 @@ def e_var(SAD):
 
 
 
-def OE(SAD):
-    SAD = filter(lambda a: a != 0, SAD)
+def OE(sad):
+    sad = filter(lambda a: a != 0, sad)
 
-    S = len(SAD)
-    N = sum(SAD)
+    S = len(sad)
+    N = sum(sad)
     o = 0
 
-    for ab in SAD:
+    for ab in sad:
         o += min(ab/N, 1/S)
 
     return o
 
 
 
-def camargo(SAD): # function to calculate Camargo's eveness:
-    SAD = filter(lambda a: a != 0, SAD)
+def camargo(sad): # function to calculate Camargo's eveness:
+    sad = filter(lambda a: a != 0, sad)
 
-    S = len(SAD)
-    SAD = np.array(SAD)/sum(SAD)
-    SAD = SAD.tolist()
+    S = len(sad)
+    sad = np.array(sad)/sum(sad)
+    sad = sad.tolist()
 
     E = 1
     for i in range(0, S-1):
         for j in range(i+1, S-1):
 
-            pi = SAD[i]
-            pj = SAD[j]
+            pi = sad[i]
+            pj = sad[j]
             E -= abs(pi - pj)/S
 
     return E
@@ -548,7 +607,7 @@ def get_modal(_list):
 
 
 def get_kdens_choose_kernel(xlist,kernel):
-    """ Finds the kernel density function across a sample of SADs """
+    """ Finds the kernel density function across a sample of sads """
     density = gaussian_kde(xlist)
     n = len(xlist)
     xs = np.linspace(min(xlist),max(xlist),n)
@@ -561,7 +620,7 @@ def get_kdens_choose_kernel(xlist,kernel):
 
 
 def get_kdens(xlist):
-    """ Finds the kernel density function across a sample of SADs """
+    """ Finds the kernel density function across a sample of sads """
     density = gaussian_kde(xlist)
     #xs = np.linspace(min(xlist),max(xlist),n)
     xs = np.linspace(0.0,1.0,len(xlist))
