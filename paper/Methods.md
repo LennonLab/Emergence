@@ -1,5 +1,10 @@
 # Methods
 
+simplex was developed to accomplish three primary objects. 
+First, simplex assembles and run individual-based ecological models from random combinations of state variables and processes.
+Second, simplex stores the recorded output as R-style data frames for future analyses and/or as an image file (as when generating a simplex movie).
+Third, simplex contains R files for analyzing data frame output files; these will eventually be offered in Python as well.
+
 ## Model description following the ODD Protocol
 The ODD protocol is standard for describing 
 individual-based models (Grimm et al. 2006). 
@@ -145,53 +150,23 @@ For example, as per the original ODD documentation: “One time step represents 
 In contrast, the smallest grain achievable by simplex is determined by slowest rate at which individuals can undergo BIDE (birth, immigration, death, emigration) processes. For example, under high residence times, an individual can move across 0.00001% of the x or y axis in one time step. Under low residence times, an individual can move across 10% or greater of the x or y axis in one time step.
 ### Process overview and scheduling**Assembly**--The user runs a program that chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
 
-### Core simulation process
-**simplex** models begin simulation immediately after 
-assembly from random combinations of state-variables and 
-processes. Instead of operating by definitive time steps 
-(i.e. days, generations), **simplex** models advance 
-turnover of the environmental matrix according to the 
-initial rate of flow. If the initial rate of flow is 1.0, 
-then the environmental matrix and inert particles would 
-flow 1.0 units of distance. After each iteration of flow, 
-each individual is given the chance to consume, grow, 
-reproduce, starve, die, and to disperse towards resources 
-and environmental optima.
+**Core simulation process**--simplex models begin simulation immediately after assembly from random combinations of state-variables and processes. 
+Instead of operating by definitive time steps (i.e. days, generations), simplex models advance turnover of the environmental matrix according to the initial rate of flow. 
+If the initial rate of flow is 1.0, then the environmental matrix and inert particles would flow 1.0 units of distance. After each iteration of flow, each individual is given the chance to consume, grow, reproduce, starve, die, and to disperse towards resources and environmental optima.
 
-### Duration: A run to mean reversion
-Once assembled, a **simplex** model simulates ecological 
-processes (birth, death, dispersal, growth, consumption, 
-etc.) until the system reaches a fluctuaing equilibrium 
-determined by a point of mean reversion (quantified by 
-Hurst's exponent). Mean reversion captures the tendency 
-of a system to repeatedly reverse a directional change in, 
-say, total abundance. The system examines whether a point 
-of mean reversion has occured by recording the total 
-abundance of the system each time a tracer particle exits 
-the system. This ensures that, at the least, enough time 
-has passed for an inert particle to enter and exit the 
+**Duration: A run to mean reversion**--Once assembled, a simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a fluctuaing equilibrium 
+determined by a point of mean reversion (quantified by Hurst's exponent). Mean reversion captures the tendency of a system to repeatedly reverse a directional change in, say, total abundance. The system examines whether a point of mean reversion has occured by recording the total abundance of the system each time a tracer particle exits the system. This ensures that, at the least, enough time has passed for an inert particle to enter and exit the 
 system. 
 ### Fluid dynamics
-**simplex** uses an efficient and powerful method for 
+simplex uses an efficient and powerful method for 
 simulating fluid flow, i.e., a Lattice-Boltzmann Method 
 (LBM). An LBM discretizes the environment into a lattice 
 and attaches to each position in the lattice a number of 
 particle densities and velocities for each of nine 
 directions of movement possible in a 2D environment 
-(N, S, E, W, NE, NW, SE, SW, current position).###Active dispersal**simplex** models allow individuals to move towards their 
-environmental optima. Rather than a single environmental 
-optima resulting from a single environmental gradient,
-**simplex** allows environmental optima to occur as 
-intersections among environmental gradients. Hence, 
-individuals potentially have multiple optima resulting 
-from unique and equally optimal intersection of up to 10 
-environmental gradients.###Simulated life history
-**simplex** models simulate growth, reproduction, and 
-death via weighted random sampling. This simulate the 
-partly probabilistic and partly deterministic nature of 
-environmental filtering and individual-level interactions. 
+(N, S, E, W, NE, NW, SE, SW, current position).**Active dispersal**--simplex models allow individuals to move towards their environmental optima. Rather than a single environmental optima resulting from a single environmental gradient, simplex allows environmental optima to occur as intersections among environmental gradients. Hence, individuals potentially have multiple optima resulting from unique and equally optimal intersection of up to 10 environmental gradients.**Simulated life history**--simplex models simulate growth, reproduction, and death via weighted random sampling. This simulate the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions. 
 
-**Inflow/Entrance:** Resources and individuals enter from 
+*Inflow/Entrance:* Resources and individuals enter from 
 any point in the environment. Species identities of 
 inflowing propagules are chosen at random from a log-series
 distribution, which often approximates the distribution 
@@ -204,14 +179,14 @@ unique ID and a multi-resource cell quota that represent
 the state of internal resources. The average of these 
 cell quotas determine the probability of reproduction. 
 
-**Dispersal:** Individuals are allowed to actively move 
+*Dispersal:* Individuals are allowed to actively move 
 along environmental gradients (sometimes against the 
 direction of environmenta flow) and towards their optima. 
 A better match to one's environmental optima increases 
 the chance of reproduction and the individual's ability 
 to perform (consume, grow). 
 
-**Consumption & growth:** Sampled individuals consume 
+*Consumption & growth:* Sampled individuals consume 
 resources according to their specific maximum rates of 
 uptake and grow according to specific resource efficiencies 
 and maintenance costs. Uptake increases the individual 
@@ -219,7 +194,7 @@ cell quotas and decreases ambient resources. Individual
 cell quotas are then decreased according to a specific 
 physiological maintenance cost. 
 
-**Reproduction:** Reproduction in **simplex** is currently 
+*Reproduction:* Reproduction in simplex is currently 
 limited to clonal reproduction with the possibility of 
 mutation. Individuals reproduce with a probability 
 determined by the combination of mean cell quota and the 
@@ -230,45 +205,39 @@ unique individual ID and the species ID of its mother,
 unless in the case of speciation, but is allowed small 
 mutations in individual-level state variables.
 
-**Speciation:** Speciation is simulated within **simplex** 
+*Speciation:* Speciation is simulated within simplex 
 as a discrete event but is accompanied by mutations in the 
 values of species-level state variables. This allows for 
 diversity to arise within the system, which the 
 environmental filter can then select on.
 
-**Death:** Individuals sampled at random will die if 
+*Death:* Individuals sampled at random will die if 
 their smallest resource specific cell quota (i.e., N, C, P)
 is equal to or less than 0. 
 
-**Emigration:** Individuals, resource particles, and inert 
+*Emigration:* Individuals, resource particles, and inert 
 tracers are considered to have left or to have flowed out 
-when they pass beyond edges of the environment.## Design conceptsThe ODD protocol calls for eleven design concepts. We 
-adhere to some of these noting the absence of ODD police 
-and our general dislike of dogma.###Basic principles. 
-**Concepts**  
+when they pass beyond edges of the environment.### Design concepts**Basic principles.** 
+*Ecological complexity*: simplex assembles models from random combinations of constraints (state-variables) and processes to generate output data that allow the user to test the general influence of a particular state-variable, process, or combination thereof using univariate and multivariate tests.  
 
-* Ecological complexity: **simplex** assembles models from random combinations of constraints (state-variables) and processes to generate output data that allow the user to test the general influence of a particular state-variable, process, or combination thereof using univariate and multivariate tests.
-* Resource limited growth: All models assembled by **simplex** employ the universal concept that individual growth and activity is fueled and limited by resources.
-* Resource diversity & heterogeneity: **simplex** allows the user to explore the influence of the number and abundances of different resources on ecological diversity and ecosystem processes.
+*Nutrient limited growth*: All models assembled by simplex employ the universal concept that individual growth and activity is fueled and limited by resources.  
+
+*Resource diversity & heterogeneity*: simplex allows the user to explore the influence of the number and abundances of different resources on ecological diversity and ecosystem processes.
 
 **Theories**
+*Constraint-based theory*: simplex was originally built to explore the influence of ecosystem residence time (volume/flow rate) on community assembly and structure. That is, the idea that both ecological processes and constraints shape ecological diversity. 
 
-* Constraint-based theory: **simplex** was originally built to explore the influence of ecosystem residence time (volume/flow rate) on community assembly and structure. That is, the idea that both ecological processes and constraints shape ecological diversity. 
-* Chemostat theory: **simplex** operates much like an unhinged bioreactor or chemostat. That is, particles flow through a system of a defined size at an average rate, and are limited in growth by their residence time.
-* Ecological neutral theory: **simplex** operates via random sampling and can vary from being completely neutral (all individuals having equal vital rates) to completely idiosyncratic (all individual and species are as different as possible). The one aspect of neutral theory that **simplex** adopts without question is the importance of stochastic life history processes (i.e. weighted or unweighted random fluctuations in population sizes). 
+*Chemostat theory*: simplex operates much like an unhinged bioreactor or chemostat. That is, particles flow through a system of a defined size at an average rate, and are limited in growth by their residence time.
+
+*Ecological neutral theory*: simplex operates via random sampling and can vary from being completely neutral (all individuals having equal vital rates) to completely idiosyncratic (all individual and species are as different as possible). The one aspect of neutral theory that simplex adopts without question is the importance of stochastic life history processes (i.e. weighted or unweighted random fluctuations in population sizes). 
 
 **Hypotheses**
-
-* These are entirely up to the user to formulate
-and test according to **simplex**'s capabilities
-and analytical tools.
+* These are entirely up to the user to formulate and test according to simplex's capabilities and analytical tools.
 
 **Modeling approaches**
-
-* Random sampling
-* Fluid dynamics
-###Emergence
-**simplex** uses random sampling and random assembly
+Simplex operations via two main modeling approaches, other than being individual-based, i.e., random sampling and computaitonal fluid dynamics.
+**Emergence**
+simplex uses random sampling and random assembly
 its models to avoid imposing strong constraints on
 the properties that emerge and to allow unanticipated
 combinations of traits and ecological structure to
@@ -295,45 +264,44 @@ emerge.
 	* Mobility vs. metabolic maintenance
 	* Growth rate vs. metabolic maintenance
 	* Generalist vs. specialist
-	* R vs. K selection###Adaptation
+	* R vs. K selection**Adaptation** 
 Individuals can move towards their environmental optima.
 Populations can become aggregated in areas that provide 
 favorable intersections of species optima. Species can 
 evolve by the action of the environmental filter on 
-subpopulation variation in state variables.###Objectives
+subpopulation variation in state variables.**Objectives**
 Individual seek conditions that match them to the 
 environment (e.g., positions along environmental 
 gradients). Individuals also seek to acquire resources 
 through active searching. In the future, individuals 
 will seek to avoid predation.
-###Learning
-There is no aspect of individual-based learning in 
-**simplex**###Prediction 
-Individuals in **simplex** do not have the ability to 
-anticipate conditions.###Sensing
+**Learning**
+There is no aspect of individual-based learning in simplex**Prediction**
+Individuals in simplex do not have the ability to 
+anticipate conditions.**Sensing**
 Individuals only sense in the sense that they can move 
 towards environmental optima and, in the future, 
 resources. Otherwise, all encounters are the result 
-of random walks or fluid flow.###Interaction
+of random walks or fluid flow.**Interaction**
 At the moment, individuals only interact indirectly 
 through excluding each other from resources (e.g. 
 preemption). In the future, individuals will interact 
 as predator-prey, mutualists, resource-dependents, etc. 
 Likewise, there is currently no communication, though 
-quorum sensing would be cool.###Stochasticity
+quorum sensing would be cool.**Stochasticity**
 The occurrence of nearly all processes of birth, death, 
 life, immigration, dispersal, emigration, consumption, etc. 
 are conducted via random sampling. In this way, population 
 and community dynamics result, in part, from demographic 
 stochasticity. Likewise, the emergence of life history 
 traits proceeds from initially random combinations of 
-traits.### Collectives
+traits.**Collectives**
 Individuals belong to species. Species belong to 
-communities. In the future, **simplex** will allow 
-communities to belong to trophic levels.###Observation
-Many **simplex** models shoudl be run to examine trends 
+communities. In the future, simplex will allow 
+communities to belong to trophic levels.**Observation**
+Many simplex models shoudl be run to examine trends 
 in the variation generated. The following is recorded 
-for each **simplex** model:
+for each simplex model:
 
 * Values of randomly chosen state variables
 * Total abundance, $N$
@@ -370,18 +338,18 @@ for each **simplex** model:
 
 These data are stored in file as R-formatted data.frames.
 These files can be directly imported into an R or Python 
-environment.## Initialization
+environment.###Initialization
 The model initiates with a random set of values for state-
 variables, 100 to 10,000 randomly drawn individuals from a 
 theoretical log-series metacommunity.
-These values are saved, so that a **simplex** model could 
+These values are saved, so that a simplex model could 
 be programmed to replicate an analysis.
-## Input data**simplex** models require no input data, but it might be 
+###Input datasimplex models require no input data, but it might be 
 cool to use an api to grab environmental data or other 
-data from a website to parameterize a **simplex** model.## Submodels & Equations
+data from a website to parameterize a simplex model.###Submodels & Equations
 
-### Cell quota model of Droop
-In **simplex** models, individuals grow according to their
+**Cell quota model of Droop**
+In simplex models, individuals grow according to their
 amounts of endogenous resources (cell quota).
 
 Droop (1968, 1983) gave a relationship between specific
@@ -392,14 +360,7 @@ $$\mu = \mu'_{m} (1 - k_{q}/Q)$$
 where $k_{q}$ is the minimum cell quota needed for life,
 also referred to as the subsistence quota. $\mu'$ is the 
 
-**Reference:** Leadbeater, B.S.C. (2006) The 'Droop equation' - Michael 
-Droop and the legacy of the 'Cell-quota model' of 
-phytoplankton growth. Protist. 157: 345-358.
-http://www.whoi.edu/cms/files/Leadbetter_DroopTribute_Protist2006_52271.pdf
-*This is an excellent introduction and go-to for 
-many of Droop's papers*
-
-### Maintenance cost of Pirt
+**Maintenance cost of Pirt**
 Pirt (1965) states "The variation, with growth rate, 
 of the yield of organism from the substrate used as 
 energy source is attributed to consumption of energy 
@@ -407,8 +368,8 @@ at a constant rate for cell maintenance." He derives
 a relationships between the growth yield (biomass), 
 the growth rate, and metabolic maintenance.
 
-**simplex** models use Pirt's concept of a constant 
-maintenance requirement. **simplex** also draws from 
+simplex models use Pirt's concept of a constant 
+maintenance requirement. simplex also draws from 
 Pirt's simple relation for substrate use:  
 
 $$use(total) = use(maintenance) + use(growth)$$
@@ -416,12 +377,8 @@ $$use(total) = use(maintenance) + use(growth)$$
 Respiration and activity without growth is not accounted
 for.
 
-**Reference:** Pirt, S.J. (1965) The Maintenance Energy of 
-Bacteria in Growing Cultures. Proceedings of the Royal 
-Society of London. Series B, Biological Sciences, 163:224-231
-
-### Log-series metacommunity
-**simplex** models draw immigrating individuals from a 
+**Log-series metacommunity**
+simplex models draw immigrating individuals from a 
 theoretical log-series distribution.
 Hubbell (2001) states that the regional community 
 (i.e., metacommmunity) often has a log-series species 
@@ -434,6 +391,23 @@ Hubbell (2001) provides explicit detail of the log-series,
 which is also covered in most ecological diversity texts
 and even on Wikipedia: https://en.wikipedia.org/wiki/Logarithmic_distribution
 
-**Reference:** Hubbell, S.P. (2001) The unified neutral 
-theory of biodiversity and biogeography. Princeton 
-University Press, Princeton, NJ.
+## Source code
+**Python**--simplex is coded in the Python programming language. 
+Python is well-structured and easily-read, and has many scientific and plotting libraries (including animation).
+Python is not as code-intensive as C++ but as a high-level programming language, Python give greater control over the operating system (e.g., adjusting call stacks and recursion limits, multiprocessing and multithreading) than data analysis languages. 
+Python can also obtain C-like speeds when implementing certain software (e.g. Cython) and libraries (e.g. Sage).  
+
+Because simplex is intended to be continuously developed, and to expand to greater computational sophistication, Python is well suited to this purpose.
+Likewise, simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. 
+Data analysis languages tend to be comparatively slow at purely computational tasks because their data objects carry greater overhead, e.g., associated with numeric types and objects.
+
+*model.py*: This is the primary Python file for running simplex. Once run, simplex begins assembling and running simulation models. Output for the numbers of models run and additional cursory data are printed to the users terminal window. These data include the number of individual organisms, species, tracer particles, and resource particles in the system. simplex prints the results of models runs to files immediately after running each model, which allows the user to stop the program at any point without losing data.
+
+
+**R**--The R data analysis language is well-suited to the statistical analysis of simplex's output.
+R has been developed for over a decade and contains many packages for multivariate analysis and higher-order statistical analysis that Python is only beginning to accumulate.
+Consequently, we provide R source code in .R files and .Rmd (RMarkdown) files, complete with basic and advanced statistical analyses for analyzing diversity, regression models, ordination, variance partitioning, and for generating pdf documents (via Knitr) that integrate prose, code, and figures for manuscripts. 
+
+## Analysis of recorded data
+
+

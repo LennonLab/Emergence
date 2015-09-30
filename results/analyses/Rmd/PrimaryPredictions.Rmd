@@ -1,0 +1,227 @@
+---
+title: "Residence time, a master variable of ecology, physiology, and natural selection"
+author: "Ken Locey, Jay Lennon"
+date: "June, 2015"
+header-includes:
+   - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/hydrobide") 
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+#install.packages("vegan") 
+require("vegan") 
+#install.packages("moments")
+require("moments")
+#install.packages("IDPmisc", repos = "http://cran.cnr.Berkeley.edu")
+require(IDPmisc)
+#install.packages("ISLR")
+require(ISLR)
+
+library(ggplot2)
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Loading files with plotting and diversity functions
+source("~/GitHub/hydrobide/tools/Rbin/multiplot.R")
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Load Data
+ dat <- read.csv("~/GitHub/hydrobide/results/simulated_data/2015_September/12_Sept/SimData.csv")
+dat <- NaRV.omit(dat)
+dat$h.tau <- (dat$height * dat$width)/dat$flow.rate
+
+f.dat <- subset(dat, motion == " fluid")
+r.dat <- subset(dat, motion == " random_walk")
+```
+
+## We hypothesized that total abundance (N) and species richness (S) shared humped-shaped relationshiped with residence time, reflecting chemostat theory.
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+fit <- lm(log10(f.dat$total.abundance) ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.N.2.r2 <- summary(fit)$adj.r.squared
+f.N.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(f.dat$total.abundance) ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.N.3.r2 <- summary(fit)$adj.r.squared
+f.N.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$total.abundance) ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.N.2.r2 <- summary(fit)$adj.r.squared
+r.N.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$total.abundance) ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.N.3.r2 <- summary(fit)$adj.r.squared
+r.N.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(f.dat$species.richness) ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.S.2.r2 <- summary(fit)$adj.r.squared
+f.S.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(f.dat$species.richness) ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.S.3.r2 <- summary(fit)$adj.r.squared
+f.S.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$species.richness) ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.S.2.r2 <- summary(fit)$adj.r.squared
+r.S.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(log10(r.dat$species.richness) ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.S.3.r2 <- summary(fit)$adj.r.squared
+r.S.3.pVal <- anova(fit)$'Pr(>F)'[1]
+```
+
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/NandS_vs_ResTime.png',
+      width = 1500, height = 1200, res=200, bg = "white")
+
+p1 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$total.abundance, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$total.abundance, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$total.abundance, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.N.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.N.3.r2,2))),
+      name = "") +
+  
+  
+  labs(x= expression(tau), y="Individuals") +
+  labs(title="Total abundance") +
+  scale_x_log10() +
+  scale_y_log10() +
+  theme(legend.position="top") +
+  coord_fixed(ratio = .50)
+
+p2 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$species.richness, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$species.richness, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$species.richness, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.S.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.S.3.r2,2))),
+      name = "") +
+    
+  labs(x= expression(tau), y="Number of species") +
+  labs(title="Species richness") +
+  theme(legend.position="top") +
+  scale_x_log10() +
+  scale_y_log10() +
+  coord_fixed(ratio = 1.0)
+
+multiplot(p1, p2, cols=2)
+dev.off()
+```
+
+
+## We hypothesized that the realtionship species evenness (E) to residence time would be U-shaped, and that the relationship of species turnover (B) to residence time would be L-shaped.
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+fit <- lm(f.dat$e.var ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.ev.2.r2 <- summary(fit)$adj.r.squared
+f.ev.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$e.var ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.ev.3.r2 <- summary(fit)$adj.r.squared
+f.ev.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$e.var ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.ev.2.r2 <- summary(fit)$adj.r.squared
+r.ev.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$e.var ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.ev.3.r2 <- summary(fit)$adj.r.squared
+r.ev.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$species.turnover ~ poly(log10(f.dat$h.tau), 2, raw=TRUE))
+f.to.2.r2 <- summary(fit)$adj.r.squared
+f.to.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(f.dat$species.turnover ~ poly(log10(f.dat$h.tau), 3, raw=TRUE))
+f.to.3.r2 <- summary(fit)$adj.r.squared
+f.to.3.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$species.turnover ~ poly(log10(r.dat$h.tau), 2, raw=TRUE))
+r.to.2.r2 <- summary(fit)$adj.r.squared
+r.to.2.pVal <- anova(fit)$'Pr(>F)'[1]
+
+fit <- lm(r.dat$species.turnover ~ poly(log10(r.dat$h.tau), 3, raw=TRUE))
+r.to.3.r2 <- summary(fit)$adj.r.squared
+r.to.3.pVal <- anova(fit)$'Pr(>F)'[1]
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+png(filename = '~/GitHub/hydrobide/results/figs/ForPaper/EvennessAndTurnover_vs_ResTime.png', width = 1500, height = 1200, res=200, bg = "white")
+
+p1 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$e.var, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$e.var, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$e.var, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.ev.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.ev.3.r2,2))),
+      name = "") +
+  
+  labs(x= expression(tau), y="Evar") +
+  labs(title="Species evenness") +
+  scale_x_log10() +
+  ylim(0,1) +
+  theme(legend.position="top") +
+  coord_fixed(ratio = 2.0)
+
+p2 <- ggplot()+
+  geom_smooth(aes(x=f.dat$h.tau, y=f.dat$species.turnover, group=f.dat$sim), colour='skyblue1',
+    data=f.dat, se=F) +  
+  geom_smooth(aes(x=r.dat$h.tau, y=r.dat$species.turnover, group=r.dat$sim), colour='seagreen1',
+    data=r.dat, se=F) +  
+  
+  stat_smooth(aes(x=dat$h.tau, y=dat$species.turnover, group=dat$motion, colour=dat$motion),
+    data=dat, method = "lm", geom="smooth", linetype="dashed", size=1,
+    formula = y ~ poly(x,3), se=FALSE) +
+  
+  scale_colour_manual(values = c("navy", "darkgreen"),
+      labels = c(paste("Fluid, r^2 = ",round(f.to.3.r2,2)),
+      paste("Non-fluid, r^2 = ",round(r.to.3.r2,2))),
+      name = "") +
+    
+  labs(x= expression(tau), y="Whittaker's") +
+  labs(title="Species turnover") +
+  scale_x_log10() +
+  ylim(0,1) +
+  theme(legend.position="top") +
+  coord_fixed(ratio = 2.0)
+
+multiplot(p1, p2, cols=2)
+dev.off()
+```
