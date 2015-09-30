@@ -89,3 +89,25 @@ def test_simpsons_dom():
     assert metrics.simpsons_dom([1,1,1,1,1,1,1,1,1,1]) == 0.9
     assert metrics.simpsons_dom([0]) == 'NaN'
     assert metrics.simpsons_dom([2, 6, 76, 1, -1]) == 'NaN'
+
+
+def test_e_shannon():
+
+    """ test for the value of Pielou's evenness index, which is based on
+    Shannon's information entropy """
+
+    assert metrics.e_shannon([100, 100]) == 1.0
+    assert metrics.e_shannon([1,1,1,1,1,1,1,1,1,1]) == 1.0
+    assert metrics.e_shannon([0]) == 'NaN'
+    assert metrics.e_shannon([2, 6, 76, 1, -1]) == 'NaN'
+
+
+def test_simplest_gini():
+
+    """ test for the value of Gini's inequality index """
+
+    assert metrics.simplest_gini([100, 100]) == 0.0
+    assert metrics.simplest_gini([1,1,1,1,1,1,1,1,1,1]) == 0.0
+    assert metrics.simplest_gini([1000,1]) == 0.499001
+    assert metrics.simplest_gini([0]) == 'NaN'
+    assert metrics.simplest_gini([2, 6, 76, 1, -1]) == 'NaN'
