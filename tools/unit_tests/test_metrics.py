@@ -36,3 +36,11 @@ def test_percent_pt_one():
     assert metrics.percent_pt_one([1]) == 0
     assert metrics.percent_pt_one([1000, 1]) == 50
     assert metrics.percent_pt_one([999, 1]) == 0
+
+
+def test_Rlogskew():
+
+    """ test for log-skew of a frequency distribution """
+    assert metrics.Rlogskew([1,1]) == 'S < 2, cannot compute log-skew'
+    assert metrics.Rlogskew([1.0,123]) == 'S < 2, cannot compute log-skew'
+    assert metrics.Rlogskew([5,5,5,5,5]) == '0 variance, cannot compute log-skew'

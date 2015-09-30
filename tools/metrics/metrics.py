@@ -38,8 +38,10 @@ def Rlogskew(sad):
     S = len(sad)
 
     if S <= 2.0:
-        print 'S < 2, cannot compute log-skew'
-        sys.exit()
+        return 'S < 2, cannot compute log-skew'
+
+    if max(sad) == min(sad):
+        return '0 variance, cannot compute log-skew'
 
     sad = np.log10(sad)
     mu = np.mean(sad)
