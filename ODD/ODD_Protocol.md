@@ -1,6 +1,6 @@
 #ODD Protocol
 The ODD protocol is standard for describing 
-individual-based models. We descibe **simplex** 
+individual-based models. I descibe **simplex** 
 as close as reasonable according to an ODD protocol.
 
 Grimm, V. *et al*. (2006) A standard protocol for 
