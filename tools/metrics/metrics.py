@@ -1,21 +1,22 @@
 from __future__ import division
 import sys
 import numpy as np
-from scipy import stats
-from scipy.stats import gaussian_kde
-from scipy.optimize import fsolve
+#import scipy
+#from scipy import stats
+#from scipy.stats import gaussian_kde
+#from scipy.optimize import fsolve
 import math
 
 
 ############### RARITY #########################################################
-def r_singletons(sad): # relative abundance of the least abundant taxon
+def percent_ones(sad): # relative abundance of the least abundant taxon
 
     """ percent of species represented by a single individual """
 
     return 100 * sad.count(1)/len(sad)
 
 
-def p_ZPtOne(sad):
+def percent_pt_one(sad):
 
     """ percent taxa with less than 0.1% N """
     N = sum(sad)
@@ -30,7 +31,7 @@ def p_ZPtOne(sad):
         if sp < 0.1:
             numR += 1
 
-    return numR/S
+    return 100 * numR/S
 
 
 def Rlogskew(sad):
