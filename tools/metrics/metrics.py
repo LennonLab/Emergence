@@ -287,7 +287,7 @@ def e_Mcintosh(sad):
     for n in sad: sum_n += n**2
     U = np.sqrt(sum_n)
     E = (N - U)/(N - (N/np.sqrt(S)))
-    return E
+    return round(E, 6)
 
 
 

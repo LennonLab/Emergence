@@ -111,3 +111,13 @@ def test_simplest_gini():
     assert metrics.simplest_gini([1000,1]) == 0.499001
     assert metrics.simplest_gini([0]) == 'NaN'
     assert metrics.simplest_gini([2, 6, 76, 1, -1]) == 'NaN'
+
+
+def test_e_Mcintosh():
+
+    """ tests for the value of McIntosh's evenness metric """
+    assert metrics.e_Mcintosh([100, 100]) == 1.0
+    assert metrics.e_Mcintosh([1,1,1,1,1,1,1,1,1,1]) == 1.0
+    assert metrics.e_Mcintosh([1000,1]) == 0.003409
+    assert metrics.e_Mcintosh([0]) == 'NaN'
+    assert metrics.e_Mcintosh([2, 6, 76, 1, -1]) == 'NaN'
