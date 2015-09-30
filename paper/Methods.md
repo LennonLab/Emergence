@@ -401,13 +401,17 @@ Because simplex is intended to be continuously developed, and to expand to great
 Likewise, simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. 
 Data analysis languages tend to be comparatively slow at purely computational tasks because their data objects carry greater overhead, e.g., associated with numeric types and objects.
 
-*model.py*: This is the primary Python file for running simplex. Once run, simplex begins assembling and running simulation models. Output for the numbers of models run and additional cursory data are printed to the users terminal window. These data include the number of individual organisms, species, tracer particles, and resource particles in the system. simplex prints the results of models runs to files immediately after running each model, which allows the user to stop the program at any point without losing data.
-
+To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository: https://github.com/LennonLab/simplex/blob/master/README.md
 
 **R**--The R data analysis language is well-suited to the statistical analysis of simplex's output.
 R has been developed for over a decade and contains many packages for multivariate analysis and higher-order statistical analysis that Python is only beginning to accumulate.
 Consequently, we provide R source code in .R files and .Rmd (RMarkdown) files, complete with basic and advanced statistical analyses for analyzing diversity, regression models, ordination, variance partitioning, and for generating pdf documents (via Knitr) that integrate prose, code, and figures for manuscripts. 
 
 ## Analysis of recorded data
+
+
+The reader can view example R-based analysis files that users can use to examine simplex's simulated data: https://github.com/LennonLab/simplex/tree/master/results/analyses/Rmd
+
+
 
 
