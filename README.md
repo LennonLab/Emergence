@@ -16,6 +16,8 @@ Because studying complexity doesn't have to be complicated.
 ##Suggested software
 **simplex** was developed on the free Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
 
+**simplex** implements unit testing using pytest version 2.8.1; see: http://pytest.org/latest/getting-started.html#getstarted
+
 ##Unit tests
 **Coming soon**
 
