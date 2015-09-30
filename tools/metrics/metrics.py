@@ -8,23 +8,26 @@ import math
 
 
 ############### RARITY #########################################################
-def percent_ones(sad): # relative abundance of the least abundant taxon
-
+def percent_ones(sad):
     """ percent of species represented by a single individual """
+
+    sad = filter(lambda a: a != 0, sad)
 
     x = sum(1 for n in sad if n < 0)
     if x >= 1:
-        return 'all elements must be < 0'
+        return 'NaN'
 
     return 100 * sad.count(1)/len(sad)
 
 
 def percent_pt_one(sad):
-
     """ percent taxa with less than 0.1% N """
+
+    sad = filter(lambda a: a != 0, sad)
+
     x = sum(1 for n in sad if n < 0)
     if x >= 1:
-        return 'all elements must be < 0'
+        return 'NaN'
 
     N = sum(sad)
     S = len(sad)
@@ -43,18 +46,20 @@ def percent_pt_one(sad):
 
 def Rlogskew(sad):
 
+    sad = filter(lambda a: a != 0, sad)
+
     x = sum(1 for n in sad if n < 0)
     if x >= 1:
-        return 'all elements must be < 0'
+        return 'NaN'
 
 
     S = len(sad)
 
     if S <= 2.0:
-        return 'S < 2, cannot compute log-skew'
+        return 'NaN'
 
     if max(sad) == min(sad):
-        return '0 variance, cannot compute log-skew'
+        return 'NaN'
 
     sad = np.log10(sad)
     mu = np.mean(sad)
@@ -75,14 +80,16 @@ def Rlogskew(sad):
 
 def Preston(sad):
 
+    sad = filter(lambda a: a != 0, sad)
+
     x = sum(1 for n in sad if n < 0)
     if x >= 1:
-        return 'all elements must be < 0'
+        return 'NaN'
 
     N = sum(sad)
 
     if N <= 0:
-        return 'sum <= 0, cannot compute'
+        return 'NaN'
 
     Nmax = max(sad)
 
@@ -104,17 +111,32 @@ def Preston(sad):
 
 def Berger_Parker(sad):
 
+    sad = filter(lambda a: a != 0, sad)
+
     if sum(sad) <= 0:
-        return 'sum <= 0, cannot compute'
+        return 'NaN'
 
     x = sum(1 for n in sad if n < 0)
     if x >= 1:
-        return 'all elements must be < 0'
+        return 'NaN'
 
     return max(sad)/sum(sad)
 
 
 def McNaughton(sad):
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    if len(sad) == 1:
+        return 'NaN'
+
     sad.sort(reverse=True)
     return 100 * (sad[0] + sad[1])/sum(sad)
 
@@ -127,6 +149,15 @@ def Shannons_H(sad):
 
     sad = filter(lambda a: a != 0, sad)
 
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
     if sum(sad) == 0:
         return 'NaN'
 
@@ -134,7 +165,7 @@ def Shannons_H(sad):
     for i in sad:
         p = i/sum(sad)
         H += p*np.log(p)
-    return H*-1.0
+    return round(H*-1.0, 6)
 
 
 def simpsons_dom(sad): # ALSO CONSIDERED A DOMINANCE MEASURE
