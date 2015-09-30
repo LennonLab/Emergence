@@ -172,6 +172,20 @@ def simpsons_dom(sad): # ALSO CONSIDERED A DOMINANCE MEASURE
 
     sad = filter(lambda a: a != 0, sad)
 
+    if sum(sad) <= 0:
+        return 'NaN'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
+    if sum(sad) == 0:
+        return 'NaN'
+
+    sad = filter(lambda a: a != 0, sad)
+
     D = 0.0
     N = sum(sad)
 

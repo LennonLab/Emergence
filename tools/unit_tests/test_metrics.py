@@ -79,3 +79,13 @@ def test_Shannons_H():
 
     assert metrics.Shannons_H([0]) == 'NaN'
     assert metrics.Shannons_H([2, 6, 76, 1, -1]) == 'NaN'
+
+
+def test_simpsons_dom():
+
+    """ test for the value of Shannon's information entropy """
+
+    assert metrics.simpsons_dom([100]) == 0.0
+    assert metrics.simpsons_dom([1,1,1,1,1,1,1,1,1,1]) == 0.9
+    assert metrics.simpsons_dom([0]) == 'NaN'
+    assert metrics.simpsons_dom([2, 6, 76, 1, -1]) == 'NaN'
