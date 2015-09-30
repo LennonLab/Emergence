@@ -202,6 +202,9 @@ def e_shannon(sad):
 
     sad = filter(lambda a: a != 0, sad)
 
+    if len(sad) <= 1:
+        return 'NaN'
+
     if sum(sad) <= 0:
         return 'NaN'
 
@@ -217,7 +220,7 @@ def e_shannon(sad):
 
     H = Shannons_H(sad)
     S = len(sad)
-    return H/np.log(S)
+    return round(H/np.log(S), 6)
 
 
 
@@ -248,7 +251,7 @@ def simplest_gini(sad):
     n = len(sad)
     G = sum(xi * (i+1) for i,xi in enumerate(sad))
     G = 2.0*G/(n*sum(sad)) #2*B
-    return G - 1 - (1.0/n)
+    return round(G - 1 - (1.0/n), 6)
 
 
 
