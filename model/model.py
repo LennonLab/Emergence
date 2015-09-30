@@ -11,16 +11,14 @@ import os
 #import psutil
 
 mydir = os.path.expanduser("~/")
-sys.path.append(mydir + "GitHub/hydrobide/tools/metrics")
+sys.path.append(mydir + "GitHub/simplex/tools/metrics")
 import metrics
-sys.path.append(mydir + "GitHub/hydrobide/tools/LBM")
+sys.path.append(mydir + "GitHub/simplex/tools/LBM")
 import LBM
-sys.path.append(mydir + "GitHub/hydrobide/tools/bide")
+sys.path.append(mydir + "GitHub/simplex/tools/bide")
 import bide
-sys.path.append(mydir + "GitHub/hydrobide/tools/randparams")
+sys.path.append(mydir + "GitHub/simplex/tools/randparams")
 import randparams as rp
-
-
 
 
 GenPath = mydir + '/GitHub/hydrobide/results/simulated_data/'
