@@ -1,10 +1,9 @@
 from __future__ import division
 import sys
 import numpy as np
-#import scipy
-#from scipy import stats
-#from scipy.stats import gaussian_kde
-#from scipy.optimize import fsolve
+from scipy import stats
+from scipy.stats import gaussian_kde
+from scipy.optimize import fsolve
 import math
 
 
@@ -13,12 +12,20 @@ def percent_ones(sad): # relative abundance of the least abundant taxon
 
     """ percent of species represented by a single individual """
 
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'all elements must be < 0'
+
     return 100 * sad.count(1)/len(sad)
 
 
 def percent_pt_one(sad):
 
     """ percent taxa with less than 0.1% N """
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'all elements must be < 0'
+
     N = sum(sad)
     S = len(sad)
 
@@ -35,11 +42,19 @@ def percent_pt_one(sad):
 
 
 def Rlogskew(sad):
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'all elements must be < 0'
+
+
     S = len(sad)
 
     if S <= 2.0:
-        print 'S < 2, cannot compute log-skew'
-        sys.exit()
+        return 'S < 2, cannot compute log-skew'
+
+    if max(sad) == min(sad):
+        return '0 variance, cannot compute log-skew'
 
     sad = np.log10(sad)
     mu = np.mean(sad)
@@ -53,13 +68,22 @@ def Rlogskew(sad):
     t1 = num/(denom**(3.0/2.0))
     t2 = (S/(S - 2.0)) * np.sqrt((S - 1.0)/S)
 
-    return t1 * t2
+    return round(t1 * t2, 4)
 
 
 ############### LOGNORMAL VARIABLES ############################################
 
 def Preston(sad):
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'all elements must be < 0'
+
     N = sum(sad)
+
+    if N <= 0:
+        return 'sum <= 0, cannot compute'
+
     Nmax = max(sad)
 
     left = (2 * N)/(np.sqrt(np.pi) * Nmax)
@@ -79,6 +103,14 @@ def Preston(sad):
 
 
 def Berger_Parker(sad):
+
+    if sum(sad) <= 0:
+        return 'sum <= 0, cannot compute'
+
+    x = sum(1 for n in sad if n < 0)
+    if x >= 1:
+        return 'all elements must be < 0'
+
     return max(sad)/sum(sad)
 
 
