@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 # Introduction
 
 Modeling is a elementary approach to understanding ecological systems, the influence of ecological processes, and the predictability of ecological patterns and dynamics. 
