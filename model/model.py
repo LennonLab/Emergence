@@ -2,13 +2,16 @@ from __future__ import division
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 
+import statsmodels.tsa.stattools as sta
+from math import isnan
 from random import choice
 from scipy import stats
 import numpy as np
 from numpy import sin, pi, mean
 import sys
 import os
-#import psutil
+import time
+import psutil
 
 mydir = os.path.expanduser("~/")
 sys.path.append(mydir + "GitHub/simplex/tools/metrics")
@@ -21,7 +24,7 @@ sys.path.append(mydir + "GitHub/simplex/tools/randparams")
 import randparams as rp
 
 
-GenPath = mydir + '/GitHub/hydrobide/results/simulated_data/'
+GenPath = mydir + 'GitHub/simplex/results/simulated_data/'
 
 ############## OPEN OUTPUT DATA FILE ###########################################
 OUT1 = open(GenPath + 'examples/SimData.csv','w')
@@ -49,7 +52,7 @@ def nextFrame(arg):
 
     """ Function called for each successive animation frame; arg is the frame number """
 
-    global width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs, PRs, CRs, Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
+    global p, BurnIn, t, num_sims, width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs, PRs, CRs, Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
 
     ct += 1
     plot_system = 'no'
@@ -114,8 +117,9 @@ def nextFrame(arg):
     else: RAD, splist, N, S = [], [], 0, 0
 
     N, S, tt, rr = sum(RAD), len(RAD), len(TIDs), len(RIDs)
+    Ns.append(N)
 
-    Title = ['Individuals consume resources, grow, reproduce, and die as they move through the environment. \nAverage speed on the x-axis is '+str(u0)+' units per time step. '+str(len(TExitAge))+' tracers have passed through.\nMotion is '+motion+'; N: '+str(N)+', S: '+str(S)+', tracers: '+str(tt)+', resources: '+str(rr)+', replicate: '+str(len(Ns)), 'ct: '+str(ct)]
+    Title = ['Individuals consume resources, grow, reproduce, and die as they move through the environment. \nAverage speed on the x-axis is '+str(u0)+' units per time step. '+str(len(TExitAge))+' tracers have passed through.\nN: '+str(N)+', S: '+str(S)+', tracers: '+str(tt)+', resources: '+str(rr)+', replicate: '+str(len(Ns)), 'ct: '+str(ct)]
 
     txt.set_text(' '.join(Title))
     ax.set_ylim(0, height)
@@ -139,20 +143,30 @@ def nextFrame(arg):
 
     plt.draw()
 
-    LowerLimit = 1 + (u0 * 100)
-    if len(TExitAge) >= LowerLimit or ct >= 100:
-        ct = 95
+    if BurnIn == 'not done' and len(Ns) > 99:
+        AugmentedDickeyFuller = sta.adfuller(Ns)
+        val, p = AugmentedDickeyFuller[0:2]
+
+        if p >= 0.05:
+            Ns.pop(0)
+
+        elif p < 0.05 or isnan(p) == True:
+            BurnIn = 'done'
+            Ns = [Ns[-1]] # only keep the most recent N value
+
+    if BurnIn == 'done':
 
         PRODIs.append(PRODI)
         PRODNs.append(PRODN)
         PRODPs.append(PRODP)
         PRODCs.append(PRODC)
 
-        if len(RExitAge) > 0: RTAUs.append(mean(RExitAge))
-        if len(IndExitAge) > 0: INDTAUs.append(mean(IndExitAge))
-        if len(TExitAge) > 0: TTAUs.append(mean(TExitAge))
-
-        RExitAge, IndExitAge, TExitAge = [], [], []
+        if len(RExitAge) > 0:
+            RTAUs.append(mean(RExitAge))
+        if len(IndExitAge) > 0:
+            INDTAUs.append(mean(IndExitAge))
+        if len(TExitAge) > 0:
+            TTAUs.append(mean(TExitAge))
 
         # Examining the resource RAD
         if len(RTypes) > 0:
@@ -160,7 +174,6 @@ def nextFrame(arg):
             RDens = len(RTypes)/(height*width)
             RDiv = float(metrics.Shannons_H(RRAD))
             RRich = len(Rlist)
-
 
         RDENs.append(RDens)
         RDIVs.append(RDiv)
@@ -170,10 +183,7 @@ def nextFrame(arg):
 
         Ts.append(T)
         Rs.append(R)
-
-        if N == 0:
-            Ns.append(0)
-            Ss.append(0)
+        Ss.append(S)
 
         if N >= 1:
 
@@ -183,7 +193,6 @@ def nextFrame(arg):
 
             S = len(RAD)
             Ss.append(S)
-            Ns.append(N)
             # Evenness, Dominance, and Rarity measures
             Ev = metrics.e_var(RAD)
             EVs.append(Ev)
@@ -223,13 +232,14 @@ def nextFrame(arg):
             CRs.append(mean(means))
 
 
-        #process = psutil.Process(os.getpid())
-        #mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)
+        process = psutil.Process(os.getpid())
+        mem = round(process.get_memory_info()[0] / float(2 ** 20), 1)
         # return the memory usage in MB
 
-        if len(Ns) >= 2:
-
-            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), ' pI:', int(mean(PRODIs)), 'WT:', round(mean(WTs),3), ':  flow:', u0#, ' MB:',int(round(mem))
+        if len(Ns) > 99:
+            t = time.clock() - t
+            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), 'WT:', round(mean(WTs),3), ':  flow:', u0, 'time:', t, 'seconds', ' MB:',int(round(mem)), 'p-val =',p
+            t = time.clock()
 
             SString = str(splist).strip('()')
             RADString = str(RAD).strip('()')
@@ -265,7 +275,12 @@ def nextFrame(arg):
             ct = 0
             SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, RColorDict, DispDict = {}, {}, {}, {}, {}, {}, {}, {}, {}
             width, height, alpha, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, gmax, maintmax, dmax, amp, freq, flux, pulse, phase, disturb, envgrads, barriers, Rates = rp.get_rand_params()
+
             sim += 1
+            if sim > num_sims:
+                print "simplex finished"
+                sys.exit()
+
             alpha = np.random.uniform(0.99, 0.999)
 
             for i in range(barriers):
@@ -274,11 +289,16 @@ def nextFrame(arg):
 
             u0 = choice(Rates)
 
-            Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs = [list([]) for _ in xrange(22)]
-            RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, WT, Jc, So, ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = [0]*24
+            RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = [0]*21
+            RAD, splist, IndTimeIn, SpeciesIDs, IndX, IndY,  IndIDs, Qs, IndExitAge, TX, TY, TExitAge, TIDs, TTimeIn, RX, RY,  RIDs, RTypes, RExitAge, RTimeIn, RVals, Gs, Ms, NRs, PRs, CRs, Ds, Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs,BPs, SDs, NMAXs, SKs, MUs, MAINTs, WTs, Jcs, Sos, splist2 = [list([]) for _ in xrange(53)]
+            SpColorDict, GrowthDict, MaintDict, EnvD, N_RD, P_RD, C_RD, RColorDict, DispDict, EnvD = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+            SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispList = [list([]) for _ in xrange(8)]
 
-            SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispList, IndTimeIn, SpeciesIDs, IndX, IndY,  IndIDs, Qs, IndExitAge, splist2 = [list([]) for _ in xrange(16)]
-            TX, TY, TExitAge, TIDs, TTimeIn, WTs, Jcs, Sos, RX, RY,  RIDs, RTypes, RExitAge, RTimeIn, RVals = [list([]) for _ in xrange(15)]
+            #Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs = [list([]) for _ in xrange(22)]
+            #RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, WT, Jc, So, ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = [0]*24
+
+            #SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispList, IndTimeIn, SpeciesIDs, IndX, IndY,  IndIDs, Qs, IndExitAge, splist2 = [list([]) for _ in xrange(16)]
+            #TX, TY, TExitAge, TIDs, TTimeIn, WTs, Jcs, Sos, RX, RY,  RIDs, RTypes, RExitAge, RTimeIn, RVals = [list([]) for _ in xrange(15)]
 
             n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, bE, bW, bNE, bNW, bSE, bSW = LBM.SetLattice(u0, viscosity, width, height, lefts, bottoms, barriers)
 
@@ -305,6 +325,8 @@ SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispL
 
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
+num_sims = 100
+
 LowerLimit, sim, left1, bottom1, left2, bottom2 = 30, 1, 0.2, 0.2, 0.6, 0.6
 viscosity = 10 # unitless but required by an LBM model
 u0 = choice(Rates)  # initial in-flow speed
@@ -321,6 +343,11 @@ n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, barrier, rho, ux, uy, bN, bS, bE, bW, bN
 
 Title = ['','']
 txt = fig.suptitle(' '.join(Title), fontsize = 12)
+
+t = time.clock()
+Ns = []
+BurnIn = 'not done'
+p = 0.0
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=110, interval=40, blit=False) # 20000 frames is a long movie
 plt.show()

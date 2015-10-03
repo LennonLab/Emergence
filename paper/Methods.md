@@ -1,25 +1,26 @@
+---
+output: pdf_document
+---
 # Methods
 
-simplex was developed to accomplish three primary objects. 
-First, simplex assembles and run individual-based ecological models from random combinations of state variables and processes.
-Second, simplex stores the recorded output as R-style data frames for future analyses and/or as an image file (as when generating a simplex movie).
-Third, simplex contains R files for analyzing data frame output files; these will eventually be offered in Python as well.
+**Overview**--simplex was developed to accomplish three primary objectives. 
+First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. 
+Second, simplex stores the recorded output as R-style data frames for future analyses and/or as an image file; e.g., when the user chooses to generate a movie of a simplex model. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
+
+**Source code:**--To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
 ## Model description following the ODD Protocol
 The ODD protocol is standard for describing 
 individual-based models (Grimm et al. 2006). 
-Here, I descibe simplex as close as reasonable according to  the ODD protocol.
+ODD stands for Overview, Design concepts, and Details.
+Here, I descibe simplex *largely* according to the ODD protocol.
 The ODD protocol for simplex can also be found on the public GitHub repository at https://github.com/LennonLab/simplex
-### PurposeThe purpose of models constructed by simplex is to simulate life history of individual organisms, the assembly of ecological communities, and the evolution 
-of traits in spatially explicit environments under stochastic conditions. The proximate goal of simplex is to generate high degrees of variation in the assembly and structure of populations and communities by assembling many different models from random combinations of  state-variables and processes. simplex contains 
-code for analyzing the large amounts of simulation data it records and for making movies of simulation runs. 
 
-The ultimate goal of simplex is to provide a simulation-based platform for examining conditions under which processes and constraints may have a robust influence on eco-evolutionary dynamics and biodiversity.
-### Entities & their state variables
-**Individual organisms**--Individuals are distinguished by collections of elements within lists. Because simplex models operate via random sampling (both 
-weighted and unweighted), individuals undergo changes when randomly sampled from lists. Each specific position in the list corresponds to the same individual. For 
-example, in simulating growth, a simplex model chooses an individual from the list of cell quotas (the probability of reproducing is determined by endogenous resources). The first position in this list 
-as well in all other individual attribute lists corresponds to the same individual. 
+### Purpose
+The purpose of simplex is to simulate life history of individual organisms, the assembly of ecological communities, and the evolution of traits in spatially explicit environments under stochastic conditions. The proximate goal of simplex is to generate high degrees of variation in the assembly and structure of populations and communities by assembling many different models from random combinations of state-variables and processes. The ultimate goal of simplex is to provide a simulation-based platform for examining conditions under which processes and constraints have a robust influence on eco-evolutionary dynamics and patterns of biodiversity.
+
+### Entities & their state variables
+**Individual organisms**--Individuals are distinguished by collections of elements within lists. Individuals undergo changes when randomly sampled from lists. Each specific position in the list corresponds to the same individual. For example, in simulating growth, a simplex model chooses an individual from the list of cell quotas (the probability of reproducing is determined by endogenous resources). The first position in this list as well in all other lists of individual attributes corresponds to the same individual.
 
 	Example:
 	IndIDs = [1,  2, 33, 14]
@@ -43,9 +44,7 @@ These are the lists of attributes for individual organisms:
 * products of individual-level metabolism
 
 
-**Species**--Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, metabolic maintenance cost, and even the color in which they are visualized. 
-Species information is stored in Python dictionaries. In this way, if simplex requires the species ID of an individual it will access the spID list where each element corresponds to an individual (as above). But, if simplex requires the maximum specific growth rate for an individual it finds the species ID and then 
-using that to accesses the Python dictionary for maximum specific growth rates of species.
+**Species**--Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, metabolic maintenance cost. Species information is stored in Python dictionaries. In this way, if simplex requires the species ID of an individual it will access the species ID list where each element corresponds to a specific individual. But, if simplex requires the maximum growth rate for an individual, then it finds the species ID and then uses that to accesses the Python dictionary for maximum specific growth rates of species.
 
 	Example:
 	IndIDs = [1,  2, 33, 14]
@@ -61,7 +60,7 @@ The following are they types of species-level information that are stored in Pyt
 * maximum theoretical growth rate
 * resource use efficiency for each resource
 
-**Resource particles**--Individual resource particles are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle.  For example, the first position in the resource ID list as well in all other resource attribute lists corresponds to the same particle. 
+**Resource particles**--Individual resource particles are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle. 
 
 	Example:
 	resIDs = [4,  6, 17, 1]
@@ -82,18 +81,16 @@ The following are the types of information stored about each resource particle:
 * size of the particle
 
 
-**Inert tracers particles**--These are objects that move/flow into and through the environment. 
-They only interact with physical barriers. 
-The use of tracers particles allows for attributes of a system that flows or physically turns over to be quantified (e.g., hydraulic residence time). 
-Like all other individual-level object in simplex models, tracers are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle.
+**Inert tracers particles**--These are objects that move/flow into and through the environment. They only interact with physical barriers. 
+The use of tracers particles allows for attributes of a system that flows or physically turns over to be quantified (e.g., hydraulic residence time). Like other individual-level objects in simplex models, tracers are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle.
 
-The following are the types of information stored about each resource particle:
+This information stored about each resource particle:
 
 * time in the system
 * 2D spatial location
 * particle ID
 
-**Physcial barriers**--These objects are simulated as discrete 2D spatial coordinates that cannot be occupied by any particles. 
+**Physcial barriers**--These objects are simulated as discrete 2D spatial coordinates that cannot be occupied by any individual entities. The number, size, and location of physical barriers are chosen at random by simplex at the start of each model.
 
 ###System level state variables
 Each run of simplex begins with random choices for the values of:
@@ -136,19 +133,17 @@ For example
 The two general aspects of scale are grain (a.k.a. 
 resolution) and extent (e.g. total area).
 
-**Space**--The environment of simplex models is two dimensional and can vary along each axis from 5 to 100 discrete units. 
-This makes for a potential total extent of 25 to 10,000 discrete patches, each with a grain of 1 square unit. 
+**Spatial extent**--The environment of simplex models is two dimensional and can vary along each axis from 5 to 100 discrete units. This makes for a potential total extent of 25 to 10,000 discrete patches, each with a grain of 1 square unit. 
 
-Note, that all particles move in decimal units the limit of which is determined by Python's decimal precision. 
-This means that individual particles can occupy practically infinite locations within patches and likewise, squeeze through barriers (which only occupy integer x-y coordinates).
+Note that all particles move in decimal units the limit of which is determined by Python's decimal precision. This means that individual particles can occupy practically infinite locations within patches and likewise, squeeze through barriers (which only occupy integer x-y coordinates).
 
-**Time**--Extent of time in simplex models refers to residence time, i.e., the average amount of time that individual particles spend in the system. 
-Residence time for inert tracer particles can vary across five orders of magnitude. 
+**Temporal extent**--Extent of time in simplex models refers to residence time, i.e., the average amount of time that individual particles spend in the system. Residence time for inert tracer particles can vary across five orders of magnitude. 
 
 **Grain**--Grain is the smallest unit over which change can happen. 
-For example, as per the original ODD documentation: “One time step represents one year and simulations were run for 100 years. One grid cell represents 1 ha and the model landscape comprised 1,000 x 1,000 ha; i.e., 10,000 square kilometers”. 
-In contrast, the smallest grain achievable by simplex is determined by slowest rate at which individuals can undergo BIDE (birth, immigration, death, emigration) processes. For example, under high residence times, an individual can move across 0.00001% of the x or y axis in one time step. Under low residence times, an individual can move across 10% or greater of the x or y axis in one time step.
-### Process overview and scheduling**Assembly**--The user runs a program that chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
+For example, as per the original ODD documentation: “One time step represents one year and simulations were run for 100 years. One grid cell represents 1 ha and the model landscape comprised 1,000 x 1,000 ha; i.e., 10,000 square kilometers”. In contrast, the smallest grain achievable by simplex is determined by slowest rate at which individuals can undergo BIDE (birth, immigration, death, emigration) processes. For example, under high residence times, an individual can move across 0.00001% of the x or y axis in one time step. Under low residence times, an individual can move across 10% or greater of the x or y axis in one time step.
+
+### Process overview and scheduling
+**Assembly**--The user runs a program that chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
 
 **Core simulation process**--simplex models begin simulation immediately after assembly from random combinations of state-variables and processes. 
 Instead of operating by definitive time steps (i.e. days, generations), simplex models advance turnover of the environmental matrix according to the initial rate of flow. 
@@ -157,14 +152,19 @@ If the initial rate of flow is 1.0, then the environmental matrix and inert part
 **Duration: A run to mean reversion**--Once assembled, a simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a fluctuaing equilibrium 
 determined by a point of mean reversion (quantified by Hurst's exponent). Mean reversion captures the tendency of a system to repeatedly reverse a directional change in, say, total abundance. The system examines whether a point of mean reversion has occured by recording the total abundance of the system each time a tracer particle exits the system. This ensures that, at the least, enough time has passed for an inert particle to enter and exit the 
 system. 
-### Fluid dynamics
+
+### Fluid dynamics
 simplex uses an efficient and powerful method for 
 simulating fluid flow, i.e., a Lattice-Boltzmann Method 
 (LBM). An LBM discretizes the environment into a lattice 
 and attaches to each position in the lattice a number of 
 particle densities and velocities for each of nine 
 directions of movement possible in a 2D environment 
-(N, S, E, W, NE, NW, SE, SW, current position).**Active dispersal**--simplex models allow individuals to move towards their environmental optima. Rather than a single environmental optima resulting from a single environmental gradient, simplex allows environmental optima to occur as intersections among environmental gradients. Hence, individuals potentially have multiple optima resulting from unique and equally optimal intersection of up to 10 environmental gradients.**Simulated life history**--simplex models simulate growth, reproduction, and death via weighted random sampling. This simulate the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions. 
+(N, S, E, W, NE, NW, SE, SW, current position).
+
+**Active dispersal**--simplex models allow individuals to move towards their environmental optima. Rather than a single environmental optima resulting from a single environmental gradient, simplex allows environmental optima to occur as intersections among environmental gradients. Hence, individuals potentially have multiple optima resulting from unique and equally optimal intersection of up to 10 environmental gradients.
+
+**Simulated life history**--simplex models simulate growth, reproduction, and death via weighted random sampling. This simulate the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions. 
 
 *Inflow/Entrance:* Resources and individuals enter from 
 any point in the environment. Species identities of 
@@ -217,7 +217,11 @@ is equal to or less than 0.
 
 *Emigration:* Individuals, resource particles, and inert 
 tracers are considered to have left or to have flowed out 
-when they pass beyond edges of the environment.### Design concepts**Basic principles.** 
+when they pass beyond edges of the environment.
+
+### Design concepts
+
+**Basic principles.** 
 *Ecological complexity*: simplex assembles models from random combinations of constraints (state-variables) and processes to generate output data that allow the user to test the general influence of a particular state-variable, process, or combination thereof using univariate and multivariate tests.  
 
 *Nutrient limited growth*: All models assembled by simplex employ the universal concept that individual growth and activity is fueled and limited by resources.  
@@ -236,7 +240,8 @@ when they pass beyond edges of the environment.### Design concepts**Basic pr
 
 **Modeling approaches**
 Simplex operations via two main modeling approaches, other than being individual-based, i.e., random sampling and computaitonal fluid dynamics.
-**Emergence**
+
+**Emergence**
 simplex uses random sampling and random assembly
 its models to avoid imposing strong constraints on
 the properties that emerge and to allow unanticipated
@@ -264,41 +269,58 @@ emerge.
 	* Mobility vs. metabolic maintenance
 	* Growth rate vs. metabolic maintenance
 	* Generalist vs. specialist
-	* R vs. K selection**Adaptation** 
+	* R vs. K selection
+
+**Adaptation** 
 Individuals can move towards their environmental optima.
 Populations can become aggregated in areas that provide 
 favorable intersections of species optima. Species can 
 evolve by the action of the environmental filter on 
-subpopulation variation in state variables.**Objectives**
+subpopulation variation in state variables.
+
+**Objectives**
 Individual seek conditions that match them to the 
 environment (e.g., positions along environmental 
 gradients). Individuals also seek to acquire resources 
 through active searching. In the future, individuals 
 will seek to avoid predation.
-**Learning**
-There is no aspect of individual-based learning in simplex**Prediction**
+
+**Learning**
+There is no aspect of individual-based learning in simplex
+
+**Prediction**
 Individuals in simplex do not have the ability to 
-anticipate conditions.**Sensing**
+anticipate conditions.
+
+**Sensing**
 Individuals only sense in the sense that they can move 
 towards environmental optima and, in the future, 
 resources. Otherwise, all encounters are the result 
-of random walks or fluid flow.**Interaction**
+of random walks or fluid flow.
+
+**Interaction**
 At the moment, individuals only interact indirectly 
 through excluding each other from resources (e.g. 
 preemption). In the future, individuals will interact 
 as predator-prey, mutualists, resource-dependents, etc. 
 Likewise, there is currently no communication, though 
-quorum sensing would be cool.**Stochasticity**
+quorum sensing would be cool.
+
+**Stochasticity**
 The occurrence of nearly all processes of birth, death, 
 life, immigration, dispersal, emigration, consumption, etc. 
 are conducted via random sampling. In this way, population 
 and community dynamics result, in part, from demographic 
 stochasticity. Likewise, the emergence of life history 
 traits proceeds from initially random combinations of 
-traits.**Collectives**
+traits.
+
+**Collectives**
 Individuals belong to species. Species belong to 
 communities. In the future, simplex will allow 
-communities to belong to trophic levels.**Observation**
+communities to belong to trophic levels.
+
+**Observation**
 Many simplex models shoudl be run to examine trends 
 in the variation generated. The following is recorded 
 for each simplex model:
@@ -338,15 +360,21 @@ for each simplex model:
 
 These data are stored in file as R-formatted data.frames.
 These files can be directly imported into an R or Python 
-environment.###Initialization
+environment.
+
+###Initialization
 The model initiates with a random set of values for state-
 variables, 100 to 10,000 randomly drawn individuals from a 
 theoretical log-series metacommunity.
 These values are saved, so that a simplex model could 
 be programmed to replicate an analysis.
-###Input datasimplex models require no input data, but it might be 
+
+###Input data
+simplex models require no input data, but it might be 
 cool to use an api to grab environmental data or other 
-data from a website to parameterize a simplex model.###Submodels & Equations
+data from a website to parameterize a simplex model.
+
+###Submodels & Equations
 
 **Cell quota model of Droop**
 In simplex models, individuals grow according to their
@@ -391,27 +419,11 @@ Hubbell (2001) provides explicit detail of the log-series,
 which is also covered in most ecological diversity texts
 and even on Wikipedia: https://en.wikipedia.org/wiki/Logarithmic_distribution
 
-## Source code
-**Python**--simplex is coded in the Python programming language. 
-Python is well-structured and easily-read, and has many scientific and plotting libraries (including animation).
-Python is not as code-intensive as C++ but as a high-level programming language, Python give greater control over the operating system (e.g., adjusting call stacks and recursion limits, multiprocessing and multithreading) than data analysis languages. 
-Python can also obtain C-like speeds when implementing certain software (e.g. Cython) and libraries (e.g. Sage).  
+## Notes on simplex source code
+simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. Likewise, simplex models generate and hold a lot of information about all the particles and elements in the system, which can become a computationally intensive task. To this end, simplex modeling coded is written in Python. 
 
-Because simplex is intended to be continuously developed, and to expand to greater computational sophistication, Python is well suited to this purpose.
-Likewise, simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. 
-Data analysis languages tend to be comparatively slow at purely computational tasks because their data objects carry greater overhead, e.g., associated with numeric types and objects.
+Python is an easy to interpret high-level programming language that has many scientific, plotting libraries, and animation libraries. Python gives greater control over the operating system than data analysis languages (e.g. R, Matlab). Likewise, data analysis languages tend to be comparatively slow at purely computational tasks and can greatly limit the amount of memory held in any data object and fail to import large amounts of data. Python can also obtain C-like speeds when implementing certain software, e.g., Cython, Sage.
 
-To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository: https://github.com/LennonLab/simplex/blob/master/README.md
+The output of simplex is a broad array of information held in seven .csv files. The most important of these is SimData.csv, and is intended to be analyzed in the freely available R (https://www.r-project.org/) and RStudio (https://www.rstudio.com/) environments. The R statistical computing language is well-suited to the analysis of simplex output and contains many packages for multivariate analysis and higher-order statistical analysis that Python is only beginning to accumulate. Consequently, we provide R source code in .R files and .Rmd (RMarkdown) files, complete with basic and advanced statistical analyses for analyzing diversity, regression models, ordination, variance partitioning, and for generating pdf documents (via Knitr) that integrate prose, code, and figures for manuscripts. 
 
-**R**--The R data analysis language is well-suited to the statistical analysis of simplex's output.
-R has been developed for over a decade and contains many packages for multivariate analysis and higher-order statistical analysis that Python is only beginning to accumulate.
-Consequently, we provide R source code in .R files and .Rmd (RMarkdown) files, complete with basic and advanced statistical analyses for analyzing diversity, regression models, ordination, variance partitioning, and for generating pdf documents (via Knitr) that integrate prose, code, and figures for manuscripts. 
-
-## Analysis of recorded data
-
-
-The reader can view example R-based analysis files that users can use to examine simplex's simulated data: https://github.com/LennonLab/simplex/tree/master/results/analyses/Rmd
-
-
-
-
+The reader can view example R-based analysis files that users can use to examine simplex's simulated data: https://github.com/LennonLab/simplex/tree/master/results/analyses.
