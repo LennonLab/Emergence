@@ -3,17 +3,13 @@ output: pdf_document
 ---
 # Methods
 
-**Overview**--simplex was developed to accomplish three primary objectives. 
-First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. 
-Second, simplex stores the recorded output as R-style data frames for future analyses and/or as an image file; e.g., when the user chooses to generate a movie of a simplex model. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
+**Overview**--simplex was developed to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores the recorded output as R-style data frames for future analyses and/or as an image file; e.g., when the user chooses to generate a movie of a simplex model. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
 
-**Source code:**--To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
+**Source code:**--To save space, I also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
 ## Model description following the ODD Protocol
-The ODD protocol is standard for describing 
-individual-based models (Grimm et al. 2006). 
-ODD stands for Overview, Design concepts, and Details.
-Here, I descibe simplex *largely* according to the ODD protocol.
+The ODD protocol is standard for describing individual-based models (Grimm et al. 2006). 
+ODD stands for Overview, Design concepts, and Details. Here, I descibe simplex *largely* according to the ODD protocol.
 The ODD protocol for simplex can also be found on the public GitHub repository at https://github.com/LennonLab/simplex
 
 ### Purpose
@@ -149,9 +145,7 @@ For example, as per the original ODD documentation: “One time step represents 
 Instead of operating by definitive time steps (i.e. days, generations), simplex models advance turnover of the environmental matrix according to the initial rate of flow. 
 If the initial rate of flow is 1.0, then the environmental matrix and inert particles would flow 1.0 units of distance. After each iteration of flow, each individual is given the chance to consume, grow, reproduce, starve, die, and to disperse towards resources and environmental optima.
 
-**Duration: A run to mean reversion**--Once assembled, a simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a fluctuaing equilibrium 
-determined by a point of mean reversion (quantified by Hurst's exponent). Mean reversion captures the tendency of a system to repeatedly reverse a directional change in, say, total abundance. The system examines whether a point of mean reversion has occured by recording the total abundance of the system each time a tracer particle exits the system. This ensures that, at the least, enough time has passed for an inert particle to enter and exit the 
-system. 
+**Duration: A run to mean reversion**--Once assembled, a simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a point of mean reversion, i.e., the tendency of a system to reverse a directional change in, say, total abundance. Mean reversion captures whether a system is fluctuating around a mean value. Once 100 generations have occurred within a model, simplex examines whether a point of mean reversion has occured by conducting an Augmented Dickey-Fuller (ADF) Test, which is well-explained here: https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing. A model is stopped once mean reversion is determined to occurred and, unless the number of desired simulations (i.e. models) has been reached, simplex simply constructs another model from random combinations of state-variables and processes, and then runs it to mean reversion.
 
 ### Fluid dynamics
 simplex uses an efficient and powerful method for 
@@ -420,10 +414,14 @@ which is also covered in most ecological diversity texts
 and even on Wikipedia: https://en.wikipedia.org/wiki/Logarithmic_distribution
 
 ## Notes on simplex source code
-simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. Likewise, simplex models generate and hold a lot of information about all the particles and elements in the system, which can become a computationally intensive task. To this end, simplex modeling coded is written in Python. 
-
-Python is an easy to interpret high-level programming language that has many scientific, plotting libraries, and animation libraries. Python gives greater control over the operating system than data analysis languages (e.g. R, Matlab). Likewise, data analysis languages tend to be comparatively slow at purely computational tasks and can greatly limit the amount of memory held in any data object and fail to import large amounts of data. Python can also obtain C-like speeds when implementing certain software, e.g., Cython, Sage.
+simplex models operate primarily on lists in a programmatic way, e.g., quickly sorting lists, and removing and returning an element from lists with very little overhead. Likewise, simplex models generate and hold a lot of information about all the particles and elements in the system, which can become a computationally intensive task. To this end, simplex modeling coded is written in Python, an easy to read high-level programming language that has many scientific, plotting, and animation libraries. Python gives greater control over the operating system than data analysis languages (e.g. R, Matlab) that can be comparatively slow at purely computational tasks and can greatly limit the amount of memory held in any data object, and even fail to import large amounts of data. Python can also obtain C-like speeds when implementing certain software, e.g., Cython, Sage.
 
 The output of simplex is a broad array of information held in seven .csv files. The most important of these is SimData.csv, and is intended to be analyzed in the freely available R (https://www.r-project.org/) and RStudio (https://www.rstudio.com/) environments. The R statistical computing language is well-suited to the analysis of simplex output and contains many packages for multivariate analysis and higher-order statistical analysis that Python is only beginning to accumulate. Consequently, we provide R source code in .R files and .Rmd (RMarkdown) files, complete with basic and advanced statistical analyses for analyzing diversity, regression models, ordination, variance partitioning, and for generating pdf documents (via Knitr) that integrate prose, code, and figures for manuscripts. 
 
 The reader can view example R-based analysis files that users can use to examine simplex's simulated data: https://github.com/LennonLab/simplex/tree/master/results/analyses.
+
+## Speed & Memory
+
+Simplex models do not complete until the time series of total abundance values reaches a state of mean reversion (i.e., stationarity). Because simplex models can range from quickly flowing eratic systems to barely flowing depleting systems, simulations can potentially take several minutes or more to complete. Likewise, the ability to simulate many complex scenarios also allows for very large total abundances, the resulting values of which are difficult to predict and can theoretically outstrip a computer's memory. 
+
+I ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 2 Duo processor and 4GB of Memory. This system probably represents a below average capacity for modern personal computers, which for this study, was desirable as simplex should be able to be ran on both personal computers and high capacity remote servers. I present results for time to completion and required memory in the Results.
