@@ -247,6 +247,7 @@ def nextFrame(arg):
 
             SString = str(splist).strip('()')
             RADString = str(RAD).strip('()')
+            RADString = str(RAD).strip('[]')
             IndRTD = str(IndExitAge).strip('[]')
             TRTD = str(TExitAge).strip('[]')
             RRTD = str(RExitAge).strip('[]')
