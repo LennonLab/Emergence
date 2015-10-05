@@ -1,24 +1,6 @@
-################################################################################
-#                                                                              #
-# Functions for calculating metrics of diversity, evenness, rarity, etc.       #
-# These are not included in other diversity packages, e.g., Vegan              #
-#                                                                              #
-################################################################################
-#                                                                              #
-# Written by: Ken Locey                                                        #
-#                                                                              #
-################################################################################
-#                                                                              #
-# Recent Changes:                                                              #
-#                                                                              #
-# Future Changes (To-Do List):                                                 #
-#         1.                                                                   #
-#         2. Add warnings                                                      #
-#                                                                              #
-################################################################################
-
 #### A function to generate observed richness
 S.obs <- function(x = ""){ rowSums(x > 0) * 1}
+
 
 sp.turnover <- function(site1, site2){
   
@@ -36,3 +18,28 @@ sp.turnover <- function(site1, site2){
   return(b.w)
   }
 
+
+
+get.vectors <- function(inputFile){
+  vectors <- c()
+  i <- 1
+  con  <- file(inputFile, open = "r")
+  while (length(oneLine <- readLines(con, n = 1)) > 0) {
+    myLine <- unlist((strsplit(oneLine, ",")))
+    myLine[myLine == '[]'] <- -1
+    myLine[is.na(myLine)] <- -1
+    myLine <- myLine[which(myLine!=-1)]
+    myLine <- myLine[which(myLine!="")]
+  
+    if (length(myLine > 0)){
+      myLine <- as.vector(myLine)
+      vectors[i] <- myLine
+      i <- i + 1
+    }
+  }
+  close(con)
+  return(vectors)
+}
+
+
+sem <- function(x) return(sqrt(var(x)/length(x)))

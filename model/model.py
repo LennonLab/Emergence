@@ -24,6 +24,10 @@ sys.path.append(mydir + "GitHub/simplex/tools/randparams")
 import randparams as rp
 
 
+# https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing
+# http://statsmodels.sourceforge.net/0.5.0/generated/statsmodels.tsa.stattools.adfuller.html
+
+
 GenPath = mydir + 'GitHub/simplex/results/simulated_data/'
 
 ############## OPEN OUTPUT DATA FILE ###########################################
@@ -288,6 +292,8 @@ def nextFrame(arg):
                 bottoms.append(np.random.uniform(0.2, 0.8))
 
             u0 = choice(Rates)
+            p = 0
+            BurnIn = 'not done'
 
             RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, Mu, Maint, ct, IndID, RID, N, ct1, T, R, PRODI, PRODQ = [0]*21
             RAD, splist, IndTimeIn, SpeciesIDs, IndX, IndY,  IndIDs, Qs, IndExitAge, TX, TY, TExitAge, TIDs, TTimeIn, RX, RY,  RIDs, RTypes, RExitAge, RTimeIn, RVals, Gs, Ms, NRs, PRs, CRs, Ds, Ts, Rs, PRODIs, PRODNs, PRODPs, PRODCs, Ns, RTAUs, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs,BPs, SDs, NMAXs, SKs, MUs, MAINTs, WTs, Jcs, Sos, splist2 = [list([]) for _ in xrange(53)]

@@ -10,9 +10,9 @@ def get_rand_params():
     motion = choice(['fluid'])
     D = choice([2, 2]) # number of spatial dimensions
 
-    width = choice([10, 15, 20])
+    width = choice([10, 15, 20, 30, 40, 50])
     height = choice([5, 6, 7, 8, 9, 10])
-    barriers = choice([1])
+    barriers = choice([1,2,3,4])
 
     pulse = choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     flux = choice(['yes'])
@@ -25,15 +25,14 @@ def get_rand_params():
     # 0 = in phase; 16 = entirely out of phase
 
     disturb = choice([0.0001])#, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.1])
-    rates = np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.02, 0.01, 0.0075, 0.005])  # inflow speeds
+    rates = np.array([1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.02, 0.01, 0.0075, 0.005, 0.001, 0.0005, 0.0001])  # inflow speeds
 
-    #rates = [0.001]
-    alpha = np.random.uniform(0.99, 0.999)
+    alpha = np.random.uniform(0.99, 0.9999)
     reproduction = choice(['fission', 'sexual'])
     speciation = choice(['yes', 'no'])
 
     seedCom = choice([100]) # size of starting community
-    m = choice([0.0, 0.0001, 0.0005, 0.001, 0.005]) # m = probability of immigration
+    m = choice([0.0, 0.0001, 0.0005, 0.001, 0.005, 0.01]) # m = probability of immigration
     r = choice([200, 400, 600, 800, 1000])
     # r = resource particles flowing in per time step
     nNi = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) # max number of Nitrogen types
@@ -42,7 +41,6 @@ def get_rand_params():
 
     envgrads = []
     num_envgrads = choice([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    #num_envgrads = 1
     for i in range(num_envgrads):
 
         x = np.random.uniform(0, width)
@@ -50,9 +48,10 @@ def get_rand_params():
         envgrads.append([x, y])
 
     rmax = choice([10000, 20000, 40000, 80000, 100000]) # maximum resource particle size
-    gmax = choice([0.1, 0.2, 0.4, 0.6, 0.8])
-    dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1])
+    gmax = choice([0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 0.9])
     maintmax = choice([0.0001, 0.0002, 0.0004, 0.0006, 0.0008, 0.001, 0.002])
+    maintmax = maintmax*gmax
+    dmax = choice([0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.3, 0.4, 0.5])
 
     # TO EXPLORE A SINGLE SET OF VALUES FOR MODEL PARAMETERS
     #m = 0

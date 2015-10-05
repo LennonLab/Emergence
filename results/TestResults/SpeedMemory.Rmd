@@ -1,0 +1,48 @@
+---
+title: "Speed and Time tests"
+author: "Ken Locey"
+date: "October, 2015"
+header-includes: - \usepackage{array}
+output: pdf_document
+geometry: margin=2.54cm
+---
+  
+  
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+rm(list=ls()) 
+getwd() 
+setwd("~/GitHub/simplex") 
+```
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+#install.packages("vegan") 
+require("vegan") 
+#install.packages("moments")
+require("moments")
+library(ggplot2)
+```
+
+
+```{r, results = 'hide', echo=FALSE, message = FALSE, warning = FALSE}
+## Load Data
+dat <- read.csv("~/GitHub/simplex/results/TestResults/SpeedMemory.csv")
+
+sem <- function(x) sqrt(var(x)/length(x))
+
+#is.nan(val) == FALSE
+Ns <- dat$N
+mn = mean(Ns)
+se <- sem(Ns)
+print(c(mn, se))
+
+times <- dat$time
+mn = mean(times)
+se <- sem(times)
+print(c(mn, se))
+
+mems <- dat$memory
+mn = mean(mems)
+se <- sem(mems)
+print(c(mn, se))
+```
+
