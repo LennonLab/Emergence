@@ -1,2 +1,8 @@
 # Discussion
-##
+
+The platform simplex assembles individual-based models from random combinations of state-variables and processes. This is done to explore a large degree of variation in ecological conditions and complexity. In this way, simplex allows ecologists to examine whether the influence of a particular variable should be robust to a wide range of ecological conditions.
+
+By taking advantage of modern computing and version control and social coding tools (e.g., Python, R/RStudio, Knitr, Git, GitHub) simplex is well-positioned to continue developing. Future developments and will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. Improvements to simplex will also include an explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
+
+Likewise, improvements and future versions of simplex will provide increasing numbers of files for statistical analysis of simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of simplex output (e.g., demographic, resource-related, spatial, multivariate, ecological model testing). Moreover, these and all simplex files are freely available and open source, allowing users to modify simplex source code to suit their particular needs.
+

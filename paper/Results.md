@@ -23,18 +23,4 @@ simplex generates six files as its output data. They are:
 All output data were correctly formatted and placed within results/simulated_data/examples directory.
 Each of the six output data files was able to be imported into the RStudio environment using the Exploratory.Rmd Rmarkdown file provided in the "GitHub/simplex/results/analyses/Rmd/" path. The user can use the Exploratory.Rmd file to craft a .Rmd file for their own specific analyses.
 
-## Analysis of saved output
-
-Running the Exploratory.Rmd file conducts the following analyses:
-
-
-
-
-
-
-## Animation
-
-
-
-
 
