@@ -358,4 +358,4 @@ p = 0.0
 
 ani = animation.FuncAnimation(fig, nextFrame, frames=110, interval=40, blit=False) # 20000 frames is a long movie
 plt.show()
-#ani.save(mydir+'/GitHub/hydrobide/results/movies/2015_08_05_1741_hydrobide.avi', bitrate=5000)
+#ani.save(mydir+'/GitHub/simplex/results/movies/examples/2015_10_05_1751_hydrobide.avi', bitrate=5000)

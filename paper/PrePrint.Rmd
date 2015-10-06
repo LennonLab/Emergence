@@ -1,11 +1,37 @@
 ---
+title: "simplex: An individual-based modeling platform"
+author: "Kenneth J Locey,
+Dept. of Biology, University of Indiana, Bloomington"
+geometry: margin=2.54cm
 output: pdf_document
+header-includes:
+    - \usepackage{setspace}
+    - \doublespacing
 ---
+
+# Introduction
+
+Modeling is a elementary approach to understanding ecological systems, the influence of ecological processes, and the predictability of ecological patterns and dynamics. Before modern computing, ecological models were almost exclusively equation-based representations of highly simplified systems (Black and McKane 2012, Otto and Troy 2007, Grant and Swannack 2008). Since the advent of personal computing, ecological models have been increasingly constructed to handle greater complexity and to explicitly simulate ecological processes.
+
+In ecology, simulation-based models are often used to examine analytically challenging or intractable scenarios. 
+Examples are markov models that simulate stochastic demographic changes and early ecological null models, both of which operate on matrices (Gotelli and Entsminger 2001, Hubbell 2001). Ecologists have also simulated growth and interactions among individuals for over two decades with individual-based models (IBMs) (DeAngelis and Gross 1992, Rosindell et al. 2015). 
+IBMs explicitly encode rules of how individuals change and interact. Once the rules are encoded, population to ecosystem-level dynamics can emerge as an IBM simulates over time and spatially explicit environments.
+
+A body of literature including original research, comprehensive reviews, and textbooks reveal the use, advantages, and challenges of ecological IBMs (e.g., Grimm 1999, Grimm and Railsback 2005). IBMs can provide degrees of ecological realism, individual variability, and spatial heterogenetiy that are unattainable with other models. IBMs also offer the potential for realistic and unanticipated ecological dynamics and patterns to emerge from individual-level interactions. However, IBMs offer challenges that include greater computational complexity, the difficulty of explicitly encoding ecological theory, and the use of ecological problem solving (Matthews et al. 2007, Grimm and Railsback 2005).
+
+Despite their frequent use, the power of ecological IBMs has yet been leveraged to the greatest advantage. Few, if any, include fluid dynamics or combine fluid dynamics with growth and active dispersal. While growth, sensing, and decision making are often modeled, few IBMs integrate physiology, evolution, community ecology, biogeography, and sampling theory. 
+Ecological IBMs are more often constructed to model a specific system than to synthesize general theories of ecology and evolution (but see Rosindell et al. 2015). Yet, IBMs can allow researchers to simulate and track information from the level of genomes and internal physiology to the stoichiometry of resource particles and distributions of abundance among species and across space.
+
+Here, I present source code and a detailed description for an ecological IBM platform (called simplex) that simulates a broad range of ecological conditions, records information from individuals to the ecosystem, and provides computing code for analyzing output. This platform incorporates computational fluid dynamics (Succi 2001), life history processes and concepts and patterns from biogeography (Hubbell 2001, Bell 2001), evolution and aspects of selection (Hartl and Clark 1997), and integrates nutrient-limited growth and physiology (Pirt 1965, Droop 1983) among dimension of ecology and evolutionary science. 
+I constructed simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes. 
+Below, I provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
+
+
 # Methods
 
 **Overview**--simplex was developed to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores model output as R-style data frames and, when the user chooses, generates and stores animations of models. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
 
-**Source code:**--To save space, I also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
+**Source code**--To save space, I also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
 ## Model description following the ODD Protocol
 The ODD protocol is standard for describing individual-based models (Grimm et al. 2006). 
@@ -160,57 +186,35 @@ directions of movement possible in a 2D environment
 
 **Simulated life history**--simplex models simulate growth, reproduction, and death via weighted random sampling. This simulate the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions. 
 
-*Inflow/Entrance:* Resources and individuals enter from 
-any point in the environment. Species identities of 
-inflowing propagules are chosen at random from a log-series
-distribution, which often approximates the distribution 
-of abundance among species in ecological communities 
-(see Hubbell 2001). Along with a species ID and species-
-specific maximum rates of resource uptake, active 
-dispersal, resource efficiencies, cell maintenance, 
-and environmental optima, each propagule was given a 
-unique ID and a multi-resource cell quota that represent 
-the state of internal resources. The average of these 
-cell quotas determine the probability of reproduction. 
+*Inflow/Entrance:* Resources and individuals enter from any point in the environment. Species identities of inflowing propagules are chosen at random from a log-series distribution, which often approximates the distribution 
+of abundance among species in ecological communities (see Hubbell 2001). Along with a species ID and species-
+specific maximum rates of resource uptake, active dispersal, resource efficiencies, cell maintenance, 
+and environmental optima, each propagule was given a unique ID and a multi-resource cell quota that represent 
+the state of internal resources. The average of these cell quotas determine the probability of reproduction. 
 
-*Dispersal:* Individuals are allowed to actively move 
-along environmental gradients (sometimes against the 
-direction of environmenta flow) and towards their optima. 
-A better match to one's environmental optima increases 
-the chance of reproduction and the individual's ability 
-to perform (consume, grow). 
+*Dispersal:* Individuals are allowed to actively move along environmental gradients (sometimes against the 
+direction of environmenta flow) and towards their optima. A better match to one's environmental optima increases 
+the chance of reproduction and the individual's ability to perform (consume, grow). 
 
-*Consumption & growth:* Sampled individuals consume 
-resources according to their specific maximum rates of 
-uptake and grow according to specific resource efficiencies 
-and maintenance costs. Uptake increases the individual 
-cell quotas and decreases ambient resources. Individual 
-cell quotas are then decreased according to a specific 
+*Consumption & growth:* Sampled individuals consume resources according to their specific maximum rates of 
+uptake and grow according to specific resource efficiencies and maintenance costs. Uptake increases the individual 
+cell quotas and decreases ambient resources. Individual cell quotas are then decreased according to a specific 
 physiological maintenance cost. 
 
-*Reproduction:* Reproduction in simplex is currently 
-limited to clonal reproduction with the possibility of 
-mutation. Individuals reproduce with a probability 
-determined by the combination of mean cell quota and the 
-proportional match to the environmental optima. The cell 
-quota of each resource is evenly divided between the 
-individual and its daughter. The daughter is given a 
-unique individual ID and the species ID of its mother, 
-unless in the case of speciation, but is allowed small 
-mutations in individual-level state variables.
+*Reproduction:* Reproduction in simplex is currently limited to clonal reproduction with the possibility of 
+mutation. Individuals reproduce with a probability determined by the combination of mean cell quota and the 
+proportional match to the environmental optima. The cell quota of each resource is evenly divided between the 
+individual and its daughter. The daughter is given a unique individual ID and the species ID of its mother, 
+unless in the case of speciation, but is allowed small mutations in individual-level state variables.
 
-*Speciation:* Speciation is simulated within simplex 
-as a discrete event but is accompanied by mutations in the 
-values of species-level state variables. This allows for 
-diversity to arise within the system, which the 
+*Speciation:* Speciation is simulated within simplex as a discrete event but is accompanied by mutations in the 
+values of species-level state variables. This allows for diversity to arise within the system, which the 
 environmental filter can then select on.
 
-*Death:* Individuals sampled at random will die if 
-their smallest resource specific cell quota (i.e., N, C, P)
+*Death:* Individuals sampled at random will die if their smallest resource specific cell quota (i.e., N, C, P)
 is equal to or less than 0. 
 
-*Emigration:* Individuals, resource particles, and inert 
-tracers are considered to have left or to have flowed out 
+*Emigration:* Individuals, resource particles, and inert tracers are considered to have left or to have flowed out 
 when they pass beyond edges of the environment.
 
 ### Design concepts
@@ -236,11 +240,7 @@ when they pass beyond edges of the environment.
 Simplex operations via two main modeling approaches, other than being individual-based, i.e., random sampling and computaitonal fluid dynamics.
 
 **Emergence**
-simplex uses random sampling and random assembly
-its models to avoid imposing strong constraints on
-the properties that emerge and to allow unanticipated
-combinations of traits and ecological structure to
-emerge.
+simplex uses random sampling and random assembly its models to avoid imposing strong constraints on the properties that emerge and to allow unanticipated combinations of traits and ecological structure to emerge.
 
 * Abundance
 	* Total community abundance
@@ -266,58 +266,36 @@ emerge.
 	* R vs. K selection
 
 **Adaptation** 
-Individuals can move towards their environmental optima.
-Populations can become aggregated in areas that provide 
-favorable intersections of species optima. Species can 
-evolve by the action of the environmental filter on 
-subpopulation variation in state variables.
+Individuals can move towards their environmental optima. Populations can become aggregated in areas that provide 
+favorable intersections of species optima. Species canevolve by the action of the environmental filter on subpopulation variation in state variables.
 
 **Objectives**
-Individual seek conditions that match them to the 
-environment (e.g., positions along environmental 
-gradients). Individuals also seek to acquire resources 
-through active searching. In the future, individuals 
-will seek to avoid predation.
+Individual seek conditions that match them to the environment (e.g., positions along environmental gradients). Individuals also seek to acquire resources through active searching. In the future, individuals will seek to avoid predation.
 
 **Learning**
-There is no aspect of individual-based learning in simplex
+There is no aspect of individual-based learning in simplex, as of yet.
 
 **Prediction**
-Individuals in simplex do not have the ability to 
-anticipate conditions.
+Individuals in simplex do not have the ability to anticipate conditions.
 
 **Sensing**
-Individuals only sense in the sense that they can move 
-towards environmental optima and, in the future, 
-resources. Otherwise, all encounters are the result 
-of random walks or fluid flow.
+Individuals only sense in the sense that they can move towards environmental optima and, in the future, 
+resources. Otherwise, all encounters are the result of random walks or fluid flow.
 
 **Interaction**
-At the moment, individuals only interact indirectly 
-through excluding each other from resources (e.g. 
-preemption). In the future, individuals will interact 
-as predator-prey, mutualists, resource-dependents, etc. 
-Likewise, there is currently no communication, though 
-quorum sensing would be cool.
+At the moment, individuals only interact indirectly through excluding each other from resources (e.g. 
+preemption). In the future, individuals will interact as predator-prey, mutualists, resource-dependents, etc. 
+Likewise, there is currently no communication, though quorum sensing would be cool.
 
 **Stochasticity**
-The occurrence of nearly all processes of birth, death, 
-life, immigration, dispersal, emigration, consumption, etc. 
-are conducted via random sampling. In this way, population 
-and community dynamics result, in part, from demographic 
-stochasticity. Likewise, the emergence of life history 
-traits proceeds from initially random combinations of 
-traits.
+The occurrence of nearly all processes of birth, death, life, immigration, dispersal, emigration, consumption, etc. are conducted via random sampling. In this way, population and community dynamics result, in part, from demographic 
+stochasticity. Likewise, the emergence of life history traits proceeds from initially random combinations of traits.
 
 **Collectives**
-Individuals belong to species. Species belong to 
-communities. In the future, simplex will allow 
-communities to belong to trophic levels.
+Individuals belong to species. Species belong to communities. In the future, simplex will allow communities to belong to trophic levels.
 
 **Observation**
-Many simplex models shoudl be run to examine trends 
-in the variation generated. The following is recorded 
-for each simplex model:
+Many simplex models shoudl be run to examine trends in the variation generated. The following is recorded for each simplex model:
 
 * Values of randomly chosen state variables
 * Total abundance, $N$
@@ -352,65 +330,47 @@ for each simplex model:
 * Resource particle RTD
 * Tracer particle RTD
 
-These data are stored in file as R-formatted data.frames.
-These files can be directly imported into an R or Python 
-environment.
+These data are stored in file as R-formatted data.frames. These files can be directly imported into an R or Python environment.
 
 ###Initialization
-The model initiates with a random set of values for state-
-variables, 100 to 10,000 randomly drawn individuals from a 
-theoretical log-series metacommunity.
-These values are saved, so that a simplex model could 
-be programmed to replicate an analysis.
+The model initiates with a random set of values for state-variables, 100 to 10,000 randomly drawn individuals from a 
+theoretical log-series metacommunity. These values are saved, so that a simplex model could be programmed to replicate an analysis.
 
 ###Input data
-simplex models require no input data, but it might be 
-cool to use an api to grab environmental data or other 
+simplex models require no input data, but it might be cool to use an api to grab environmental data or other 
 data from a website to parameterize a simplex model.
 
 ###Submodels & Equations
 
 **Cell quota model of Droop**
-In simplex models, individuals grow according to their
-amounts of endogenous resources (cell quota).
+In simplex models, individuals grow according to their amounts of endogenous resources (cell quota).
 
-Droop (1968, 1983) gave a relationship between specific
-growth rate ($\mu$) and cell quota ($Q$):
+Droop (1968, 1983) gave a relationship between specific growth rate ($\mu$) and cell quota ($Q$):
 
 $$\mu = \mu'_{m} (1 - k_{q}/Q)$$
 
-where $k_{q}$ is the minimum cell quota needed for life,
-also referred to as the subsistence quota. $\mu'$ is the 
+where $k_{q}$ is the minimum cell quota needed for life, also referred to as the subsistence quota. $\mu'$ is the 
 
 **Maintenance cost of Pirt**
-Pirt (1965) states "The variation, with growth rate, 
-of the yield of organism from the substrate used as 
-energy source is attributed to consumption of energy 
-at a constant rate for cell maintenance." He derives 
-a relationships between the growth yield (biomass), 
-the growth rate, and metabolic maintenance.
+Pirt (1965) states "The variation, with growth rate, of the yield of organism from the substrate used as 
+energy source is attributed to consumption of energy at a constant rate for cell maintenance." He derives 
+a relationships between the growth yield (biomass), the growth rate, and metabolic maintenance.
 
-simplex models use Pirt's concept of a constant 
-maintenance requirement. simplex also draws from 
+simplex models use Pirt's concept of a constant maintenance requirement. simplex also draws from 
 Pirt's simple relation for substrate use:  
 
 $$use(total) = use(maintenance) + use(growth)$$
 
-Respiration and activity without growth is not accounted
-for.
+Respiration and activity without growth is not accounted for.
 
 **Log-series metacommunity**
-simplex models draw immigrating individuals from a 
-theoretical log-series distribution.
-Hubbell (2001) states that the regional community 
-(i.e., metacommmunity) often has a log-series species 
-abundance distribution. The probability density 
-function (pdf) of the log-series is:
+simplex models draw immigrating individuals from a theoretical log-series distribution.
+Hubbell (2001) states that the regional community (i.e., metacommmunity) often has a log-series species 
+abundance distribution. The probability density function (pdf) of the log-series is:
 
 $$f(k) = -1/ln(1 - p) * p^{k}/k$$
 
-Hubbell (2001) provides explicit detail of the log-series, 
-which is also covered in most ecological diversity texts
+Hubbell (2001) provides explicit detail of the log-series, which is also covered in most ecological diversity texts
 and even on Wikipedia: https://en.wikipedia.org/wiki/Logarithmic_distribution
 
 ## Notes on simplex source code
@@ -429,3 +389,68 @@ I ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 
 ## Animations
 
 Simplex can generate animations of its models and store them in various image file formats. It does this using the matplotlib animation libary. At the moment, choosing whether to animate or not animate a model is done by commenting out lines of code in model.py. However, this feature will be developed more highly for publication.
+
+#Results
+
+## Unit tests
+
+simplex passed all units tests for 15 diversity indices, ensuring that each index returns either the correct calculated value, or 'NaN' if given any values that cannot be used (e.g., negative numbers, string characters, empty lists).
+
+## Speed & Memory
+
+**Results 100 randomly assembled models.** On average, simplex models required 96.60 +- 32.70 seconds to run, had an average total abundance (*N*) of 31367.0 +- 878.92, and required 160.5 +- 4.28 megabytes of memory. The longest any model took to complete was 48.95 minutes. This model required 261MB of memory and also had generated the greatest total abundance (*N* = 68,808). The shortest any model took to complete was 5.8 seconds with a total abundance of 0 individuals. The least amount of memory any model required was 90MB. These and other analyses from the 100 randomly assembled models can be run using the SpeedMemory.Rmd file located in the results/TestResults directory.
+
+## Output data
+simplex generates six files as its output data. They are: 
+
+*SimData.csv*--Formatted as an R data frame, where each row is a run of a randomly assembled model, and each column holds a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, rate of disturbance, etc.).  
+
+*IndRTD.csv*, *ResRTD.csv*, *TracerRTD.csv*--Each line of these three files contains the amount of time that each individual, resource particle, or inert tracer (from beginning to end) spent in the system. Each line is a run of a randomly assembled model.
+
+*RADs.csv*--Each line is a run of a randomly assembled model and contains the rank-abundance vector at the point when the model was stopped.
+
+*Species.csv*--Each line is a run of a randomly assembled model and contains a vector of species labels corresponding to RADs.csv.
+
+All output data were correctly formatted and placed within results/simulated_data/examples directory.
+Each of the six output data files was able to be imported into the RStudio environment using the Exploratory.Rmd Rmarkdown file provided in the "GitHub/simplex/results/analyses/Rmd/" path. The user can use the Exploratory.Rmd file to craft a .Rmd file for their own specific analyses.
+
+
+# Discussion
+
+The simplex platform assembles individual-based models from random combinations of state-variables and processes. This is done to explore a large degree of variation in ecological conditions and complexity. In this way, simplex allows ecologists to examine whether the influence of a particular variable should be robust to a wide range of ecological conditions.
+
+By taking advantage of modern computing and version control and social coding tools (e.g., Python, R/RStudio, Knitr, Git, GitHub) simplex is well-positioned to keep developing. Future developments will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. Improvements to simplex will also include an explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
+
+Likewise, improvements and future versions of simplex will provide increasing numbers of files for statistical analysis of simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of simplex output (e.g., demographic, resource-related, spatial, multivariate, ecological model testing). Moreover, these and all simplex files are freely available and open source, allowing users to modify simplex source code to suit their particular needs.
+
+# Acknowledgments
+
+I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, 
+
+# References
+
+1. Black AJ, McKane AJ (2012) Stochastic formulation of ecological models and their applications. Trends in Ecology and Evolution. 27:337-345.
+
+2. DeAngelis DL, Gross LJ (1992) Individual-based Models and Approaches in Ecology: Populations, Communities, and Ecosystems. Chapman & Hall. New York.
+
+3. Droop MR (1983) Twenty-five years of algal growth kinetics, a personal view. Botanica Marina. 26: 99-112.
+
+4. Gotelli NJ, Entsminger GL (2001) Swap and fill algorithms in null model analysis: rethinking the knight’s tour. Oecologia. 129:281–291
+
+5. Grimm V, Berger U, Bastiansen F, Eliassen S, Ginot V, Giske J, Goss-Custard J, Grand T, Heinz SK, Huse G, Huth A, Jepsen JU, Jørgensen C, Mooij WM, Mu¨ller B, Pe’er G, Pioub C, Railsback SF, Robbins AM, Robbins MM, Rossmanith E, Ru¨ger N, Strand E, Souissim S, Stillmane RA, Vabøg R, Visser U, DeAngelis DL (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. 198: 115-126.
+
+6. Grimm V, Railsback SF (2005) Individual-based Modeling and Ecology. Princeton University Press, Princeton.
+
+7. Hartl DL, Clark AG (1997) Principle of Population Genetics. Sinauer Associates, Inc. Publishers, Sunderland, MA.
+
+8. Hubbell SP (2001) The unified neutral theory of biodiversity and biogeography. Princeton University Press, Princeton, NJ.
+
+9. Leadbeater BSC (2006) The 'Droop equation' - Michael Droop and the legacy of the 'Cell-quota model' of phytoplankton growth. Protist. 157: 345-358.
+
+10. Matthews RB, Gilbert NG, Roach A, Polhill JG, Gotts NM (2007) Agent-based land-use models: a review of applications. Landscape Ecology. 22: 1447-1459.
+
+11. Pirt SJ (1965) The Maintenance Energy of Bacteria in Growing Cultures. Proceedings of the Royal Society of London. Series B, Biological Sciences, 163:224-231.
+
+12. Rosindell J, Harmon LJ, Etienne RS (2015) Unifying ecology and macroevolution with individual-based theory. Ecology Letters. 18: 472-482.
+
+13. Succi S (2001) The Lattice Boltzmann Equation: For Fluid Dynamics and Beyond. Oxford University Press. New York.
