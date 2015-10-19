@@ -1,6 +1,6 @@
 ---
 title: "simplex: An individual-based modeling platform"
-author: "Kenneth J Locey,
+author: "TBD,
 Dept. of Biology, University of Indiana, Bloomington"
 geometry: margin=2.54cm
 output: pdf_document
@@ -22,20 +22,20 @@ A body of literature including original research, comprehensive reviews, and tex
 Despite their frequent use, the power of ecological IBMs has yet been leveraged to the greatest advantage. Few, if any, include fluid dynamics or combine fluid dynamics with growth and active dispersal. While growth, sensing, and decision making are often modeled, few IBMs integrate physiology, evolution, community ecology, biogeography, and sampling theory. 
 Ecological IBMs are more often constructed to model a specific system than to synthesize general theories of ecology and evolution (but see Rosindell et al. 2015). Yet, IBMs can allow researchers to simulate and track information from the level of genomes and internal physiology to the stoichiometry of resource particles and distributions of abundance among species and across space.
 
-Here, I present source code and a detailed description for an ecological IBM platform (called simplex) that simulates a broad range of ecological conditions, records information from individuals to the ecosystem, and provides computing code for analyzing output. This platform incorporates computational fluid dynamics (Succi 2001), life history processes and concepts and patterns from biogeography (Hubbell 2001, Bell 2001), evolution and aspects of selection (Hartl and Clark 1997), and integrates nutrient-limited growth and physiology (Pirt 1965, Droop 1983) among dimension of ecology and evolutionary science. 
-I constructed simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes. 
-Below, I provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
+Here, we present source code and a detailed description for an ecological IBM platform (called simplex) that simulates a broad range of ecological conditions, records information from individuals to the ecosystem, and provides computing code for analyzing output. This platform incorporates computational fluid dynamics (Succi 2001), life history processes and concepts and patterns from biogeography (Hubbell 2001, Bell 2001), evolution and aspects of selection (Hartl and Clark 1997), and integrates nutrient-limited growth and physiology (Pirt 1965, Droop 1983) among dimension of ecology and evolutionary science. 
+We constructed simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes. 
+Below, we provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
 
 
 # Methods
 
 **Overview**--simplex was developed to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores model output as R-style data frames and, when the user chooses, generates and stores animations of models. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
 
-**Source code**--To save space, I also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
+**Source code**--To save space, we also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
 ## Model description following the ODD Protocol
 The ODD protocol is standard for describing individual-based models (Grimm et al. 2006). 
-ODD stands for Overview, Design concepts, and Details. Here, I descibe simplex *largely* according to the ODD protocol.
+ODD stands for Overview, Design concepts, and Details. Here, we descibe simplex *largely* according to the ODD protocol.
 The ODD protocol for simplex can also be found on the public GitHub repository at https://github.com/LennonLab/simplex
 
 ### Purpose
@@ -384,7 +384,7 @@ The reader can view example R-based analysis files that users can use to examine
 
 Simplex models do not complete until the time series of total abundance values reaches a state of mean reversion (i.e., stationarity). Because simplex models can range from quickly flowing eratic systems to barely flowing depleting systems, simulations can potentially take several minutes or more to complete. Likewise, the ability to simulate many complex scenarios also allows for very large total abundances, the resulting values of which are difficult to predict and can theoretically outstrip a computer's memory. 
 
-I ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 2 Duo processor and 4GB of Memory. This system probably represents a below average capacity for modern personal computers, which for this study, was desirable as simplex should be able to be ran on both personal computers and high capacity remote servers. I present results for time to completion and required memory in the Results.
+We ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 2 Duo processor and 4GB of Memory. This system probably represents a below average capacity for modern personal computers, which for this study, was desirable as simplex should be able to be ran on both personal computers and high capacity remote servers. We present results for time to completion and required memory in the Results.
 
 ## Animations
 
@@ -425,7 +425,7 @@ Likewise, improvements and future versions of simplex will provide increasing nu
 
 # Acknowledgments
 
-I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, 
+We thank Mario Muscarella and Xiao Xiao for fruitful discussions. **Grant number?**
 
 # References
 

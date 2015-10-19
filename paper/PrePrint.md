@@ -1,7 +1,7 @@
 ---
 title: simplex: An individual-based modeling platform
-author:
-    - Kenneth J. Locey
+author(s):
+    - TBD
 date: \today{}
 geometry: margin=2cm
 output: pdf_document
