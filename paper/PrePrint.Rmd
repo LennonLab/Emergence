@@ -1,6 +1,6 @@
 ---
 title: "simplex: An individual-based modeling platform"
-author: "TBD,
+author: "Kenneth J. Locey,
 Dept. of Biology, University of Indiana, Bloomington"
 geometry: margin=2.54cm
 output: pdf_document
@@ -31,11 +31,11 @@ Below, we provide detailed explanation of how hydrobide works, the data it quant
 
 **Overview**--simplex was developed to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores model output as R-style data frames and, when the user chooses, generates and stores animations of models. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
 
-**Source code**--To save space, we also refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
+**Source code**--To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
 ## Model description following the ODD Protocol
 The ODD protocol is standard for describing individual-based models (Grimm et al. 2006). 
-ODD stands for Overview, Design concepts, and Details. Here, we descibe simplex *largely* according to the ODD protocol.
+ODD stands for Overview, Design concepts, and Details. Here, I descibe simplex *largely* according to the ODD protocol.
 The ODD protocol for simplex can also be found on the public GitHub repository at https://github.com/LennonLab/simplex
 
 ### Purpose
@@ -382,13 +382,13 @@ The reader can view example R-based analysis files that users can use to examine
 
 ## Speed & Memory
 
-Simplex models do not complete until the time series of total abundance values reaches a state of mean reversion (i.e., stationarity). Because simplex models can range from quickly flowing eratic systems to barely flowing depleting systems, simulations can potentially take several minutes or more to complete. Likewise, the ability to simulate many complex scenarios also allows for very large total abundances, the resulting values of which are difficult to predict and can theoretically outstrip a computer's memory. 
+Simplex models do not complete until the time series of total abundance values reaches a state of mean reversion (i.e., stationarity). Because simplex models can range from quickly flowing systems with high disturbance to barely flowing and highly stable but depleted systems, simulations can potentially take several minutes or more to complete. Likewise, the ability to simulate many complex scenarios also allows for very large total abundances, the values of which cannot be predicted *a priori* and can even potentially outstrip a computer's memory. 
 
-We ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 2 Duo processor and 4GB of Memory. This system probably represents a below average capacity for modern personal computers, which for this study, was desirable as simplex should be able to be ran on both personal computers and high capacity remote servers. We present results for time to completion and required memory in the Results.
+I ran simplex on a Mid 2010 MacBook Pro (OS X 10.9.5) with a 2.4 GHz Intel Core 2 Duo processor and 4GB of Memory. This system probably represents a below average capacity for modern personal computers, which for this study, was desirable as simplex should be able to be ran on both personal computers and high capacity remote servers. I present results for time to completion and required memory in the Results.
 
 ## Animations
 
-Simplex can generate animations of its models and store them in various image file formats. It does this using the matplotlib animation libary. At the moment, choosing whether to animate or not animate a model is done by commenting out lines of code in model.py. However, this feature will be developed more highly for publication.
+Simplex can generate animations of its models and store them in various image file formats. It does this using the matplotlib animation libary. At the moment, choosing whether to animate or not animate a model is done by commenting out lines of code in model.py. However, this feature will be developed more highly for future versions.
 
 #Results
 
@@ -398,7 +398,7 @@ simplex passed all units tests for 15 diversity indices, ensuring that each inde
 
 ## Speed & Memory
 
-**Results 100 randomly assembled models.** On average, simplex models required 96.60 +- 32.70 seconds to run, had an average total abundance (*N*) of 31367.0 +- 878.92, and required 160.5 +- 4.28 megabytes of memory. The longest any model took to complete was 48.95 minutes. This model required 261MB of memory and also had generated the greatest total abundance (*N* = 68,808). The shortest any model took to complete was 5.8 seconds with a total abundance of 0 individuals. The least amount of memory any model required was 90MB. These and other analyses from the 100 randomly assembled models can be run using the SpeedMemory.Rmd file located in the results/TestResults directory.
+**Results from 100 randomly assembled models.** On average, simplex models required 96.60 +- 32.70 seconds to run, had an average total abundance (*N*) of 31,367 +- 879, and required 161 +- 4.3 megabytes of memory. The longest any model took to complete was 49 minutes. This particularly demanding model required 261MB of memory and also had generated the greatest total abundance (*N* = 68,808). The shortest any model took to complete was 5.8 seconds with a total abundance of 0 individuals. The least amount of memory any model required was 90MB. These and other analyses from the 100 randomly assembled models can be run using the SpeedMemory.Rmd file located in the results/TestResults directory.
 
 ## Output data
 simplex generates six files as its output data. They are: 
@@ -425,7 +425,7 @@ Likewise, improvements and future versions of simplex will provide increasing nu
 
 # Acknowledgments
 
-We thank Mario Muscarella and Xiao Xiao for fruitful discussions. **Grant number?**
+I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, and Ed Hall for fruitful discussions. I thanks Dr. Daniel V. Schroeder for his web-based fluid dynamic simulator, the python-based code for which serves as the core method in simplex for simulating fluid flow.
 
 # References
 

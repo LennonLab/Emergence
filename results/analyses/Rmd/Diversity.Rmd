@@ -34,7 +34,6 @@ source("~/GitHub/simplex/tools/Rbin/metrics.R")
 ```
 
 
-
 ## Import simulated data
 
 ```{r, results = 'hide', echo=TRUE, message = FALSE, warning = FALSE}
@@ -70,8 +69,26 @@ ggplot(dat, aes(x=dat$total.abundance, y=dat$e.var)) +
 ```
 
 
-### 2.) Variance partitioning
+### 2.) How do species richness (S) and total abundance (N) relate to ecosystem residence time?
 
+```{r, results = 'hide', echo=TRUE, message = FALSE, warning = FALSE, fig.width=7, fig.height=4}
+tau <- (dat$width * dat$height)/dat$flow.rate
+
+ggplot(dat, aes(x=tau, y=dat$total.abundance)) +
+  geom_point(colour="red") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x= "Residence time", y="Total abundance")
+
+ggplot(dat, aes(x=tau, y=dat$species.richness)) +
+  geom_point(colour="blue") +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x= "Residence time", y="Species richness")
+```
+
+
+### 2.) Variance partitioning
 
 ```{r, results='hide', echo=TRUE, message=F, warning=F, fig.width=7, fig.height=4}
 plot.new()
