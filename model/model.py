@@ -23,6 +23,15 @@ import bide
 sys.path.append(mydir + "GitHub/simplex/tools/randparams")
 import randparams as rp
 
+""" To generate movies:
+1.) uncomment line 'ani.save' on or near line 364
+2.) adjust the frames variable on or near line 364, to change movie length
+3.) change plot_system = 'no' to 'yes' on or near line 66
+
+Because generating animations requires computing time and memory, doing so can
+be computationally demanding. To quicken the process, comment out plt.show() on
+or near line 368.
+"""
 
 # https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing
 # http://statsmodels.sourceforge.net/0.5.0/generated/statsmodels.tsa.stattools.adfuller.html
