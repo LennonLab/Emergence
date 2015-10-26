@@ -20,21 +20,27 @@ sp.turnover <- function(site1, site2){
 
 
 
-get.vectors <- function(inputFile){
+get.vectors <- function(inputFile, type){
   vectors <- c()
-  i <- 1
   con  <- file(inputFile, open = "r")
+  
   while (length(oneLine <- readLines(con, n = 1)) > 0) {
     myLine <- unlist((strsplit(oneLine, ",")))
     myLine[myLine == '[]'] <- -1
     myLine[is.na(myLine)] <- -1
     myLine <- myLine[which(myLine!=-1)]
     myLine <- myLine[which(myLine!="")]
-  
+    
     if (length(myLine > 0)){
-      myLine <- as.vector(myLine)
-      vectors[i] <- myLine
-      i <- i + 1
+      #if(type == 'char'){
+      #  myLine <- as.vector(myLine)
+      #}
+      if(type == 'number'){
+        myLine <- as.numeric(myLine)
+      }
+      
+      i <- length(vectors)+1
+      vectors[[i]] <- myLine
     }
   }
   close(con)
