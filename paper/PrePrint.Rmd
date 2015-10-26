@@ -9,6 +9,14 @@ header-includes:
     - \doublespacing
 ---
 
+\pagebreak
+
+# Abstract
+
+A popular approach in ecology explicitly simulates the lives of individual organisms. Individual-based modeling (IBM) allows researchers to study ecological complexity as it emerges from individual-level interactions, to explicitly synthesize ecological theories and principles, and to track and record virtually any aspect of a system. I developed a novel IBM platform called simplex to explicitly simulate physiology, life history, resource-limited growth, fluctuating environmental dynamics, and community assembly and structure in both fluid and non-fluid environments. simplex accomplishes three primary tasks in keeping with its namesake, i.e., a generalization of the notion of a triangle to arbitrary dimensions. First, simplex assembles and runs stochastic ecological models from random combinations of over 20 state variables. Second, simplex stores the output of models and generates and stores animations. Third, simplex provides R Markdown files for analyzing simulated data. The simplex source code is freely available, includes the standard ODD description protocol, is open to community-based revision, includes unit testing and time testing, and has been developed to be run on a modest laptop setup using freely available open-source tools.
+
+\pagebreak
+
 # Introduction
 
 Modeling is a elementary approach to understanding ecological systems, the influence of ecological processes, and the predictability of ecological patterns and dynamics. Before modern computing, ecological models were almost exclusively equation-based representations of highly simplified systems (Black and McKane 2012, Otto and Troy 2007, Grant and Swannack 2008). Since the advent of personal computing, ecological models have been increasingly constructed to handle greater complexity and to explicitly simulate ecological processes.
