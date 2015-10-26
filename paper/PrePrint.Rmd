@@ -1,5 +1,5 @@
 ---
-title: "simplex: An individual-based modeling platform"
+title: "simplex: An individual-based ecological modeling platform"
 author: "Kenneth J. Locey,
 Dept. of Biology, University of Indiana, Bloomington"
 geometry: margin=2.54cm
@@ -22,14 +22,14 @@ A body of literature including original research, comprehensive reviews, and tex
 Despite their frequent use, the power of ecological IBMs has yet been leveraged to the greatest advantage. Few, if any, include fluid dynamics or combine fluid dynamics with growth and active dispersal. While growth, sensing, and decision making are often modeled, few IBMs integrate physiology, evolution, community ecology, biogeography, and sampling theory. 
 Ecological IBMs are more often constructed to model a specific system than to synthesize general theories of ecology and evolution (but see Rosindell et al. 2015). Yet, IBMs can allow researchers to simulate and track information from the level of genomes and internal physiology to the stoichiometry of resource particles and distributions of abundance among species and across space.
 
-Here, we present source code and a detailed description for an ecological IBM platform (called simplex) that simulates a broad range of ecological conditions, records information from individuals to the ecosystem, and provides computing code for analyzing output. This platform incorporates computational fluid dynamics (Succi 2001), life history processes and concepts and patterns from biogeography (Hubbell 2001, Bell 2001), evolution and aspects of selection (Hartl and Clark 1997), and integrates nutrient-limited growth and physiology (Pirt 1965, Droop 1983) among dimension of ecology and evolutionary science. 
-We constructed simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes. 
-Below, we provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
+Here, I present source code and a detailed description for an ecological IBM platform (called simplex) that simulates a broad range of ecological conditions, records information from individuals to the ecosystem, and provides computing code for analyzing output. This platform incorporates computational fluid dynamics (Succi 2001), life history processes and concepts and patterns from biogeography (Hubbell 2001, Bell 2001), evolution and aspects of selection (Hartl and Clark 1997), and integrates nutrient-limited growth and physiology (Pirt 1965, Droop 1983) among dimension of ecology and evolutionary science. 
+I constructed simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes. 
+Below, I provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
 
 
 # Methods
 
-**Overview**--simplex was developed to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores model output as R-style data frames and, when the user chooses, generates and stores animations of models. Third, simplex provides R-based files for analyzing simulated; these will eventually be offered in Python as well.
+**Overview**--I developed simplex to accomplish three objectives. First, simplex assembles and runs individual-based ecological models from random combinations of state variables and processes. Second, simplex stores the output of models as R-style data frames and .csv files, and when the user chooses, generates and stores animations of models. Third, simplex provides R Markdown files for analyzing simulated data; these will eventually be offered in Python as well.
 
 **Source code**--To save space, I refer the reader to the README.md file on the public simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
 
@@ -227,7 +227,7 @@ when they pass beyond edges of the environment.
 *Resource diversity & heterogeneity*: simplex allows the user to explore the influence of the number and abundances of different resources on ecological diversity and ecosystem processes.
 
 **Theories**
-*Constraint-based theory*: simplex was originally built to explore the influence of ecosystem residence time (volume/flow rate) on community assembly and structure. That is, the idea that both ecological processes and constraints shape ecological diversity. 
+*Constraint-based theory*: simplex was originally built to explore the influence of ecosystem residence time (volume/flow rate) on community assembly and structure. That is, the idea that both ecological processes and physical constraints shape ecological diversity. 
 
 *Chemostat theory*: simplex operates much like an unhinged bioreactor or chemostat. That is, particles flow through a system of a defined size at an average rate, and are limited in growth by their residence time.
 
@@ -400,12 +400,13 @@ simplex passed all units tests for 15 diversity indices, ensuring that each inde
 
 **Results from 100 randomly assembled models.** On average, simplex models required 96.60 +- 32.70 seconds to run, had an average total abundance (*N*) of 31,367 +- 879, and required 161 +- 4.3 megabytes of memory. The longest any model took to complete was 49 minutes. This particularly demanding model required 261MB of memory and also had generated the greatest total abundance (*N* = 68,808). The shortest any model took to complete was 5.8 seconds with a total abundance of 0 individuals. The least amount of memory any model required was 90MB. These and other analyses from the 100 randomly assembled models can be run using the SpeedMemory.Rmd file located in the results/TestResults directory.
 
-## Output data
+## Products
+### Output data
 simplex generates six files as its output data. They are: 
 
 *SimData.csv*--Formatted as an R data frame, where each row is a run of a randomly assembled model, and each column holds a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, rate of disturbance, etc.).  
 
-*IndRTD.csv*, *ResRTD.csv*, *TracerRTD.csv*--Each line of these three files contains the amount of time that each individual, resource particle, or inert tracer (from beginning to end) spent in the system. Each line is a run of a randomly assembled model.
+*IndRTD.csv*, *ResRTD.csv*, *TracerRTD.csv*--Each line of these three files contains the amount of time that each individual, resource particle, or inert tracer spent in the system. Each line represents the same run of a randomly assembled model.
 
 *RADs.csv*--Each line is a run of a randomly assembled model and contains the rank-abundance vector at the point when the model was stopped.
 
@@ -414,18 +415,32 @@ simplex generates six files as its output data. They are:
 All output data were correctly formatted and placed within results/simulated_data/examples directory.
 Each of the six output data files was able to be imported into the RStudio environment using the Exploratory.Rmd Rmarkdown file provided in the "GitHub/simplex/results/analyses/Rmd/" path. The user can use the Exploratory.Rmd file to craft a .Rmd file for their own specific analyses.
 
+### R analysis files
+
+There are currently two R Markdown analysis files associated with simplex; these are located in the `tools/analyses/Rmd` directory. 
+These files are primarily designed to help users understand how to import simplex files, to use R Markdown to analyze simplex data, and conduct descriptive and univariate statistics on simplex output. The first file, `BasicAnalysis.Rmd`, focuses on descriptive statistics, multiple univariate analyses, and variance partitioning to reveal relationships among simplex variables. The second file, `Diversity.Rmd`, focuses on the analysis of taxonomic diversity and abundance to include fitting species abundance models using the R-based `vegan` module. Each file generates a knitted pdf (includes code, text, and figures), see Supplement.
+
+### Animations
+
+I used the animation module in the matplotlib plotting library to generate avi formatted movies of simplex models. These can be viewed in any internet brower (https://github.com/LennonLab/simplex/tree/master/results/movies/examples). Currently, generating movies requires following three instructions in model/model.py:
+
+1.) uncomment line 'ani.save' on or near line 364  
+2.) adjust the frames variable on or near line 364, to change movie length   
+3.) change plot_system = 'no' to 'yes' on or near line 66  
+
+Because generating animations requires computing time and memory, doing so can be computationally demanding. To quicken the process, comment out plt.show() on or near line 368.
 
 # Discussion
 
-The simplex platform assembles individual-based models from random combinations of state-variables and processes. This is done to explore a large degree of variation in ecological conditions and complexity. In this way, simplex allows ecologists to examine whether the influence of a particular variable should be robust to a wide range of ecological conditions.
+The simplex platform assembles individual-based models from random combinations of state-variables and processes. This is done to explore a large degree of variation in ecological conditions and complexity. In this way, simplex allows ecologists or educators to examine whether the influence of a particular variable should be robust to a wide range of ecological conditions. In addition to its unique  modeling aspects, simplex includes analysis code that shows the user how to import and analyze the simulated data, and provides a basic demonstration of how to conduct variance partitioning and fitting of species abundance models.
 
-By taking advantage of modern computing and version control and social coding tools (e.g., Python, R/RStudio, Knitr, Git, GitHub) simplex is well-positioned to keep developing. Future developments will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. Improvements to simplex will also include an explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
+By taking advantage of modern computing and version control and social coding tools (e.g., Python, R/RStudio, Knitr, Git, GitHub) simplex is well-positioned to continue development as both a research and education/instructional tool for ecology. Future developments and released versions will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. Improvements to simplex will also include an explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
 
-Likewise, improvements and future versions of simplex will provide increasing numbers of files for statistical analysis of simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of simplex output (e.g., demographic, resource-related, spatial, multivariate, ecological model testing). Moreover, these and all simplex files are freely available and open source, allowing users to modify simplex source code to suit their particular needs.
+Likewise, improvements and future versions of simplex will provide increasing numbers of files for statistical analysis of simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of simplex output (e.g., demographic, resource-related, spatial, multivariate, ecological model testing). These and all simplex files are freely available and open source, allowing users to modify simplex source code to suit their particular needs.
 
 # Acknowledgments
 
-I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, and Ed Hall for fruitful discussions. I thanks Dr. Daniel V. Schroeder for his web-based fluid dynamic simulator, the python-based code for which serves as the core method in simplex for simulating fluid flow.
+I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, and Ed Hall for fruitful discussions. I thank Dr. Daniel V. Schroeder for his web-based fluid dynamic simulator, the python-based code for which serves as the core method in simplex for simulating fluid flow.
 
 # References
 
