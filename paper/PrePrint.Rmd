@@ -1,7 +1,7 @@
 ---
-title: "simplex: An individual-based ecological modeling platform"
-author: "Kenneth J. Locey,
-Dept. of Biology, University of Indiana, Bloomington"
+title: "simplex: An individual-based platform for ecological modeling"
+author: "Kenneth J. Locey"
+fontsize: 12pt
 geometry: margin=2.54cm
 output: pdf_document
 header-includes:
@@ -9,11 +9,19 @@ header-includes:
     - \doublespacing
 ---
 
+\begin{center} 
+Department of Biology, University of Indiana, Bloomington
+\end{center}
+
+\begin{center}
+email: kjlocey@indiana.edu
+\end{center}
+
 \pagebreak
 
 # Abstract
 
-A popular approach in ecology explicitly simulates the lives of individual organisms. Individual-based modeling (IBM) allows researchers to study ecological complexity as it emerges from individual-level interactions, to explicitly synthesize ecological theories and principles, and to track and record virtually any aspect of a system. I developed a novel IBM platform called simplex to explicitly simulate physiology, life history, resource-limited growth, fluctuating environmental dynamics, and community assembly and structure in both fluid and non-fluid environments. simplex accomplishes three primary tasks in keeping with its namesake, i.e., a generalization of the notion of a triangle to arbitrary dimensions. First, simplex assembles and runs stochastic ecological models from random combinations of over 20 state variables. Second, simplex stores the output of models and generates and stores animations. Third, simplex provides R Markdown files for analyzing simulated data. The simplex source code is freely available, includes the standard ODD description protocol, is open to community-based revision, includes unit testing and time testing, and has been developed to be run on a modest laptop setup using freely available open-source tools.
+A popular approach in ecological modeling explicitly simulates the lives of individual organisms. Individual-based modeling (IBM) allows ecological complexity to be studied as it emerges from the individual-level, to explicitly synthesize theories and principles, and to track and record virtually any aspect of a system. I developed a novel IBM platform called simplex to explicitly simulate physiology, life history, resource-limited growth, fluctuating environmental dynamics, and community assembly and structure in both fluid and non-fluid environments. simplex accomplishes three primary tasks in keeping with its namesake (i.e., the generalized notion of a triangle to arbitrary dimensions). First, simplex assembles and runs stochastic ecological models from random combinations of over 20 state variables. Second, simplex stores the output of models and generates and stores animations. Third, simplex provides R Markdown files for analyzing simulated data. The simplex source code is freely available, includes the standard ODD description protocol, is open to community-based revision, includes unit testing and time testing, and has been developed to be run using modest hardware and freely available open-source tools.
 
 \pagebreak
 
@@ -58,7 +66,8 @@ The purpose of simplex is to simulate life history of individual organisms, the 
 	Xpos =   [45, 23, 456, 1]
 	Ypos =   [765, 87, 21, 34]
 	
-	The individual with ID of 1 has a cell quota of 0.1 and is located at position x=45, y=765
+	The individual with ID of 1 has a cell quota of 0.1 and is 
+  located at position x=45, y=765
 
 These are the lists of attributes for individual organisms:
 
@@ -81,7 +90,8 @@ These are the lists of attributes for individual organisms:
 	spIDs = [12, 32, 11, 6]
 	MaxGrowthDict = {12: 0.9, 32: 0.5, 11: 0.8, 6: 0.4}
 	
-	The individual with ID of 1 belongs to species 12, which has a theoretical maximum growth rate of 0.9.
+	The individual with ID of 1 belongs to species 12, which has a 
+  theoretical maximum growth rate of 0.9.
 
 The following are they types of species-level information that are stored in Python dictionaries: 
 
