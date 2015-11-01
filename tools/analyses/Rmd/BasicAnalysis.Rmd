@@ -38,21 +38,26 @@ As it is iterating through randomly assembled models, simplex writes its output 
 ```{r, results = 'hide', echo=T, message = F, warning = F}
 # A table where each columns corresponds to a state variable or model output.  
 simplex.dat <- read.csv("~/GitHub/simplex/results/simulated_data/examples/SimData.csv")
-simplex.dat$h.tau <- log((simplex.dat$width * simplex.dat$height)/simplex.dat$flow.rate)
 
 # Replacing 0's with 1's to allow log-transforms below
-simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 1
-simplex.dat$N.max[simplex.dat$N.max<=0] <- 1
-simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 1
-simplex.dat$resource.particles[simplex.dat$resource.particles<=0] <- 1
-simplex.dat$resource.concentration[simplex.dat$resource.concentration<=0] <- 1
+simplex.dat <- simplex.dat[complete.cases(simplex.dat), ]
+
+simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 0.00001
+simplex.dat$N.max[simplex.dat$N.max<=0] <- 0.00001
+simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 0.00001
+simplex.dat$resource.particles[simplex.dat$resource.particles<=0] <- 0.00001
+simplex.dat$resource.concentration[simplex.dat$resource.concentration<=0] <- 0.00001
+simplex.dat$Whittakers.turnover[simplex.dat$Whittakers.turnover<=0] <- 0.00001
+simplex.dat$Jaccards.dissimilarity[simplex.dat$Jaccards.dissimilarity<=0] <- 0.00001
 
 simplex.dat$total.abundance <- log(simplex.dat$total.abundance)
 simplex.dat$N.max <- log(simplex.dat$N.max)
+simplex.dat$Whittakers.turnover <- log(simplex.dat$Whittakers.turnover)
+simplex.dat$Jaccards.dissimilarity <- log(simplex.dat$Jaccards.dissimilarity)
 simplex.dat$species.richness <- log(simplex.dat$species.richness)
 simplex.dat$resource.particles <- log(simplex.dat$resource.particles)
 simplex.dat$resource.concentration <- log(simplex.dat$resource.concentration)
-simplex.dat[is.na(simplex.dat)] <- 0
+
 ```
 
 
@@ -63,19 +68,18 @@ Perhaps we want to ask whether **simplex** produces (i) relationships that are w
 Let's begin by examining relationships between some physical variables. As we'll see, the only physical variables that appear to be correlated are ecosystem residence time and the rate of flow.
 
 ```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
-
 # Physical and metacommunity variables
+png(filename="~/GitHub/simplex/results/figures/examples/PhysicalUnivariate.png")
+
 phys.dat <- as.matrix(subset(simplex.dat, 
-                      select = c(h.tau,
-                                 flow.rate,
+                      select = c(flow.rate,
                                  barriers,
                                  width,
                                  height,
-                                 amplitude,
-                                 frequency,
-                                 phase)))
+                                 amplitude)))
 
 scatterplotMatrix(phys.dat, main="Physical data", diagonal = "none")
+dev.off()
 ```
 
 
@@ -83,6 +87,8 @@ Next, let's explore relationships between some resource-related variables. As we
 
 ```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
 # Resource variables
+png(filename="~/GitHub/simplex/results/figures/examples/ResourceUnivariate.png")
+
 res.dat <- as.matrix(subset(simplex.dat, 
                       select = c(resource.concentration,
                       shannons.resource.diversity,
@@ -90,6 +96,7 @@ res.dat <- as.matrix(subset(simplex.dat,
                       resource.particles)))
 
 scatterplotMatrix(res.dat, main="Resource data", diagonal = "none")
+dev.off()
 ```
 
 
@@ -97,33 +104,35 @@ We can also explore relationships between physiological variables, noticing that
 
 ```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
 # Physiological variables
+png(filename="~/GitHub/simplex/results/figures/examples/PhysioUnivariate.png")
+
 physio.dat <- as.matrix(subset(simplex.dat, 
                       select = c(biomass.prod.N,
-                      biomass.prod.C,
-                      biomass.prod.P,
                       avg.per.capita.N.efficiency,
-                      avg.per.capita.P.efficiency,
-                      avg.per.capita.C.efficiency,
                       max.growth.rate,
                       max.met.maint)))
 
 scatterplotMatrix(physio.dat, main="Physiological data", diagonal = "none")
+dev.off()
 ```
 
 
 Finally, let's explore relationships between some diversity related variables. As we can see different evenness measure basically reflect each other, as do different measures of species turnover. Likewise, we see a strong postivie relationships between total abundance and species richness and between total abundance and the abundance of the most abundant species; which we should expect.
 
 ```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
+# Diversity-related variables
+png(filename="~/GitHub/simplex/results/figures/examples/DiversityUnivariate.png")
+
 diversity.dat <- as.matrix(subset(simplex.dat, 
                       select = c(total.abundance,
                       N.max,
                       species.richness,
                       simpson.e,
-                      e.var,
                       Whittakers.turnover,
                       Jaccards.dissimilarity)))
 
 scatterplotMatrix(diversity.dat, main="Diversity data", diagonal = "none")
+dev.off()
 ```
 
 
