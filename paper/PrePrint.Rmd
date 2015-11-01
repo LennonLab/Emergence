@@ -348,6 +348,7 @@ Likewise, improvements and future versions of simplex will provide increasing nu
 **ACKNOWLEDGMENTS**
 
 I thank Jay T. Lennon, Mario Muscarella, Xiao Xiao, and Ed Hall for fruitful discussions. I thank Dr. Daniel V. Schroeder for his web-based fluid dynamic simulator, the python-based code for which serves as the core method in simplex for simulating fluid flow.
+This work was supported by a National Science Foundation Dimensions of Biodiversity Grant (#1442246) awarded to Jay T. Lennon and Ken Locey.
 
 **REFERENCES**
 
