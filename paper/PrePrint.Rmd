@@ -222,7 +222,9 @@ All output data were correctly formatted and placed within results/simulated_dat
 
 **R analysis files**\setlength\parindent{36pt}
 
-There are currently two R Markdown analysis files associated with simplex. These are located in the tools/analyses/Rmd directory and are designed to help users understand how to import simplex files and use R Markdown to analyze simplex data. The first file, `BasicAnalysis.Rmd`, focuses on descriptive statistics, multiple univariate analyses, and variance partitioning to reveal relationships among simplex variables. Running this file on example simplex data revealed that simplex produces well-known and/or intuitive relationships (Figs 1, 2, 3, 4).
+There are currently two R Markdown analysis files associated with simplex. These have been included as supplemental files. These are located in the tools/analyses/Rmd directory and are designed to help users understand how to import simplex files and use R Markdown to analyze simplex data. The first file, BasicAnalysis.Rmd, focuses on descriptive statistics, multiple univariate analyses, and variance partitioning to reveal relationships among simplex variables. Running this file on example simplex data revealed that simplex produces well-known and/or intuitive relationships (Figs 1, 2, 3, 4).
+
+\setlength\parindent{0pt}
 
 ```{r, results = 'hide', echo=F, message = F, warning = F}
 rm(list=ls()) 
@@ -236,9 +238,10 @@ require("car")
 # A table where each columns corresponds to a state variable or model output.  
 simplex.dat <- read.csv("~/GitHub/simplex/results/simulated_data/examples/SimData.csv")
 
-# Replacing 0's with 1's to allow log-transforms below
+# Removing any rows with NaN's in them. Sort of harsh constraint.
 simplex.dat <- simplex.dat[complete.cases(simplex.dat), ]
 
+# Replacing 0's with very small values to allow log-transforms below
 simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 0.00001
 simplex.dat$N.max[simplex.dat$N.max<=0] <- 0.00001
 simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 0.00001
@@ -256,12 +259,12 @@ simplex.dat$resource.particles <- log(simplex.dat$resource.particles)
 simplex.dat$resource.concentration <- log(simplex.dat$resource.concentration)
 ```
 
-**Figure 1.** A scatter plot matrix revealing that the values of inputs representing physical variables were independent of one another. This is only a subset of the physical variables in simplex. Amplitude pertains to magnitude of temporal fluctuation in the inflow of propagules and/or resources. Barriers pertains to the number of barriers in the system, which varied between 1 and 4.
+\pagebreak
 
-```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
+**Figure 1.** A scatter plot matrix revealing that the values of inputs representing physical variables are independent of one another, as should be expected in the modeling. This is only a subset of the physical variables in simplex. Amplitude pertains to magnitude of temporal fluctuation in the inflow of propagules and/or resources. Barriers pertains to the number of barriers in the system, which varied between 1 and 4.
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=6}
 # Physical and metacommunity variables
-png(filename="~/GitHub/simplex/results/figures/examples/PhysicalUnivariate.png")
-
 phys.dat <- as.matrix(subset(simplex.dat, 
                       select = c(flow.rate,
                                  barriers,
@@ -270,15 +273,14 @@ phys.dat <- as.matrix(subset(simplex.dat,
                                  amplitude)))
 
 scatterplotMatrix(phys.dat, main="Physical data", diagonal = "none")
-dev.off()
 ```
 
-**Figure 2.** A scatter plot matrix revealing that the values of resource-related variables. This is only a subset of resource variables in simplex. Number of resource particles, their concentration, resource richness, and resource diversity (a combination of resource richness and the variance in abundance among resources) are all highly and positively correlated.
+\pagebreak
 
-```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
+**Figure 2.** A scatter plot matrix revealing that the values of resource-related variables. This is only a subset of resource variables in simplex. Number of resource particles, their concentration, resource richness, and resource diversity (a combination of resource richness and the variance in abundance among resources) are all highly and positively correlated, as should generally be expected.
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=6}
 # Resource variables
-png(filename="~/GitHub/simplex/results/figures/examples/ResourceUnivariate.png")
-
 res.dat <- as.matrix(subset(simplex.dat, 
                       select = c(resource.concentration,
                       shannons.resource.diversity,
@@ -286,15 +288,14 @@ res.dat <- as.matrix(subset(simplex.dat,
                       resource.particles)))
 
 scatterplotMatrix(res.dat, main="Resource data", diagonal = "none")
-dev.off()
 ```
 
-**Figure 3.** A scatter plot matrix revealing that the values of physiological variables. This is only a subset of those in simplex. As of 29 October 2015, simplex does not include explicit stoichiometry. An intuitive life history trade-off arises in that increasing growth rate leads to increasing metabolic maintenance.
+\pagebreak
 
-```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
+**Figure 3.** A scatter plot matrix revealing that the values of physiological variables. This is only a subset of those in simplex. As of 29 October 2015, simplex does not include explicit stoichiometry. An intuitive life history trade-off arises in that increasing growth rate generally leads to increasing metabolic maintenance.
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=6}
 # Physiological variables
-png(filename="~/GitHub/simplex/results/figures/examples/PhysioUnivariate.png")
-
 physio.dat <- as.matrix(subset(simplex.dat, 
                       select = c(biomass.prod.N,
                       avg.per.capita.N.efficiency,
@@ -302,15 +303,14 @@ physio.dat <- as.matrix(subset(simplex.dat,
                       max.met.maint)))
 
 scatterplotMatrix(physio.dat, main="Physiological data", diagonal = "none")
-dev.off()
 ```
 
-**Figure 4.** A scatter plot matrix revealing that the values of diversity-related variables. This is only a subset of those in simplex. We see a strong postivie relationships between total numbers of individuals (total abundance) and total numbers of species (species richness) and between total abundance and the abundance of the most abundant species (Nmax). Each of these relationships is widely observed in ecological communities (Locey and Lennon 2015).
+\pagebreak
 
-```{r, results='hide', echo=T, message=F, warning=F, fig.width=7, fig.height=6}
+**Figure 4.** A scatter plot matrix revealing that the values of diversity-related variables. This is only a subset of those in simplex. There are strong positive relationships between total numbers of individuals (total abundance) and total numbers of species (species richness) and between total abundance and the abundance of the most abundant species (Nmax). Each of these relationships is widely observed in ecological communities (Locey and Lennon 2015). Likewise, different measures of species turnover largely reflect one another, as would generally be expected.
+
+```{r, results='hide', echo=F, message=F, warning=F, fig.width=7, fig.height=6}
 # Diversity-related variables
-png(filename="~/GitHub/simplex/results/figures/examples/DiversityUnivariate.png")
-
 diversity.dat <- as.matrix(subset(simplex.dat, 
                       select = c(total.abundance,
                       N.max,
@@ -320,11 +320,11 @@ diversity.dat <- as.matrix(subset(simplex.dat,
                       Jaccards.dissimilarity)))
 
 scatterplotMatrix(diversity.dat, main="Diversity data", diagonal = "none")
-dev.off()
 ```
 
+\pagebreak
 
-The second file, `Diversity.Rmd`, focuses on the analysis of taxonomic diversity and abundance to include fitting species abundance models using the R-based `vegan` module. Each file generates a knitted pdf (includes code, text, and figures), see Supplement. 
+The second file, `Diversity.Rmd`, focuses on the analysis of taxonomic diversity and abundance to include fitting of five common species abundance models using the R-based `vegan` module. `Diversity.Rmd` also provides detailed explanation of each of the five models. Each file generates a knitted pdf (includes code, text, and figures). Pdf files of the output of Diversity.Rmd and BasicAnalysis.Rmd can be found in the tools/analyses/Rmd/pdfs directory.
 
 **Animations**   
 I used the animation module in the matplotlib plotting library to generate avi formatted movies of simplex models. These can be viewed in any internet brower (https://github.com/LennonLab/simplex/tree/master/results/movies/examples). Currently, generating movies requires following three easy steps explained in model/model.py.

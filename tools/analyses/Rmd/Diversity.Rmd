@@ -50,15 +50,25 @@ source("~/GitHub/simplex/tools/Rbin/metrics.R")
 simplex.dat <- read.csv("~/GitHub/simplex/results/simulated_data/examples/SimData.csv")
 simplex.dat$h.tau <- log((simplex.dat$width * simplex.dat$height)/simplex.dat$flow.rate)
 
-# Replacing 0's with 1's to allow log-transforms below
-simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 1
-simplex.dat$N.max[simplex.dat$N.max<=0] <- 1
-simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 1
+# Removing any rows with NaN's in them. Sort of harsh constraint.
+simplex.dat <- simplex.dat[complete.cases(simplex.dat), ]
+
+# Replacing 0's with very small values to allow log-transforms below
+simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 0.00001
+simplex.dat$N.max[simplex.dat$N.max<=0] <- 0.00001
+simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 0.00001
+simplex.dat$resource.particles[simplex.dat$resource.particles<=0] <- 0.00001
+simplex.dat$resource.concentration[simplex.dat$resource.concentration<=0] <- 0.00001
+simplex.dat$Whittakers.turnover[simplex.dat$Whittakers.turnover<=0] <- 0.00001
+simplex.dat$Jaccards.dissimilarity[simplex.dat$Jaccards.dissimilarity<=0] <- 0.00001
 
 simplex.dat$total.abundance <- log(simplex.dat$total.abundance)
 simplex.dat$N.max <- log(simplex.dat$N.max)
+simplex.dat$Whittakers.turnover <- log(simplex.dat$Whittakers.turnover)
+simplex.dat$Jaccards.dissimilarity <- log(simplex.dat$Jaccards.dissimilarity)
 simplex.dat$species.richness <- log(simplex.dat$species.richness)
-simplex.dat[is.na(simplex.dat)] <- 0
+simplex.dat$resource.particles <- log(simplex.dat$resource.particles)
+simplex.dat$resource.concentration <- log(simplex.dat$resource.concentration)
 
 # Two files, where the ith element of the jth row correspond between files
 # and where jth row correspond to the jth row of the above three files
