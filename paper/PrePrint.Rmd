@@ -39,62 +39,83 @@ A body of literature including original research, comprehensive reviews, and tex
 
 Despite their frequent use, the power of ecological IBMs has yet been leveraged to its greatest advantage. Few, if any, include fluid dynamics or combine fluid dynamics with growth and dispersal. While growth, sensing, and decision making are often modeled, few IBMs integrate physiology, nutrient-limited growth, evolution, environmental flux, community ecology, biogeography, and stochastic sampling theory. Instead, ecological IBMs are more often constructed to model a specific system than to synthesize general theories of ecology and evolution (but see Rosindell et al. 2015). Yet, IBMs can allow researchers to creatively and explicitly simulate any number of theories and principles. Likewise, IBMs can made to track and analyze any information from physiological changes and population demography, to community assembly and the structure of entire ecosystems.
 
-Here, I present a detailed description for an ecological IBM platform I refer to as "Simplex". The Simplex platform simulates a broad range of ecological conditions, records information from individuals to the ecosystem level, and provides computing code for analyzing output. Simplex incorporates fluid and non-fluid dynamics with stochastic and selection-based changes within and among populations. Simplex also integrates nutrient-limited growth and physiology. I constructed Simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes on populations, communities, and ecosystems. I provide an explanation of how Simplex works, the data it quantifies and tracks, the theories and principles that Simplex integrates, and the analyses that can be conducted using the open source code.
+Here, I present a description of an ecological IBM platform I refer to as "Simplex". This platform simulates a broad range of ecological conditions, records information from individuals to the ecosystem level, and provides R computing code for analyzing output. Simplex incorporates fluid and non-fluid dynamics with stochastic and selection-based changes within and among populations. Simplex also integrates nutrient-limited growth and physiology. I constructed Simplex with the aim of simulating ecologically complex scenarios, from which the results could be used to test (*i*) predictions of ecological theory and (*ii*) the general influence of constraints and processes on populations, communities, and ecosystems.
 
 \setlength\parindent{0pt}
 
 **METHODS**
 
 **Model description following ODD Protocol**  
-The ODD protocol is standard for describing individual-based models (Grimm et al. 2006). ODD stands for Overview, Design concepts, and Details. Here, I provide an abbreviated explanation of the Simplex ODD protocol. The full ODD protocol can be found on the public GitHub repository at https://github.com/LennonLab/simplex. Likewise, to save space, I refer the reader to the README.md file on the public Simplex GitHub.com repository (https://github.com/LennonLab/simplex/blob/master/README.md) for descriptions of source code files and directories.
+The overview, design concepts, and details protocol (ODD) is a standard for describing individual-based models (Grimm et al. 2006). Here, I provide an abbreviated version of the Simplex ODD protocol. The full Simplex ODD protocol can be found on the public GitHub repository at https://github.com/LennonLab/simplex. Likewise, to save space, I refer the reader to the README.md file on the public Simplex GitHub.com repository for descriptions of source code, files, and directories (https://github.com/LennonLab/simplex/blob/master/README.md).
 
 **Purpose**  
-The purpose of Simplex is to explicitly simulate life history and the evolution of traits among individual organisms, the assembly of ecological communities, and the structure and function of ecosystems in a spatially explicit environment under stochastic conditions. The proximate goal of Simplex is to generate high degrees of variation in the assembly and structure of populations and communities by assembling many different models from random combinations of state-variables and processes. The ultimate goal of Simplex is to provide a simulation-based platform for examining conditions under which processes and constraints have a robust influence on eco-evolutionary dynamics, patterns of biodiversity, and ecosystem processes.
+The purpose of Simplex is to explicitly simulate life history, the evolution of traits, the assembly of ecological communities, and the structure and function of ecosystems in a spatially explicit environment under stochastic conditions, environmental filtering, and species sorting. The proximate goal of Simplex is to generate high degrees of variation in the assembly and structure of populations and communities by assembling many different models from random combinations of state-variables and processes. The ultimate goal of Simplex is to provide a simulation-based platform for examining conditions under which processes and constraints have a robust influence on eco-evolutionary dynamics, patterns of biodiversity, and ecosystem processes.
 
 **Entities & their state variables**
 
-*Individual organisms*--Individuals are distinguished by collections of elements within lists. Individuals undergo changes when randomly sampled from lists. Each specific position in the list corresponds to the same individual. For example, in simulating growth, a Simplex model chooses an individual from the list of cell quotas (the probability of reproducing is determined by endogenous resources). The first position in this list as well in all other lists of individual attributes corresponds to the same individual. Lists of attributes for individual organisms include the time each individual spends in the system, species ID, individual ID, 2D spatial location, endogenous levels of resources (resource specific cell quotas), individual-level metabolic maintenance cost, individual-level maximum dispersal rate, parental lineage, individual resource use efficiency for each resource.
+*Individual organisms*--These are distinguished by the corresponding elements of several lists. For example, in simulating reproduction, a Simplex model chooses an individual at random from the list of cell quotas, where the probability of reproducing is determined by the levels of endogenous resources, i.e., cell quota. The first position in the list of cell quotas, and in all other lists of individual attributes, corresponds to the same individual, i.e.,:
 
-*Species*--Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, metabolic maintenance cost. Species information is stored in Python dictionaries. In this way, if Simplex requires the species ID of an individual it will access the species ID list where each element corresponds to a specific individual. But, if Simplex requires the maximum growth rate for an individual, then it finds the species ID and then uses that to accesses the Python dictionary for maximum specific growth rates of species. The species-level information that are stored include metabolic maintenance cost, maximum dispersal rate, maximum theoretical growth rate, and the resource use efficiency for each resource.
+```{r, eval=FALSE}
+IndIDs = [1,  2, 33, 14]  
+Quotas =  [0.1, 0.99, 0.14, 0.05]  
+Xpos =   [45, 23, 456, 1]  
+Ypos =   [765, 87, 21, 34]  
+```
 
-*Resource particles*--Individual resource particles are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle. The types of information stored about each resource particle include time in the system, particle ID, 2D spatial location, the type of resource particle, the size of the particle.
+Above, the individual with the ID "1" has a cell quota of 0.1  and is located at position x=45, y=765. Note that in simplex, there are at least three resource quotas. In future versions, the quotas will more explicitly represent nitrogen, carbon, and phosphorus. Of course, each individual could also have been distinguished as its own list of attributes, e.g., Ind1 = [1, 0.1, 45, 765]. However, this would require a large lists of lists and could make quantifying some metrics (e.g., generating a frequency distribution of cell quotas, ages, or environmental optima) more computationally intensive than necessary.
 
-*Inert tracers particles*--These are objects that move/flow into and through the environment. They only interact with physical barriers. The use of tracers particles allows for attributes of a system that flows or physically turns over to be quantified. Like other individual-level objects in Simplex models, tracers are distinguished by collections of elements within lists. Each specific position in the list corresponds to the same resource particle. Information stored about each resource particle includes time spent in the system, 2D spatial location and particle ID.
+Lists of attributes for individual organisms include the time each individual spends in the system, species ID, individual ID, 2D spatial location, endogenous levels of resources (resource specific cell quotas), individual-level metabolic maintenance cost, individual-level maximum dispersal rate, parental lineage, and individual resource use efficiency for each resource.
+
+*Species*--Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, maximum dispersal rate, and metabolic maintenance cost. Species information is stored in dictionaries. In this way, if Simplex requires the species ID of an individual it will access the species ID list. But, if Simplex requires the maximum growth rate for an individual, it will first find the species ID and then use that ID to accesses the dictionary for maximum specific growth rates of species. Species-level data include metabolic maintenance cost, maximum dispersal rate, maximum theoretical growth rate, environmental optima, and the resource use efficiency for each resource.
+
+```{r, eval=FALSE}
+IndIDs = [1,  2, 33, 14]
+spIDs = [12, 32, 11, 6]
+MaxGrowthDict = {12: 0.9, 32: 0.5, 11: 0.8, 6: 0.4}
+```
+
+The individual with ID of 1 belongs to species 12, which has a theoretical maximum growth rate of 0.9. By storing species-level information in dictionaries, Simplex does not have to store redundant information in lists.
+
+*Resource particles*--Like individual organisms, individual resource particles distinguished by the corresponding elements of several lists. Each list holds a specific type of information, including time spent in the system, particle ID, 2D spatial location, the type of resource particle, the size of the resource particle.
+
+```{r, eval=FALSE}
+resIDs = [4,  6, 17, 1]
+size =  [100, 87, 156.3, 0.001]
+Xpos =   [56, 34, 567, 2]
+Ypos =   [876, 98, 32, 45]
+```
+
+Above, the particle with ID of "4" has a size of 100 and is located at position x=56, y=876.
+
+*Inert tracers particles*--These are objects that move or flow into and through the environment. Inert tracers only interact with physical barriers. The use of these tracers particles allows for physically dynamic attributes of a system to be quantified. Examples are ecosystem residence time and the ease of passive movement or inertia through the system. Like other individual-level objects in Simplex, tracers are distinguished by corresponding elements of several lists. Each specific position in the list corresponds to the same tracer particle. Information stored about each tracer particle includes time spent in the system, 2D spatial location and particle ID.
 
 *Physcial barriers*--These objects are simulated as discrete 2D spatial coordinates that cannot be occupied by any individual entities. The number, size, and location of physical barriers are chosen at random by Simplex at the start of each model.
 
 **System level state variables**  
-Each run of Simplex begins with random choices for the values of width (5 to 100), height (5 to 100), basal flow rate (0.0 to 1.0), the number, size, and location of physical barriers, the number and direction of environmental gradients, rate of stochastic disturbance, rate of fluctuation in basal flow rate, and degrees of fluctuation and syncronized flow of individual particles, ranging from completely in-sync or completely out of sync.
-
+Each run of Simplex begins with random choices for the specific structure of a log-series metacommunity and values of width (5 to 100), height (5 to 100), flow rate (0.0 to 1.0 units along the x and y axis per time step), the number, size, and location of physical barriers, the number and direction of environmental gradients, the rate and severity of stochastic disturbance, the rate of fluctuation in basal flow rate, and degrees of fluctuation and syncronization for the inflow of individual organisms and resources, which range from completely in-sync to completely out of sync.
 
 **Spatial and temporal scales**  
 \setlength\parindent{36pt}
-The two general aspects of scale are grain (i.e., resolution) and extent (e.g. total area). The environment of Simplex models is two dimensional and can vary along each axis from 5 to 100 discrete units. This makes for a potential total extent of 25 to 10,000 discrete patches, each with a grain of 1 square unit. All particles move in decimal units, meaning that individual particles can  practically infinite locations within patches and likewise. Extent of time in Simplex models refers to residence time, i.e., the average amount of time that individual particles spend in the system. Residence time for individual particles (organisms, resources, tracers) can vary across five orders of magnitude.
+The two general aspects of scale are grain (i.e., resolution) and extent (e.g., total area). The environment of Simplex models is two dimensional and can vary along each axis from 5 to 100 discrete units. This makes for a potential total extent of 25 to 10,000 discrete patches, each with a grain of 1 square unit. However, all particles move in decimal units, meaning that individual particles can occupy practically infinite locations within patches. Extent of time in Simplex models refers to residence time, i.e., the average amount of time that individual particles spend in the system. As shown by test simulations, residence time for individual particles (organisms, resources, inert tracers) can vary across five orders of magnitude.
 
-Grain is the smallest unit over which change can happen. For example, the original ODD documentation states “One time step represents one year and simulations were run for 100 years. One grid cell represents 1 ha and the model landscape comprised 1,000 x 1,000 ha; i.e., 10,000 square kilometers”. In contrast, the smallest grain achievable by Simplex is determined by slowest rate at which individuals can undergo BIDE (birth, immigration, death, emigration) processes. For example, under high residence times, an individual can move across 0.00001% of the x or y axis in one time step. Under low residence times, an individual can move across 10% or greater of the x or y axis in one time step.
+Grain is the smallest unit over which change can happen. For example, the original ODD documentation states “One time step represents one year and simulations were run for 100 years. One grid cell represents 1 ha and the model landscape comprised 1,000 x 1,000 ha”. In Simplex, spatial grain is effectively determined by slowest rate at which individuals can traverse the landscape, which can vary from 0.00001% to 10% of the x or y axis in one time step.
 
 \setlength\parindent{0pt}
 **Process overview and scheduling**
 
 *Assembly*. The user runs a program that chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
 
-*Core simulation process*. Simplex models begin simulation immediately after assembly from random combinations of state-variables and processes. Instead of operating by definitive time steps (i.e. days, generations), Simplex models advance turnover of the environmental matrix according to the initial rate of flow. If the initial rate of flow is 1.0, then the environmental matrix and inert particles would flow 1.0 units of distance. After each iteration of flow, each individual is given the chance to consume, grow, reproduce, starve, die, and to disperse towards resources and environmental optima.
+*Core simulation process*. Simplex begin simulating immediately after assembling a model from random combinations of state-variables and processes. Simplex models advance turnover of the environmental matrix according to the rate of flow, which can be as low as 0.0 (i.e., an effectively static environment) or as high as 1.0 (i.e., where inert particles will flow 1.0 units of distance unless hindered by barriers). After each iteration of flow, every individual is given the chance to consume, grow, reproduce, starve, die, and to disperse towards environmental optima. However, each of these processes is probabilistic. 
 
-*Duration: A run to mean reversion*. Once assembled, a Simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a point of mean reversion, i.e., the tendency of a system to reverse a directional change in, say, total abundance. Mean reversion captures whether a system is fluctuating around a mean value. Once 100 generations have occurred within a model, Simplex examines whether a point of mean reversion has occured by conducting an Augmented Dickey-Fuller (ADF) Test, which is well-explained here: https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing. A model is stopped once mean reversion is determined to occurred and, unless the number of desired simulations (i.e. models) has been reached, Simplex simply constructs another model from random combinations of state-variables and processes, and then runs it to mean reversion.
+*Simulated life history*.\setlength\parindent{36pt} Simplex models simulate growth, reproduction, and death via weighted random sampling. This simulates the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions. For example, individuals with a high cell quota have a low probability of dying and a high probability of reproducing.
 
-*Fluid dynamics*. Simplex uses an efficient and powerful method for simulating fluid flow, i.e., a Lattice-Boltzmann Method (LBM) (Succi 2001). An LBM discretizes the environment into a lattice and attaches to each position in the lattice a number of particle densities and velocities for each simulated direction. Simplex simulates nine directions of movement possible in a 2D spatial environment (i.e., N, S, E, W, NE, NW, SE, SW, current position).
+Inflow/Entrance. Resources and individuals enter from any point in the environment. Species identities of inflowing propagules are chosen at random from a log-series distribution, which often approximates the distribution of abundance among species in ecological communities (Hubbell 2001). Along with a species ID and species-specific maximum rates of resource uptake, active dispersal, resource efficiencies, cell maintenance, and environmental optima, each propagule was given a unique ID and a multi-resource cell quota that represent the state of internal resources. The average of these cell quotas determines the probability of reproduction. 
 
-*Active dispersal*. Simplex models allow individuals to move towards their environmental optima. Rather than a single environmental optima resulting from a single environmental gradient, Simplex allows environmental optima to occur as intersections among environmental gradients. Hence, individuals potentially have multiple optima resulting from unique and equally optimal intersection of up to 10 environmental gradients.
+Dispersal. Individuals are allowed to actively move along environmental gradients and even against the direction of environmenta flow and towards their environmental optima. A better match to the environmental optima increases the chance of reproduction and an individual's ability to consume, grow, and reproduce. 
 
-*Simulated life history*.\setlength\parindent{36pt} Simplex models simulate growth, reproduction, and death via weighted random sampling. This simulate the partly probabilistic and partly deterministic nature of environmental filtering and individual-level interactions.
+Consumption & growth. Sampled individuals consume resources according to their specific maximum rates of uptake and grow according to specific resource efficiencies and maintenance costs. However, can consumption can only happen in Simplex if individuals physically encounter resource particles. Uptake increases the individual cell quotas and decreases the size of the resource particle. Individual cell quotas are then decreased according to a specific physiological maintenance cost. 
 
-Inflow/Entrance. Resources and individuals enter from any point in the environment. Species identities of inflowing propagules are chosen at random from a log-series distribution, which often approximates the distribution of abundance among species in ecological communities (see Hubbell 2001). Along with a species ID and species-specific maximum rates of resource uptake, active dispersal, resource efficiencies, cell maintenance, and environmental optima, each propagule was given a unique ID and a multi-resource cell quota that represent the state of internal resources. The average of these cell quotas determine the probability of reproduction. 
-
-Dispersal. Individuals are allowed to actively move along environmental gradients (sometimes against the direction of environmenta flow) and towards their optima. A better match to one's environmental optima increases the chance of reproduction and the individual's ability to perform (consume, grow). 
-
-Consumption & growth. Sampled individuals consume resources according to their specific maximum rates of uptake and grow according to specific resource efficiencies and maintenance costs. Uptake increases the individual cell quotas and decreases ambient resources. Individual cell quotas are then decreased according to a specific physiological maintenance cost. 
-
-Reproduction. Reproduction in Simplex is currently limited to clonal reproduction with the possibility of mutation. Individuals reproduce with a probability determined by the combination of mean cell quota and the proportional match to the environmental optima. The cell quota of each resource is evenly divided between the individual and its daughter. The daughter is given a unique individual ID and the species ID of its mother, unless in the case of speciation, but is allowed small mutations in individual-level state variables.
+Reproduction. Reproduction in Simplex is currently limited to clonal reproduction with the possibility of mutation. Individuals reproduce with a probability determined by the combination of mean cell quota and the proportional match to the environmental optima. The cell quota of each resource is evenly divided between the individual and its daughter. The daughter is then given a unique individual ID and the species ID of its mother, i.e., unless in the case of a random speciation event.
 
 Speciation. Speciation is simulated within Simplex as a discrete event (*sensu* Hubbell 2001 and Bell 2001) and is accompanied by mutations in the values of species-level state variables, much like that expected from a Wright-Fisher model (Hartl and Clark 1997). These random events allows for diversity to arise within the system, which the environmental filter can then select on.
 
@@ -102,12 +123,18 @@ Death and emmigration. Individuals sampled at random will die if their smallest 
 
 \setlength\parindent{0pt}
 
+*Fluid dynamics*. Simplex uses an efficient and powerful method for simulating fluid flow, i.e., a Lattice-Boltzmann Method (LBM) (Succi 2001). An LBM discretizes the environment into a lattice and attaches to each position in the lattice a number of particle densities and velocities for each simulated direction. Simplex simulates nine directions of movement possible in a 2D spatial environment (i.e., N, S, E, W, NE, NW, SE, SW, current position).
+
+*Active dispersal*. Simplex models allow individuals to move towards their environmental optima. Rather than a single environmental optima resulting from a single environmental gradient, Simplex allows environmental optima to occur as intersections among environmental gradients. Hence, individuals potentially have multiple optima resulting from unique and equally optimal intersection of up to 10 environmental gradients.
+
+*Duration: A run to mean reversion*. Once assembled, a Simplex model simulates ecological processes (birth, death, dispersal, growth, consumption, etc.) until the system reaches a point of mean reversion, i.e., the tendency of a system to reverse a directional change in, say, total abundance. Mean reversion captures whether a system is fluctuating around a mean value. Once 100 generations have occurred within a model, Simplex examines whether a point of mean reversion has occured by conducting an Augmented Dickey-Fuller (ADF) Test, which is well-explained here: https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing. A model is stopped once mean reversion is determined to occurred and, unless the number of desired simulations (i.e. models) has been reached, Simplex simply constructs another model from random combinations of state-variables and processes, and then runs it to mean reversion.
+
 **Design concepts**  
-*Ecological complexity*. Simplex assembles models from random combinations of constraints (state-variables) and processes to generate output data that allow the user to test the general influence of a particular state-variable, process, or combination thereof using univariate and multivariate tests.  
+*Ecological complexity*. Simplex assembles models from random combinations of constraints (state-variables) and processes to generate output data that allow the user to test the general influence of state-variables and processes.
 
-*Nutrient limited growth*. All models assembled by Simplex employ the universal concept that individual growth and activity is fueled and limited by resources.  
+*Process-based stochasticity*. Simplex was designed to incorporate random sampling and probability-based changes in as many ways as possible. This does not imply neutral dynamics or completely random dynamics, but instead makes all processes and dynamics (even strong environmental filtering) subject to a degree of uncertainty.
 
-*Resource diversity & heterogeneity*. Simplex allows the user to explore the influence of the number and abundances of different resources on ecological diversity and ecosystem processes.
+*Nutrient limited growth*. All models assembled by Simplex employ the universal concept that individual growth, reproduction, and activity is limited by resources within individuals (endogenous) rather than resouces simply within the environment (exogenous).
 
 **Theories**  
 *Constraint-based theory*. Simplex was originally built to explore the influence of ecosystem residence time (volume/flow rate) on community assembly and structure. That is, the idea that both ecological processes and physical constraints shape ecological diversity. 
@@ -116,7 +143,7 @@ Death and emmigration. Individuals sampled at random will die if their smallest 
 
 *Ecological neutral theory*. Simplex operates via random sampling and can vary from being completely neutral (all individuals having equal vital rates) to completely idiosyncratic (all individual and species are as different as possible). The one aspect of neutral theory that Simplex adopts without question is the importance of stochastic life history processes (i.e. weighted or unweighted random fluctuations in population sizes). 
 
-**Adaptation**
+**Adaptation**  
 Individuals can move towards their environmental optima. Populations can become aggregated in areas that provide favorable intersections of species optima. Species can evolve by the action of the environmental filter on subpopulation variation in state variables. Individual can seek conditions that match them best to their environment.
 
 **Sensing**  
@@ -151,7 +178,7 @@ The following is recorded for each Simplex model:
 * Resource particle RTD
 * Tracer particle RTD
 
-These data are stored in file as R-formatted data.frames. These files can be directly imported into an R or Python environment.
+These data are stored in .csv files. The file *SimData.csv* is stored an R-formatted data.frames. These files can be directly imported into an R or Python environment.
 
 **Initialization**  
 The model initiates with a random set of values for state-variables, 100 to 10,000 randomly drawn individuals from a theoretical log-series metacommunity. These values are saved, so that a Simplex model could be programmed to replicate an analysis.
@@ -165,9 +192,9 @@ data from a website to parameterize a Simplex model.
 *Cell quota model of Droop*. In Simplex models, individuals grow according to their amounts of endogenous resources (cell quota).
 
 Droop (1968, 1983) gave a relationship between specific growth rate ($\mu$) and cell quota ($Q$): $$\mu = \mu'_{m} (1 - k_{q}/Q)$$
-where $k_{q}$ is the minimum cell quota needed for life, also referred to as the subsistence quota. $\mu'$ is the 
+where $k_{q}$ is the minimum cell quota needed for life, also referred to as the subsistence quota. $\mu'_{m}$ is the theoretical maximum growth rate.
 
-*Maintenance cost of Pirt*. Pirt (1965) states "The variation, with growth rate, of the yield of organism from the substrate used as energy source is attributed to consumption of energy at a constant rate for cell maintenance." He derived a relationship between the growth yield (biomass), the growth rate, and metabolic maintenance. Simplex models use Pirt's concept of a constant maintenance requirement. Simplex also draws from Pirt's simple relation for substrate use: $$use(total) = use(maintenance) + use(growth)$$
+*Maintenance cost of Pirt*. Pirt (1965) states "The variation, with growth rate, of the yield of organism from the substrate used as energy source is attributed to consumption of energy at a constant rate for cell maintenance." He derived a relationship between the growth yield (biomass), the growth rate, and metabolic maintenance. Simplex models use Pirt's concept of a constant maintenance requirement. Simplex also draws from Pirt's simple relation for substrate use: $use(total) = use(maintenance) + use(growth)$
 
 Note that respiration and activity without growth is not accounted for.
 
@@ -335,13 +362,13 @@ I used the animation module in the matplotlib plotting library to generate avi f
 
 \setlength\parindent{36pt}
 
-The Simplex platform assembles individual-based models from random combinations of state-variables and processes, to explore a degrees of variation in ecological conditions and complexity. In this way, Simplex allows ecologists to examine whether the influence of particular variables should be robust to a wide range of ecological and environmental conditions. In addition to its unique modeling aspects, Simplex includes analysis code that shows users how to import and analyze simulated datasets, including variance partitioning and fitting of species abundance models.
+The Simplex platform assembles individual-based models (IBMs) from random combinations of state-variables and processes, to simulate high degrees of variation and complexity. In this way, Simplex allows ecologists to examine whether the influence of particular variables should be robust to a wide range of conditions. For example, if a user wants to examine the influence of area on commonness and rarity, or the potential relationship between growth rate and physiological maintenance, then the user only needs to run Simplex, allow it to assemble and simulate a large number of models, and then analyze the output files. This is unlike many IBMs that are often built for a specific system or for individuals with highly specified behaviors and abilities (e.g. learning). 
 
-Future developments of Simplex will have trophic dynamics including predator-prey, symbionts and mutualists, and producers and consumers. Individuals will also be attributed with additional behaviors (e.g., search patterns), sensing (e.g., of resources), and learning (e.g., predator avoidance). Additionally, individuals will also be attributed with genomes. Initially, these genomes will be represented by sets of sequences of A's, C's, T's, and G's representing genes that can be mutated as they're passed on through clonal reproduction, or mutated and recombined in the case of sexual haploid or diploid reproduction. A precursor to this has already been developed in Locey (2013), the code for which is available here: https://github.com/klocey/SYMENT.
+In addition to its unique modeling aspects, Simplex includes analysis code that shows users how to import and analyze simulated datasets, including simple univariate relationships, descriptive statistics, variance partitioning, and the fitting of species abundance models. By taking advantage of modern computational tools, version control, social coding, Simplex is well-positioned to continue development as both a research and education/instructional tool for ecology.
 
-By taking advantage of modern computing and version control and social coding tools (e.g., Python, R/RStudio, Knitr, Git, GitHub) Simplex is well-positioned to continue development as both a research and education/instructional tool for ecology. Future developments and released versions will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. Improvements to Simplex will also include an explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
+Future developments and released versions of Simplex will have trophic dynamics including predator-prey, symbionts and mutualists, and producers and consumers. Individuals will also be attributed with additional behaviors (e.g., search patterns), sensing (e.g., of resources), and learning (e.g., predator avoidance). Additionally, individuals will also be attributed with genomes. Initially, these genomes will be represented by sets of sequences of A's, C's, T's, and G's representing genes that can be mutated as they're passed on through clonal reproduction, or mutated and recombined in the case of sexual haploid or diploid reproduction. A precursor to this has already been developed in Locey (2013), the code for which is available here: https://github.com/klocey/SYMENT.
 
-Likewise, improvements and future versions of Simplex will provide increasing numbers of files for statistical analysis of Simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of Simplex output (e.g., demographic, resource-related, spatial, multivariate, ecological model testing). These and all Simplex files are freely available and open source, allowing users to modify Simplex source code to suit their particular needs.
+Future developments will also include explicit stoichiometry, where individual resource particles have ratios of Carbon, Nitrogen, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle can be assigned *x* units of phosphorus as well as the biocomplexity value of phosphate, which can be estimated as a form of entropy (Bertz 1983). Likewise, improvements and future versions of Simplex will provide increasing numbers of files for statistical analysis of Simplex output. These files will, in a sense, be able to be used as a complete analysis of some particular aspect of Simplex output (e.g., demographic, resource-related, spatial, diversity-related, multivariate, ecological model testing). These and all Simplex files are freely available and open source, allowing users to modify Simplex source code to suit their particular needs.
 
 \setlength\parindent{0pt}
 
@@ -352,32 +379,34 @@ This work was supported by a National Science Foundation Dimensions of Biodivers
 
 **REFERENCES**
 
-1. Black AJ, McKane AJ (2012) Stochastic formulation of ecological models and their applications. Trends in Ecology and Evolution. 27:337-345.
+Black AJ, McKane AJ (2012) Stochastic formulation of ecological models and their applications. Trends in Ecology and Evolution. 27:337-345.
 
-2. DeAngelis DL, Gross LJ (1992) Individual-based Models and Approaches in Ecology: Populations, Communities, and Ecosystems. Chapman & Hall. New York.
+Bertz, S (1983) On the complexity of graphs and molecules. Bulletin of Mathematical Biology 45:849–855.
 
-3. Droop MR (1983) Twenty-five years of algal growth kinetics, a personal view. Botanica Marina. 26: 99-112.
+DeAngelis DL, Gross LJ (1992) Individual-based Models and Approaches in Ecology: Populations, Communities, and Ecosystems. Chapman & Hall. New York.
 
-4. Gotelli NJ, Entsminger GL (2001) Swap and fill algorithms in null model analysis: rethinking the knight’s tour. Oecologia. 129:281–291
+Droop MR (1983) Twenty-five years of algal growth kinetics, a personal view. Botanica Marina. 26: 99-112.
 
-5. Grimm V, Berger U, Bastiansen F, Eliassen S, Ginot V, Giske J, Goss-Custard J, Grand T, Heinz SK, Huse G, Huth A, Jepsen JU, Jørgensen C, Mooij WM, Mu¨ller B, Pe’er G, Pioub C, Railsback SF, Robbins AM, Robbins MM, Rossmanith E, Ru¨ger N, Strand E, Souissim S, Stillmane RA, Vabøg R, Visser U, DeAngelis DL (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. 198: 115-126.
+Gotelli NJ, Entsminger GL (2001) Swap and fill algorithms in null model analysis: rethinking the knight’s tour. Oecologia. 129:281–291
 
-6. Grimm V, Railsback SF (2005) Individual-based Modeling and Ecology. Princeton University Press, Princeton.
+Grimm V, Railsback SF (2005) Individual-based Modeling and Ecology. Princeton University Press, Princeton.
 
-7. Hartl DL, Clark AG (1997) Principle of Population Genetics. Sinauer Associates, Inc. Publishers, Sunderland, MA.
+Grimm V, Berger U, Bastiansen F, Eliassen S, Ginot V, Giske J, Goss-Custard J, Grand T, Heinz SK, Huse G, Huth A, Jepsen JU, Jørgensen C, Mooij WM, Mu¨ller B, Pe’er G, Pioub C, Railsback SF, Robbins AM, Robbins MM, Rossmanith E, Ru¨ger N, Strand E, Souissim S, Stillmane RA, Vabøg R, Visser U, DeAngelis DL (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. 198: 115-126.
 
-8. Hubbell SP (2001) The unified neutral theory of biodiversity and biogeography. Princeton University Press, Princeton, NJ.
+Hartl DL, Clark AG (1997) Principle of Population Genetics. Sinauer Associates, Inc. Publishers, Sunderland, MA.
 
-9. Leadbeater BSC (2006) The 'Droop equation' - Michael Droop and the legacy of the 'Cell-quota model' of phytoplankton growth. Protist. 157: 345-358.
+Hubbell SP (2001) The unified neutral theory of biodiversity and biogeography. Princeton University Press, Princeton, NJ.
 
-10. Locey K (2013) Synthesized ecological molecular neutral theory. figshare. http://dx.doi.org/10.6084/m9.figshare.640105.
+Leadbeater BSC (2006) The 'Droop equation' - Michael Droop and the legacy of the 'Cell-quota model' of phytoplankton growth. Protist. 157: 345-358.
 
-11. Locey KJ, Lennon JT. (2015) Scaling laws predict global microbial diversity. PeerJ PrePrints 3:e1808 https://dx.doi.org/10.7287/peerj.preprints.1451v1
+Locey K (2013) Synthesized ecological molecular neutral theory. figshare. http://dx.doi.org/10.6084/m9.figshare.640105.
 
-12. Matthews RB, Gilbert NG, Roach A, Polhill JG, Gotts NM (2007) Agent-based land-use models: a review of applications. Landscape Ecology. 22: 1447-1459.
+Locey KJ, Lennon JT. (2015) Scaling laws predict global microbial diversity. PeerJ PrePrints 3:e1808 https://dx.doi.org/10.7287/peerj.preprints.1451v1
 
-13. Pirt SJ (1965) The Maintenance Energy of Bacteria in Growing Cultures. Proceedings of the Royal Society of London. Series B, Biological Sciences, 163:224-231.
+Matthews RB, Gilbert NG, Roach A, Polhill JG, Gotts NM (2007) Agent-based land-use models: a review of applications. Landscape Ecology. 22: 1447-1459.
 
-14. Rosindell J, Harmon LJ, Etienne RS (2015) Unifying ecology and macroevolution with individual-based theory. Ecology Letters. 18: 472-482.
+Pirt SJ (1965) The Maintenance Energy of Bacteria in Growing Cultures. Proceedings of the Royal Society of London. Series B, Biological Sciences, 163:224-231.
 
-15. Succi S (2001) The Lattice Boltzmann Equation: For Fluid Dynamics and Beyond. Oxford University Press. New York.
+Rosindell J, Harmon LJ, Etienne RS (2015) Unifying ecology and macroevolution with individual-based theory. Ecology Letters. 18: 472-482.
+
+Succi S (2001) The Lattice Boltzmann Equation: For Fluid Dynamics and Beyond. Oxford University Press. New York.
