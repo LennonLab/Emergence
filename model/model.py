@@ -29,8 +29,8 @@ import randparams as rp
 3.) change plot_system = 'no' to 'yes' on or near line 66
 
 Because generating animations requires computing time and memory, doing so can
-be computationally demanding. To quicken the process, comment out plt.show() on
-or near line 368.
+be computationally demanding. To quicken the process, use plot_system = 'no' on
+or near line 66.
 """
 
 # https://www.quantstart.com/articles/Basics-of-Statistical-Mean-Reversion-Testing
@@ -39,6 +39,7 @@ or near line 368.
 
 GenPath = mydir + 'GitHub/simplex/results/simulated_data/'
 
+"""
 ############## OPEN OUTPUT DATA FILE ###########################################
 OUT1 = open(GenPath + 'examples/SimData.csv','w')
 OUT2 = open(GenPath + 'examples/RADs.csv','w')
@@ -57,9 +58,7 @@ OUT3.close()
 OUT4.close()
 OUT5.close()
 OUT6.close()
-
-
-
+"""
 
 def nextFrame(arg):
 
@@ -68,7 +67,7 @@ def nextFrame(arg):
     global p, BurnIn, t, num_sims, width, height, Rates, u0, rho, ux, uy, n0, nN, nS, nE, nW, nNE, nNW, nSE, nSW, SpColorDict, GrowthDict, N_RD, P_RD, C_RD, DispDict, MaintDict, one9th, four9ths, one36th, barrier, gmax, dmax, maintmax, IndIDs, Qs, IndID, IndTimeIn, IndExitAge, IndX, IndY,  Ind_scatImage, SpeciesIDs, EnvD, TY, tracer_scatImage, TTimeIn, TIDs, TExitAge, TX, RTypes, RX, RY, RID, RIDs, RVals, RTimeIn, RExitAge, resource_scatImage, bN, bS, bE, bW, bNE, bNW, bSE, bSW, ct1, Mu, Maint, motion, reproduction, speciation, seedCom, m, r, nNi, nP, nC, rmax, sim, RAD, splist, N, ct, splist2, WTs, Jcs, Sos, RDens, RDiv, RRich, S, ES, Ev, BP, SD, Nm, sk, T, R, LowerLimit, prod_i, prod_q, viscosity, alpha, Ts, Rs, PRODIs, Ns, TTAUs, INDTAUs, RDENs, RDIVs, RRICHs, Ss, ESs, EVs, BPs, SDs, NMAXs, SKs, MUs, MAINTs, PRODNs, PRODPs, PRODCs, lefts, bottoms, Gs, Ms, NRs, PRs, CRs, Ds, RTAUs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList, amp, freq, flux, pulse, phase, disturb, envgrads, barriers
 
     ct += 1
-    plot_system = 'no'
+    plot_system = 'yes'
     # fluctuate flow according to amplitude, frequency, & phase
     u1 = u0 + u0*(amp * sin(2*pi * ct * freq + phase))
     if u1 > 1: u1 == 1.0
@@ -80,14 +79,22 @@ def nextFrame(arg):
     # Inflow of tracers
     TIDs, TTimeIn, TX, TY = bide.NewTracers(motion,TIDs, TX, TY, TTimeIn, width, height, u0)
     # moving tracer particles
-    if len(TIDs) > 0: TIDs, TX, TY, TExitAge, TTimeIn = bide.fluid_movement('tracer', TIDs, TTimeIn, TExitAge, TX, TY, ux, uy, width, height, u0)
+    if len(TIDs) > 0:
+        if motion == 'fluid':
+            TIDs, TX, TY, TExitAge, TTimeIn = bide.fluid_movement('tracer', TIDs, TTimeIn, TExitAge, TX, TY, ux, uy, width, height, u0)
+        else:
+            TIDs, TX, TY, TExitAge, TTimeIn = bide.nonfluid_movement('tracer', motion, TIDs, TTimeIn, TExitAge, TX, TY, ux, uy, width, height, u0)
 
     # Inflow of resources
     RTypes, RVals, RX, RY,  RIDs, RID, RTimeIn = bide.ResIn(motion, RTypes, RVals, RX, RY,  RID, RIDs, RTimeIn, r, rmax, nNi, nP, nC, width, height, u1)
 
     # resource flow
     Lists = [RTypes, RIDs, RID, RVals]
-    if len(RTypes) > 0: RTypes, RX, RY,  RExitAge, RIDs, RID, RTimeIn, RVals = bide.fluid_movement('resource', Lists, RTimeIn, RExitAge, RX, RY,  ux, uy, width, height, u0)
+    if len(RTypes) > 0:
+        if motion == 'fluid':
+            RTypes, RX, RY,  RExitAge, RIDs, RID, RTimeIn, RVals = bide.fluid_movement('resource', Lists, RTimeIn, RExitAge, RX, RY,  ux, uy, width, height, u0)
+        else:
+            RTypes, RX, RY,  RExitAge, RIDs, RID, RTimeIn, RVals = bide.nonfluid_movement('resource', motion, Lists, RTimeIn, RExitAge, RX, RY,  ux, uy, width, height, u0)
 
     # Inflow of individuals (immigration)
     if ct == 1: SpeciesIDs, IndX, IndY,  MaintDict, EnvD, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.immigration(dmax, gmax, maintmax, motion, 1000, 1, SpeciesIDs, IndX, IndY,  width, height, MaintDict, EnvD, envgrads, GrowthDict, DispDict, SpColorDict, IndIDs, IndID, IndTimeIn, Qs, N_RD, P_RD, C_RD, nNi, nP, nC, u1, alpha, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -95,7 +102,11 @@ def nextFrame(arg):
 
     # dispersal
     Lists = [SpeciesIDs, IndIDs, IndID, Qs, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
-    if len(SpeciesIDs) > 0: SpeciesIDs, IndX, IndY,  IndExitAge, IndIDs, IndID, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.fluid_movement('individual', Lists, IndTimeIn, IndExitAge, IndX, IndY,  ux, uy, width, height, u0)
+    if len(SpeciesIDs) > 0:
+        if motion == 'fluid':
+            SpeciesIDs, IndX, IndY,  IndExitAge, IndIDs, IndID, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.fluid_movement('individual', Lists, IndTimeIn, IndExitAge, IndX, IndY,  ux, uy, width, height, u0)
+        else:
+            SpeciesIDs, IndX, IndY,  IndExitAge, IndIDs, IndID, IndTimeIn, Qs, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.nonfluid_movement('individual', motion, Lists, IndTimeIn, IndExitAge, IndX, IndY,  ux, uy, width, height, u0)
 
     # Search for resources
     SpeciesIDs, Qs, IndIDs, ID, TimeIn, X, Y, GrowthDict, DispDict, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = bide.search(reproduction, speciation, SpeciesIDs, Qs, IndIDs, IndID, IndTimeIn, IndX, IndY,  width, height, GrowthDict, DispDict, SpColorDict, N_RD, P_RD, C_RD, MaintDict, EnvD, envgrads, nNi, nP, nC, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList)
@@ -138,7 +149,7 @@ def nextFrame(arg):
     ax.set_ylim(0, height)
     ax.set_xlim(0, width)
 
-    if plot_system == 'yes':
+    if plot_system == 'no':
         ##### PLOTTING THE SYSTEM ##############################################
         resource_scatImage.remove()
         tracer_scatImage.remove()
@@ -251,7 +262,7 @@ def nextFrame(arg):
 
         if len(Ns) > 99:
             t = time.clock() - t
-            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), 'WT:', round(mean(WTs),3), ':  flow:', u0, 'time:', t, 'seconds', ' MB:',int(round(mem)), 'p-val =',p
+            print sim, ' N:', int(round(mean(Ns))), 'S:', int(round(mean(Ss))), 'WT:', round(mean(WTs),2), ':  flow:', u0, 'time:', round(t,1), 'seconds', ' MB:',int(round(mem)), 'p-val =', round(p,3)
             t = time.clock()
 
             SString = str(splist).strip('()')
@@ -341,7 +352,7 @@ SpColorList, GrowthList, MaintList, N_RList, P_RList, C_RList, RColorList, DispL
 
 
 ###############  SIMULATION VARIABLES, DIMENSIONAL & MODEL CONSTANTS  ##########
-num_sims = 100
+num_sims = 1000
 
 LowerLimit, sim, left1, bottom1, left2, bottom2 = 30, 1, 0.2, 0.2, 0.6, 0.6
 viscosity = 10 # unitless but required by an LBM model

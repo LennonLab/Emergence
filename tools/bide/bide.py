@@ -287,6 +287,101 @@ def fluid_movement(TypeOf, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
 
 
 
+def nonfluid_movement(TypeOf, motion, List, t_In, xAge, Xs, Ys, ux, uy, w, h, u0):
+
+    Type, IDs, ID, Vals = [], [], int(), []
+
+    if TypeOf == 'resource':
+        Type, IDs, ID, Vals = List
+    elif TypeOf == 'individual':
+        Type, IDs, ID, Vals, DispD, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList = List
+    else:
+        IDs = List
+
+    if Xs == []:
+        if TypeOf == 'tracer':
+            return [IDs, Xs, Ys, xAge, t_In]
+        elif TypeOf == 'individual':
+            return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+        elif TypeOf == 'resource':
+            return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
+
+
+    limit, distance, direction, pop = 0.1, 0, 0, 'no'
+    x, y = 0, 0
+
+    for i, val in enumerate(IDs):
+
+        # get distance
+        if TypeOf == 'individual':
+            distance = np.random.uniform(0, u0)
+        else:
+            distance = np.random.uniform(0, u0)
+
+        x, y = Xs[i], Ys[i]
+
+        # go up or down
+        #if TypeOf != 'resource':
+        if motion == 'unidirectional':
+            direction = 1
+        if motion == 'random_walk':
+            direction = choice([-1, 1])
+
+        y = y + (direction * distance)
+
+        # get distance
+        if TypeOf == 'individual':
+            distance = np.random.uniform(0, u0)
+        else:
+            distance = np.random.uniform(0, u0)
+
+        # go forward or backward
+        #if TypeOf != 'resource':
+        if motion == 'unidirectional':
+            direction = 1
+        if motion == 'random_walk':
+            direction = choice([-1, 1])
+
+        x = x + (direction * distance)
+
+        if x > w - limit or x < limit:
+            pop = 'yes'
+        elif y > h - limit or y < limit:
+            pop = 'yes'
+
+
+        if pop == 'no':
+            Xs[i], Ys[i] = x, y
+            t_In[i] = t_In[i]+1
+
+        elif pop == 'yes':
+            xAge.append(t_In[i])
+            Xs.pop(i)
+            Ys.pop(i)
+            t_In.pop(i)
+            IDs.pop(i)
+
+            if TypeOf == 'resource' or TypeOf == 'individual':
+                Type.pop(i)
+                Vals.pop(i)
+
+            if TypeOf == 'individual':
+                GrowthList.pop(i)
+                MaintList.pop(i)
+                N_RList.pop(i)
+                P_RList.pop(i)
+                C_RList.pop(i)
+                DispList.pop(i)
+
+    if TypeOf == 'tracer':
+        return [IDs, Xs, Ys, xAge, t_In]
+    elif TypeOf == 'individual':
+        return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals, GrowthList, MaintList, N_RList, P_RList, C_RList, DispList]
+    elif TypeOf == 'resource':
+        return [Type, Xs, Ys, xAge, IDs, ID, t_In, Vals]
+
+
+
 
 def predation(P_IDs, P_ID, P_Xs, P_Ys, P_t_In, I_xAge, Sp_IDs, Qs, I_IDs, I_ID, I_t_In, I_Xs, I_Ys, w, h):
 

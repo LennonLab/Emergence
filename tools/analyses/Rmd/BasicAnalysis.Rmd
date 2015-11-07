@@ -42,6 +42,8 @@ simplex.dat <- read.csv("~/GitHub/simplex/results/simulated_data/examples/SimDat
 # Replacing 0's with 1's to allow log-transforms below
 simplex.dat <- simplex.dat[complete.cases(simplex.dat), ]
 
+simplex.dat$tau <- (simplex.dat(width)*simplex.dat(height))/simplex.dat(flow.rate)
+
 simplex.dat$total.abundance[simplex.dat$total.abundance<=0] <- 0.00001
 simplex.dat$N.max[simplex.dat$N.max<=0] <- 0.00001
 simplex.dat$species.richness[simplex.dat$species.richness<=0] <- 0.00001
@@ -72,7 +74,8 @@ Let's begin by examining relationships between some physical variables. As we'll
 png(filename="~/GitHub/simplex/results/figures/examples/PhysicalUnivariate.png")
 
 phys.dat <- as.matrix(subset(simplex.dat, 
-                      select = c(flow.rate,
+                      select = c(tau
+                                 flow.rate,
                                  barriers,
                                  width,
                                  height,
