@@ -668,7 +668,9 @@ def sorensen(seq1, seq2):
 
 def WhittakersTurnover(site1, site2):
 
-  """ citation: """
+  """ citation: Whittaker, R. H. (1972) Evolution and measurement of species
+                diversity. Taxon, 21, 213-251."""
+
   if len(site1) == 0 and len(site2) == 0:
       return 0
   elif len(site1) == 0 or len(site2) == 0:
@@ -677,12 +679,13 @@ def WhittakersTurnover(site1, site2):
   set1 = set(site1)
   set2 = set(site2)
 
-  gamma = set1.union(set2)         # Gamma species pool
-  s     = len(gamma)                                   # Gamma richness
+  gamma = set1.intersection(set2)         # Gamma species pool
+  s = len(gamma)                                   # Gamma richness
   abar = np.mean([len(set1), len(set2)])   # Mean sample richness
-  bw   = s/abar - 1
+  bw   = ((len(set1) - s) + (len(set2) - s))/abar
 
   return bw
+
 
 
 
