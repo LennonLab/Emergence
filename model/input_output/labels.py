@@ -2,25 +2,26 @@ from os.path import expanduser
 
 
 def processes():
-    
+
     ps = []
     ps.append('resource_inflow')
     ps.append('resource_flow')
     ps.append('immigration')
-    ps.append('passive dispersal')
-    ps.append('active disperal')
-    ps.append('searching')
+    ps.append('passive_dispersal')
+    ps.append('active_dispersal')
+    ps.append('search')
     ps.append('consume')
     ps.append('growth')
     ps.append('transition')
     ps.append('maintenance')
-    ps.append('reproduce')
-    
+    ps.append('reproduction')
+    ps.append('disturb')
+
     return ps
 
 
 def headings():
-    
+
     headings = 'sim,'
     headings += 'ct,'
     headings += 'immigration.rate,'
@@ -83,13 +84,13 @@ def headings():
     headings += 'dorm.limit'
 
     return headings
-    
-    
-    
+
+
+
 def clear():
     mydir = expanduser("~/")
     GenPath = mydir + 'GitHub/simplex/results/simulated_data/'
-    
+
     OUT = open(GenPath + 'RAD-Data.csv', 'w+').close()
     OUT = open(GenPath + 'SAR-Data.csv', 'w+').close()
     OUT = open(GenPath + 'SimData.csv','w+')

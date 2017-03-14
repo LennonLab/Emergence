@@ -1,42 +1,32 @@
 from __future__ import division
-from random import randint
+from random import randint, choice
 import numpy as np
-import sys
 
-def get_rand_params(width=0):
+def get_rand_params():
     """ Get random model parameter values. Others are chosen in bide.py """
 
-    seedCom = 1000 # size of starting community
+    sd = 500 # size of starting community
+    w = randint(10, 10)
+    h = float(w)
+    l = float(h)
 
-    if width == 0:
-        width = 4
-    elif width < 10:
-        width += 1
-    elif width >= 10:
-        width = 4
+    u = 10**np.random.uniform(-6, 0) # rate of flow
+    n = randint(3, 3) # number of resource types
 
-    height = float(width)
-    length = float(height)
+    r = randint(10, 10) # number of inflowing resource particles
+    rm = np.random.uniform(100, 100) # max size of resource particles
 
-    low = np.random.uniform(4, 4)
-    rates = np.linspace(0, -low, 40)
-    rates = 10**rates
-    rates = rates.tolist()
+    sm = np.random.uniform(100, 100) # max size of individuals
 
-    nN = randint(3, 3)
-    amp = np.random.uniform(10**-1, 10**-1)
-    freq = np.random.uniform(10**-1, 10**-1)
-    phase = np.random.uniform(10**-1, 10**-1)
-    m = np.random.uniform(0.1, 0.1)
+    a = np.random.uniform(0.1, 0.1) # amplitude
+    f = np.random.uniform(0.1, 0.1) # frequency
+    p = np.random.uniform(0.1, 0.1) # phase
+    m = np.random.uniform(0., 0.) # immigration rate
+    g = np.random.uniform(0.1, 0.1) # max growth rate
+    dl = np.random.uniform(0.1, 0.1) # max dormancy limit
+    dm = np.random.uniform(0.1, 0.1) # dispersal max
+    pm = np.random.uniform(0.1, 0.1) # resuscitation max
+    mm = np.random.uniform(0.1, 0.1) # maintenance max
+    s = choice(['y', 'n']) # stochastic or not
 
-    r = randint(20, 20)
-    rmax = np.random.uniform(1000, 1000)
-
-    dormlim = np.random.uniform(0.1, 0.1)
-    gmax = np.random.uniform(0.2, 0.2)
-    dmax = np.random.uniform(0.2, 0.2)
-    pmax = np.random.uniform(0.1, 0.1)
-    mmax = np.random.uniform(0.1, 0.1)
-    smax = np.random.uniform(100, 100)
-
-    return [width, height, length, seedCom, m, r, nN, rmax, gmax, mmax, dmax, amp, freq, phase, rates, pmax, dormlim, smax]
+    return [w, h, l, sd, m, r, n, rm, g, mm, dm, a, f, p, u, pm, dl, sm, s]

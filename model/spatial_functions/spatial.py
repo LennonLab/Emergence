@@ -4,31 +4,6 @@ import numpy as np
 import math
 
 
-def get_closest(RIDs, RX, RY, RZ, Rtypes, coords):
-    closest = 0
-    if len(RIDs) == 0:
-        return closest
-
-    x1, y1, z1 = coords
-    Try = min([20, len(RIDs)])
-    minDist, ct = 10**10, 0
-
-    while ct < Try:
-        ct += 1
-        j = randint(0, len(RIDs)-1)
-        x = RX[j]
-        y = RY[j]
-        z = RZ[j]
-
-        dist = sqrt((x1 - x)**2 + (y1 - y)**2 + (z1 - z)**2)
-
-        if dist < minDist:
-            minDist = dist
-            closest = RIDs[j]
-
-        return closest
-
-
 
 def SAR(Xs, Ys, Zs, SpIDs, w):
     
