@@ -1,174 +1,202 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-from random import randint, choice
-import sys
+from random import choice
 import numpy as np
-from os.path import expanduser
-import time
 
 
-mydir = expanduser("~/")
-sys.path.append(mydir + "GitHub/simplex/model")
+''' INPUTS TO FUNCTIONS BELOW:
 
-from diversity_metrics import *
-from spatial_functions import * 
+        sD  :  A python dictionary holding properties of specific species:
 
-
-def ind_disp(SpDict, IndDict, h, l, w, u0):
-
-        ''' A function to bring resource particles into a system
-    
-        SpDict  :  A python dictionary holding properties of specific species:
-                   
                    's_min' : lower bound on individual size
                    's_max' : upper bound on individual size
-                      
+
                    'grow' :  maximum growth rate
                    'disp' :  maximum dispersal rate
-                  
+
                    'rpf' :  probability of random transition to active state
                    'maint' : basal metabolic maintenance cost
-                  
-                   'dlim' : lower size limit at which individuals go dormant 
+
+                   'dlim' : lower size limit at which individuals go dormant
                    'spec' : speciation rate
-                  
-                   'mfd' : factor by which dormant decreases costs of 
+
+                   'mfd' : factor by which dormant decreases costs of
                    maintenance energy
-                        
-                  
+
+
                    'eff' : Resource particles can belong to one of n types for
                    which species have varying abilities to grow on.
-                     
-                     
-        IndDict  : A python dictionary to hold properties of individual
-                   organisms            
-            
-                   'size' : The size of the individual is an abstract 
+
+
+        iD  : A python dictionary to hold properties of individual
+                   organisms
+
+                   'size' : The size of the individual is an abstract
                    quantity, but can vary over two orders of magnitude
-                  
+
                    'q' : level of endogenous resources
                    'spID' : species ID
                    'state' : whether active or dormant
-                  
+
                   'x' : x-coordinate
                   'y' : y-coordinate
                   'z' : z-coordinate
-        
-        
-        params  :  General model parameters. Not all are used in every function.
-        
+
+
+        ps  :  General model parameters. Not all are used in every function.
+
                    w : width of the system
                    h : height of the system
                    l : length of the system
-                
-                   seed : Number of starting individuals
+
+                   sd : Number of starting individuals
                    m : immigration rate and the probability of an individual
-                   organism immigrating per time step
-                
-                   r : Maximum number of resource particles entering per time step 
-                   rmax : Maximum size of individual resource particles
-                
-                   nN : Number of inflowing resource types
-                   gmax : Maximum specific growth rate 
-                   maintmax : Maximum metabolic maintenance
-                   dmax : Maximum dispersal rate
-                   pmax : maximum probability of random resuscitation
-                   dormlim : level of endogenous resource at which 
-                   individual go dormant
-                   smax : Maximum size of any individual
-                
-                   amp : amplitude of environmental flux
-                   freq : frequency of environmental flux
-                   phase : phase of individual immigration and resource inflow
-                   rate : rate of system flow through
-                   
-        ct  :  indicates whether the model is on its first time step
-    '''
-    
-    for key, value in IndDict.items():
-        x = value['x']
-        y = value['y']
-        z = value['z']
-        q = value['q']
-        sp = value['spID']
-        sz = value['size']
-        d = SpDict[sp]['disp']
+                       organism immigrating per time step
+
+                   r : Maximum number of resource particles entering per time step
+                   rm : Maximum size of individual resource particles
+
+                   n : Number of inflowing resource types
+                   gm : Maximum specific growth rate
+                   mm : Maximum metabolic maintenance
+                   dm : Maximum dispersal rate
+                   pm : maximum probability of random resuscitation
+                   dl : level of endogenous resource at which
+                        individual go dormant
+                   sm : Maximum size of any individual
+
+                   a : amplitude of environmental flux
+                   f : frequency of environmental flux
+                   p : phase of individual immigration and resource inflow
+                   u : rate of system flow through
+
+        ct  :  indicates whether the model is on its first time step '''
+
+
+
+
+def get_closest(rD, cs):
+
+    rIDs = list(rD)
+    cl = 0
+    if len(rIDs) == 0: return cl
+
+    x1, y1, z1 = cs
+    t = min([20, len(rIDs)])
+    mD = 10**10
+
+    for ct in range(t):
+        j = choice(rIDs)
+        x = rD[j]['x']
+        y = rD[j]['y']
+        z = rD[j]['z']
+
+        d = np.sqrt((x1 - x)**2 + (y1 - y)**2 + (z1 - z)**2)
+
+        if d < mD:
+            mD = d
+            cl = j
+
+        return cl
+
+
+
+
+def ind_disp(sD, iD, ps):
+
+    ''' Simulate active resistence of individuals to a flowing system '''
+
+    w, h, l, sd, m, r, n, rm, gm, mm, dm, a, f, p, u, pm, dl, sm, st = ps
+
+    for k, val in iD.items():
+        x = val['x']
+        y = val['y']
+        z = val['z']
+        q = val['q']
+        sp = val['spID']
+        sz = val['size']
+        d = sD[sp]['disp']
 
         x1, y1, z1 = 0, 0, 0
-        if value['state'] == 'a':
+        if val['state'] == 'a':
             x1 = np.random.binomial(1, d)
             y1 = np.random.binomial(1, d)
             z1 = np.random.binomial(1, d)
-            q -= d * sz * u0
-            IndDict[key]['q'] = q
+            q -= d * sz * u
+            iD[k]['q'] = q
 
         x -= x1*d
         y -= y1*d
         z -= z1*d
 
         if x > h or y > l or z > w:
-            del IndDict[key]
+            del iD[k]
 
         else:
-            IndDict[key]['x'] = x
-            IndDict[key]['y'] = y
-            IndDict[key]['z'] = z
+            iD[k]['x'] = x
+            iD[k]['y'] = y
+            iD[k]['z'] = z
 
-    return IndDict
+    return iD
 
 
 
-def search(SpDict, IndDict, h, l, w, u0, RTypes, RVals, RXs, RYs, RZs, RIDs):
 
-    for key, value in IndDict.items():
+def search(sD, iD, rD, ps):
 
-        x1 = value['x']
-        y1 = value['y']
-        z1 = value['z']
-        sp = value['spID']
-        q = value['q']
-        d = SpDict[sp]['disp']
-        sz = value['size']
+    ''' Simulate active searching of individuals for resources '''
 
-        if value['state'] == 'd': continue
+    w, h, l, sd, m, r, n, rm, gm, mm, dm, a, f, p, u, pm, dl, sm, st = ps
 
-        coords = [x1, y1, z1]
-        if len(RIDs):
-            closest = get_closest(RIDs, RXs, RYs, RZs, RTypes, coords)
-            ri = RIDs.index(closest)
-            x2 = RXs[ri]
-            y2 = RYs[ri]
-            z2 = RZs[ri]
+    for k, val in iD.items():
+
+        x = val['x']
+        y = val['y']
+        z = val['z']
+        sp = val['spID']
+        q = val['q']
+        d = sD[sp]['disp']
+        sz = val['size']
+
+        if val['state'] == 'd': continue
+
+        cs = [x, y, z]
+        c = get_closest(rD, cs)
+
+        if c == 0:
+            x1 = np.random.uniform(0, h)
+            y1 = np.random.uniform(0, l)
+            z1 = np.random.uniform(0, w)
 
         else:
-            x2 = np.random.uniform(0, h)
-            y2 = np.random.uniform(0, l)
-            z2 = np.random.uniform(0, w)
+            x1 = rD[c]['x']
+            y1 = rD[c]['y']
+            z1 = rD[c]['z']
 
-        x = abs(x1 - x2)
-        y = abs(y1 - y2)
-        z = abs(z1 - z2)
+        x2 = abs(x - x1)
+        y2 = abs(y - y1)
+        z2 = abs(z - z1)
 
         q -= d * sz
-        IndDict[key]['q'] = q
+        iD[k]['q'] = q
 
-        if x1 > x2:
-            x1 -= np.random.uniform(0, d*x)
-        elif x1 < x2:
-            x1 += np.random.uniform(0, d*x)
+        if x > x1:
+            x -= np.random.uniform(0, d*x2)
+        elif x < x1:
+            x += np.random.uniform(0, d*x2)
 
-        if y1 > y2:
-            y1 -= np.random.uniform(0, d*y)
-        elif y1 < y2:
-            y1 += np.random.uniform(0, d*y)
+        if y > y1:
+            y -= np.random.uniform(0, d*y2)
+        elif y < y1:
+            y += np.random.uniform(0, d*y2)
 
-        if z1 > z2:
-            z1 -= np.random.uniform(0, d*z)
-        elif z1 < z2:
-            z1 += np.random.uniform(0, d*z)
+        if z > z1:
+            z -= np.random.uniform(0, d*z2)
+        elif z < z1:
+            z += np.random.uniform(0, d*z2)
 
-        IndDict[key]['x'] = x1
-        IndDict[key]['y'] = y1
-        IndDict[key]['z'] = z1
+        iD[k]['x'] = x
+        iD[k]['y'] = y
+        iD[k]['z'] = z
 
-    return IndDict
+    return iD

@@ -796,20 +796,3 @@ def WhittakersTurnover(site1, site2):
   bw   = ((len(set1) - s) + (len(set2) - s))/abar
 
   return bw
-
-
-
-def getprod(Qs):
-
-    N = 0
-
-    if len(Qs) == 0:
-        return [0, N]
-
-    if len(Qs) > 0:
-        for q in Qs:
-            N += q
-
-        p1 = len(Qs)
-
-        return [p1, N]

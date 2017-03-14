@@ -1,155 +1,179 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
-from random import randint, choice
-import sys
+from random import choice
 import numpy as np
-from os.path import expanduser
-import time
 
 
-mydir = expanduser("~/")
-sys.path.append(mydir + "GitHub/simplex/model")
+def get_closest(rD, cs):
 
-from diversity_metrics import *
-from spatial_functions import * 
+    rIDs = list(rD)
+    cl = 0
+    if len(rIDs) == 0: return cl
 
-def consume(SpDict, IndDict, h, l, w, u0, Rtypes, Rvals, RX, RY, RZ, RIDs):
-    
-        ''' A function to bring resource particles into a system
-    
-        SpDict  :  A python dictionary holding properties of specific species:
-                   
+    x1, y1, z1 = cs
+    t = min([20, len(rIDs)])
+    mD, ct = 10**10, 0
+
+    for ct in range(t):
+        j = choice(rIDs)
+        x = rD[j]['x']
+        y = rD[j]['y']
+        z = rD[j]['z']
+
+        d = np.sqrt((x1 - x)**2 + (y1 - y)**2 + (z1 - z)**2)
+
+        if d < mD:
+            mD = d
+            c = j
+
+        return c
+
+
+
+def consume(sD, iD, rD, params):
+
+    ''' A function to simulate consumption of resource particles
+
+        sD  :  A python dictionary holding properties of specific species:
+
                    's_min' : lower bound on individual size
                    's_max' : upper bound on individual size
-                      
+
                    'grow' :  maximum growth rate
                    'disp' :  maximum dispersal rate
-                  
+
                    'rpf' :  probability of random transition to active state
                    'maint' : basal metabolic maintenance cost
-                  
-                   'dlim' : lower size limit at which individuals go dormant 
+
+                   'dlim' : lower size limit at which individuals go dormant
                    'spec' : speciation rate
-                  
-                   'mfd' : factor by which dormant decreases costs of 
+
+                   'mfd' : factor by which dormant decreases costs of
                    maintenance energy
-                        
-                  
+
+
                    'eff' : Resource particles can belong to one of n types for
                    which species have varying abilities to grow on.
-                     
-                     
-        IndDict  : A python dictionary to hold properties of individual
-                   organisms            
-            
-                   'size' : The size of the individual is an abstract 
+
+
+        iD  : A python dictionary to hold properties of individual
+                   organisms
+
+                   'size' : The size of the individual is an abstract
                    quantity, but can vary over two orders of magnitude
-                  
+
                    'q' : level of endogenous resources
                    'spID' : species ID
                    'state' : whether active or dormant
-                  
+
                   'x' : x-coordinate
                   'y' : y-coordinate
                   'z' : z-coordinate
-        
-        
-        params  :  General model parameters. Not all are used in every function.
-        
+
+
+        rD  :  A python dictionary holding properties of individual
+                  resource particles:
+
+                  'type' : Resource particles can belong to one of 3 types for
+                  which species have varying abilities to grow on.
+
+                  'size' : The size of the resource particle is an abstract
+                  quantity, but can vary over two orders of magnitude
+
+                  'x' : x-coordinate
+                  'y' : y-coordinate
+                  'z' : z-coordinate
+
+
+        ps  :  General model parameters. Not all are used in every function.
+
                    w : width of the system
                    h : height of the system
                    l : length of the system
-                
-                   seed : Number of starting individuals
+
+                   sd : Number of starting individuals
                    m : immigration rate and the probability of an individual
-                   organism immigrating per time step
-                
-                   r : Maximum number of resource particles entering per time step 
-                   rmax : Maximum size of individual resource particles
-                
-                   nN : Number of inflowing resource types
-                   gmax : Maximum specific growth rate 
-                   maintmax : Maximum metabolic maintenance
-                   dmax : Maximum dispersal rate
-                   pmax : maximum probability of random resuscitation
-                   dormlim : level of endogenous resource at which 
-                   individual go dormant
-                   smax : Maximum size of any individual
-                
-                   amp : amplitude of environmental flux
-                   freq : frequency of environmental flux
-                   phase : phase of individual immigration and resource inflow
-                   rate : rate of system flow through
-                   
+                       organism immigrating per time step
+
+                   r : Maximum number of resource particles entering per time step
+                   rm : Maximum size of individual resource particles
+
+                   n : Number of inflowing resource types
+                   gm : Maximum specific growth rate
+                   mm : Maximum metabolic maintenance
+                   dm : Maximum dispersal rate
+                   pm : maximum probability of random resuscitation
+                   dl : level of endogenous resource at which
+                        individual go dormant
+                   sm : Maximum size of any individual
+
+                   a : amplitude of environmental flux
+                   f : frequency of environmental flux
+                   p : phase of individual immigration and resource inflow
+                   u : rate of system flow through
+
         ct  :  indicates whether the model is on its first time step
     '''
-    
-    numc = 0
 
-    for key, value in IndDict.items():
-        sp = value['spID']
-        state = value['state']
-        x1 = value['x']
-        y1 = value['y']
-        z1 = value['z']
-        sp = value['spID']
-        q = value['q']
-        sz = value['size']
-        mfd = SpDict[sp]['mfd']
-        eff = SpDict[sp]['eff']
-        maint = SpDict[sp]['maint']
-        rpf = SpDict[sp]['rpf']
+    w, h, l, sd, m, r, n, rm, gm, mm, dm, a, f, p, u, pm, dl, sm, st = params
+
+    nc = 0
+
+    for k, val in iD.items():
+        sp = val['spID']
+        st = val['state']
+        x1 = val['x']
+        y1 = val['y']
+        z1 = val['z']
+        sp = val['spID']
+        q = val['q']
+        sz = val['size']
+        mf = sD[sp]['mfd']
+        ef = sD[sp]['eff']
+        mt = sD[sp]['maint']
+        rp = sD[sp]['rpf']
 
         if q <= 0:
-            del IndDict[key]
+            del iD[k]
             continue
 
-        coords = [x1, y1, z1]
-        if len(RIDs):
-            closest = get_closest(RIDs, RX, RY, RZ, Rtypes, coords)
-            ri = RIDs.index(closest)
-            x2 = RX[ri]
-            y2 = RY[ri]
-            z2 = RZ[ri]
-            Rval = Rvals[ri]
-            rtype = Rtypes[ri]
+        cd = [x1, y1, z1]
+        cl = get_closest(rD, cd)
+        if cl == 0: continue
 
-        else: continue
+        x2 = rD[cl]['x']
+        y2 = rD[cl]['y']
+        z2 = rD[cl]['z']
+        Rv = rD[cl]['size']
+        rt = rD[cl]['type']
 
-        dist = sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
-        i_radius = ((0.75*sz)/np.pi)**(1.0/3)
-        r_radius = ((0.75*Rval*1)/np.pi)**(1.0/3)
+        d = np.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+        ir = ((0.75*sz)/np.pi)**(1.0/3)
+        rr = ((0.75*Rv*1)/np.pi)**(1.0/3)
 
-        if dist <= i_radius + r_radius:
-            if state == 'd':
-                x = np.random.binomial(1, rpf)
+        if d <= ir + rr:
+            if st == 'd':
+                x = np.random.binomial(1, rp)
                 if x == 0:
                     continue
                 elif x == 1:
-                    IndDict[key]['state'] == 'a'
-                    IndDict[key]['maint'] = maint*mfd
-                    IndDict[key]['q'] -= q * rpf
+                    iD[k]['state'] == 'a'
+                    iD[k]['maint'] = mt*mf
+                    iD[k]['q'] -= q * rp
         else: continue
 
-        numc += 1
-        e = eff[rtype]
-        if Rval > e * q: # Increase cell quota
-            Rval -= e * q
+        nc += 1
+        e = ef[rt]
+        if Rv > e * q: # Increase cell quota
+            Rv -= e * q
             q += e * q
         else:
-            q += Rval
-            Rval = 0.0
+            q += Rv
+            Rv = 0.0
 
-        if Rval <= 0.0:
-            Rvals.pop(ri)
-            Rtypes.pop(ri)
-            RIDs.pop(ri)
-            RX.pop(ri)
-            RY.pop(ri)
-            RZ.pop(ri)
-        else:
-            Rvals[ri] = Rval
+        if Rv <= 0.0:
+            del rD[cl]
 
-        IndDict[key]['q'] = q
+        iD[k]['q'] = q
 
-    return [numc, SpDict, IndDict, h, l, w, u0, Rtypes, Rvals, RX, RY, RZ, RIDs]
+    return [nc, iD, rD]
