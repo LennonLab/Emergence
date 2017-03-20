@@ -1,10 +1,9 @@
-
-#simplex
+#simplex  
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Tetrahedron-4-3D-balls.png" align="right" width="150" height="150" />
 
 Because studying ecological complexity doesn't have to be complicated. 
 
-###Purpose
+###Purpose  
 **simplex** performs three tasks:
 
 1. Assembles individual-based models from combinations of parameters and processes to simulate stochastic eco-evolutionary dynamics across many ecological and environmental conditions.
