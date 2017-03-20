@@ -5,37 +5,37 @@ import math
 
 
 
-def SAR(Xs, Ys, Zs, SpIDs, w):
-    
-    boxes = [list([]) for _ in xrange(w**2)]
-    
+def SAR(Xs, Ys, SpIDs, h):
+
+    boxes = [list([]) for _ in xrange(h**2)]
+
     index = 0
     for i, val in enumerate(SpIDs):
         x = int(round(Xs[i]))
         y = int(round(Ys[i]))
 
-        index = int(round(x + (y * w)))
+        index = int(round(x + (y * h)))
 
         if index > len(boxes) - 1:
             index = len(boxes) - 1
         elif index < 0:
             index = 0
-            
+
         boxes[index].append(val)
-    
-    
+
+
     q = []
-    sar = [] 
+    sar = []
     while boxes:
         i = randint(0, len(boxes)-1)
         box = boxes.pop(i)
         q.extend(box)
         sar.append(len(list(set(q))))
-        
+
     return sar
 
-    
-    
+
+
 
 def distance(p0, p1):
 

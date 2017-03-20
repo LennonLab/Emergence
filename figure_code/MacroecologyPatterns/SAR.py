@@ -30,7 +30,7 @@ with open(data) as f:
         d = list(eval(d))
         sim = d.pop(0)
         ct = d.pop(0)
-        if len(d) <= 1: continue
+        if max(d) < 10: continue
         SARs.append(d)
         if len(SARs) > 10000: break
 
@@ -45,13 +45,13 @@ for sar in SARs:
     if len(z_vals) > 10000:
         break
 
-fs = 6
+fs = 12
 fig = plt.figure()
 fig.add_subplot(1, 1, 1)
 kernel = 0.2
 
 D = get_kdens_choose_kernel(z_vals, kernel)
-plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99, label= 'SAR')
+plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99, label= 'SAR '+'$z$'+'-values')
 plt.legend(loc=1, fontsize=fs+1)
 plt.xlabel('$z$', fontsize=fs+5)
 plt.ylabel('density', fontsize=fs+3)

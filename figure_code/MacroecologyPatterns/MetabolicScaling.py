@@ -5,97 +5,61 @@ import numpy as np
 import os
 from scipy import stats
 
+def figplot(x, y, xlab, ylab, fig, n):
+    x = np.log10(x)
+    y = np.log10(y)
+    fig.add_subplot(3, 3, n)
+    plt.scatter(x, y, lw=0.5, color='0.2', s = 4)
+    m, b, r, p, std_err = stats.linregress(x, y)
+    plt.plot(x, m*x + b, '-', color='k')
+    plt.xlabel(xlab, fontsize=9)
+    plt.tick_params(axis='both', labelsize=6)
+    plt.ylabel(ylab, fontsize=9)
+    plt.title('$z$ = '+str(round(m,2)), fontsize=8)
+    return fig
+
+
 mydir = os.path.expanduser('~/GitHub/simplex')
 tools = os.path.expanduser(mydir + "/tools")
 
-
-p = 1
-fr = 0.2
-_lw = 0.5
-w = 1
-sz = 1
-
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
+df = df[df['ct'] > 200]
 
-df2 = pd.DataFrame({'width' : df['width'].groupby(df['sim']).mean()})
-#df2 = df2.replace([0], np.nan).dropna()
-
-df2['sim'] = df['sim'].groupby(df['sim']).mean()
-df2['flow'] = df['flow.rate'].groupby(df['sim']).mean()
-
-df2['tau'] = np.log10(df2['width']**p/df2['flow'])
-
-df2['N'] = np.log10(df['total.abundance'].groupby(df['sim']).mean())
-df2['NS'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean())
-df2['Pdens'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean()/df2['width']**3)
+df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})
+df2['N'] = df['total.abundance'].groupby(df['sim']).mean()
+df2['NS'] = df['avg.pop.size'].groupby(df['sim']).mean()
+df2['Pdens'] = df['avg.pop.size'].groupby(df['sim']).min()/df2['length']**1
 
 state = 'all'
-df2['G'] = df[state+'.avg.per.capita.growth'].groupby(df['sim']).max()
+df2['G'] = df[state+'.avg.per.capita.growth'].groupby(df['sim']).min()
 df2['M'] = df[state+'.avg.per.capita.maint'].groupby(df['sim']).mean()
 df2['D'] = df[state+'.avg.per.capita.active.dispersal'].groupby(df['sim']).mean()
 df2['E'] = df[state+'.avg.per.capita.efficiency'].groupby(df['sim']).mean()
-df2['size'] = np.log10(df[state+'.size'].groupby(df['sim']).mean())
+df2['size'] = df[state+'.size'].groupby(df['sim']).mean()
 
-df2['B'] = np.log10(df2['G'])
-df2['MSB'] = np.log10(df2['G']/df[state+'.size'].groupby(df['sim']).mean())
+df2['B'] = df2['G'] * df2['size']
+df2['MSB'] = df2['B']/df2['size']
+
+#df2 = df2[np.log10(df2['Pdens']) != -1]
+#df2 = df2[np.log10(df2['Pdens']) < -0.7]
+#df2 = df2[np.log10(df2['size']) < 1]
+#df2 = df2[np.log10(df2['Pdens']) > 0]
+
 
 df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
 
-#### plot figure ###############################################################
-fs = 6 # fontsize
 fig = plt.figure()
-
-#### Metabolic rate vs. Body size ##############################################
-fig.add_subplot(2, 2, 1)
-plt.scatter(df2['size'], df2['B'], lw=_lw, color='0.2', s = sz)
-m, b, r, p, std_err = stats.linregress(df2['size'], df2['B'])
-print 'MTE:', m
-plt.plot(df2['size'], m*df2['size'] + b, '-', color='k')
 xlab = r"$log_{10}$"+'(body size)'
 ylab = r"$log_{10}$"+'(growth rate)'
-plt.xlabel(xlab, fontsize=fs+3)
-plt.tick_params(axis='both', labelsize=fs)
-plt.ylabel(ylab, fontsize=fs+3)
-plt.text(1.0, -2.4, '$z$ = '+str(round(m,2)), fontsize=fs+2)
-plt.ylim(-2.6, -0.6)
-plt.xlim(0, 2.0)
+fig = figplot(df2['size'], df2['B'], xlab, ylab, fig, 1)
 
-
-#### N vs. Tau #################################################################
-fig.add_subplot(2, 2, 2)
-plt.scatter(df2['size'], df2['MSB'], lw=_lw, color='0.2', s = sz)
-m, b, r, p, std_err = stats.linregress(df2['size'], df2['MSB'])
-print 'MTE (msb):', m
-#Mlist = np.array(Mlist)
-plt.plot(df2['size'], m*df2['size'] + b, '-', color='k')
 xlab = r"$log_{10}$"+'(body size)'
 ylab = r"$log_{10}$"+'(m.s. growth rate)'
-plt.xlabel(xlab, fontsize=fs+3)
-plt.tick_params(axis='both', labelsize=fs)
-plt.ylabel(ylab, fontsize=fs+1)
-plt.text(1.0, -1.7, '$z$ = '+str(round(m,2)), fontsize=fs+2)
-plt.ylim(-3.2, -1.4)
-plt.xlim(0, 2.0)
+fig = figplot(df2['size'], df2['MSB'], xlab, ylab, fig, 2)
 
-
-
-fig.add_subplot(2, 2, 3)
-plt.scatter(df2['size'], df2['Pdens'], lw=_lw, color='0.2', s = sz)
-m, b, r, p, std_err = stats.linregress(df2['size'], df2['Pdens'])
-print 'Pop density:', m
-Mlist = np.array(df2['size'])
-plt.plot(df2['size'], m*df2['size'] + b, '-', color='k')
-xlab = r"$log_{10}$"+'(Body size)'
+xlab = r"$log_{10}$"+'(body size)'
 ylab = r"$log_{10}$"+'(Pop. density)'
-plt.xlabel(xlab, fontsize=fs+3)
-plt.tick_params(axis='both', labelsize=fs)
-plt.ylabel(ylab, fontsize=fs+3)
-plt.text(1.0, -0.4, '$z$ = '+str(round(m,2)), fontsize=fs+2)
-plt.ylim(-3.0, 0.0)
-plt.xlim(0, 2.0)
+fig = figplot(df2['size'], df2['Pdens'], xlab, ylab, fig, 3)
 
-
-#### Final Format and Save #####################################################
 plt.subplots_adjust(wspace=0.4, hspace=0.4)
 plt.savefig(mydir + '/results/figures/MetabolicScaling.png', dpi=200, bbox_inches = "tight")
-plt.close()

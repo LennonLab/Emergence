@@ -1,63 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
 
+def grow(iD):
+    ''' increase overall size and decrease endogenous resources'''
 
-def grow(sD, iD):
-
-    ''' A function to simulate individual growth
-
-        sD  :  A python dictionary holding properties of specific species:
-
-                   's_min' : lower bound on individual size
-                   's_max' : upper bound on individual size
-
-                   'grow' :  maximum growth rate
-                   'disp' :  maximum dispersal rate
-
-                   'rpf' :  probability of random transition to active state
-                   'maint' : basal metabolic maintenance cost
-
-                   'dlim' : lower size limit at which individuals go dormant
-                   'spec' : speciation rate
-
-                   'mfd' : factor by which dormant decreases costs of
-                   maintenance energy
-
-
-                   'eff' : Resource particles can belong to one of n types for
-                   which species have varying abilities to grow on.
-
-
-        iD  : A python dictionary to hold properties of individual
-                   organisms
-
-                   'size' : The size of the individual is an abstract
-                   quantity, but can vary over two orders of magnitude
-
-                   'q' : level of endogenous resources
-                   'spID' : species ID
-                   'state' : whether active or dormant
-
-                  'x' : x-coordinate
-                  'y' : y-coordinate
-                  'z' : z-coordinate
-    '''
-
-    for k, val in iD.items():
-        if val['state'] == 'a':
-            sp = val['spID']
-            q = val['q']
-            sz = val['size']
-            g = sD[sp]['grow']
-
-            sz += sz * g
-            q -= q * g
-
-            if q <= 0:
-                del iD[k]
-                continue
-
-            iD[k]['size'] = sz
-            iD[k]['q'] = q
+    for k, v in iD.items():
+        if v['st'] == 'a':
+            iD[k]['sz'] += v['gr'] * v['q']
+            iD[k]['q'] -= v['gr'] * v['q']
 
     return iD

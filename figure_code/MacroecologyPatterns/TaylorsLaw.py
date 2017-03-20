@@ -25,7 +25,7 @@ df2['Pdens'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean()/df2['width'
 df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
 
 #### plot figure ###############################################################
-fs = 6 # fontsize
+fs = 12 # fontsize
 fig = plt.figure()
 fig.add_subplot(1, 1, 1)
 
@@ -35,17 +35,14 @@ Vlist = df2['var'].tolist()
 
 plt.scatter(Nlist, Vlist, lw=_lw, color='0.2', s = sz)
 m, b, r, p, std_err = stats.linregress(Nlist, Vlist)
-print 'Taylors Law:', m
 Nlist = np.array(Nlist)
-plt.plot(Nlist, m*Nlist + b, '-', color='k')
+plt.plot(Nlist, m*Nlist + b, '-', color='k', label='Taylor\'s Law, '+'$z$ = '+str(round(m,2)))
 xlab = r"$log_{10}$"+'(Pop mean)'
 ylab = r"$log_{10}$"+'(variance)'
-plt.xlabel(xlab, fontsize=fs+3)
-plt.tick_params(axis='both', labelsize=fs)
-plt.ylabel(ylab, fontsize=fs+3)
-plt.text(0.7, 4.2, '$z$ = '+str(round(m,2)), fontsize=fs+2)
-#plt.ylim(1, 5)
-#plt.xlim(0.5, 2.0)
+plt.xlabel(xlab, fontsize=fs)
+plt.tick_params(axis='both', labelsize=fs-3)
+plt.ylabel(ylab, fontsize=fs)
+plt.legend(loc=2, fontsize=fs)
 
 #### Final Format and Save #####################################################
 plt.subplots_adjust(wspace=0.4, hspace=0.4)
