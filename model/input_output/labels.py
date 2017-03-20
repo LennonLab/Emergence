@@ -35,7 +35,6 @@ def headings():
     headings += 'flow.rate,'
     headings += 'height,'
     headings += 'length,'
-    headings += 'width,'
     headings += 'total.abundance,'
     headings += 'ind.production,'
     headings += 'biomass.prod.N,'
