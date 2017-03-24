@@ -292,7 +292,9 @@ The following is recorded for each Simplex model:
 These data are stored as comma separated value (.csv) files, the data from which can be directly imported into an R or Python environment.
 
 ## Output data
-Simplex generates three files of output data. Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. The three .csv files are: 
+Simplex generates three files of output data. 
+Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
+The three .csv files are: 
 
 *SimData.csv*
 -- Each column of this file corresponds to a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, resource supply and diversity, rate of disturbance, etc.).
@@ -310,22 +312,34 @@ Along with the SAR, RADs are one of the most intensively studied and commonly pr
 
 # Discussion
 
-## UNDER HEAVY CONSTRUCTION
+## UNDER CONSTRUCTION
 
-1) OVERVIEW -- The Simplex platform assembles individual-based models from random combinations of system-level variables, species traits, and process-related rates. 
-This allows users to explore a large degree of variation in ecological conditions. 
-In this way, Simplex allows the user to examine the simultaneous emergence of ecological relationships under wide-ranging conditions and combinations of ecological paradigms. 
+The Simplex platform combines ecological paradigms and general mechanisms to allow many ecological patterns and relationships to emerge simultaneously. 
+In this way, the relatively simple source code of Simplex allows patterns of community ecology, macroecology, and biodiversity science to emerge from individual-level changes and relatively few explicit constraints. 
+Simplex assembles individual-based models from random combinations of system-level variables, species traits, and process-related rates. 
+This large degree of initially random conditions allows users to explore a large degree of variation in ecological conditions and to avoid the circularity of building overly-informed models. 
+In this way, Simplex allows the user to examine the simultaneous emergence of ecological relationships under wide-ranging conditions and combinations of ecological paradigms.
 
+Simplex is designed to explore and test the simultaneous emergence of ecological relationships and other patterns. 
+The usefulness of this is manifold. 
+First, ecologists often have little knowledge of how ecological patterns are related or either interdependent or even perhaps mutually exclusive. 
+Simplex is perhaps ecology's first tool for targeting such questions. The ability to examine simultaneous emergence can also be used to great effect when testing or developing ecological theory. While many  ecological theories predict only one or a few patterns, strong theories should unify and predict multiple patterns (McGill et al. 2007). 
+Likewise, strong tests should evaluate the ability of ecological theories to explain and predict multiple patterns (e.g., Xiao et al. 2015).
 
-2) SIMULTANEOUS EMERGENCE --
+Simplex has also been designed to combine concepts from several ecological paradigms into a single platform that offers source code that is easy to read, use, and modify. 
+By default, Simplex includes the stochastic dynamics inherent to some ecological theories (e.g., neutral theory, stochastic geometry, stochastic resource limitation theory). 
+Likewise, Simplex includes the resource-limited growth dynamics of resource limitation theory and chemostat theory, and the inherent species sorting and environmental filtering (i.e., ecological selection) of community ecology. 
+Finally, Simplex includes the lognormal dynamics of a recent macroecological theory, i.e., multiplicative interactions of stochastic variables, in addition to energetic constraints that underpin trade-offs of life history theory (e.g., r vs. K selection).
 
+Simplex offers the first individual-based modeling platform for metabolic scaling theory. 
+Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases to a fractional power of body mass ($M$), i.e., $B$ = $M^{z}$. 
+This relationship is most often observed to follow a 3/4 power scaling, i.e., $z$ = 3/4. 
+The 3/4 scaling law has become one of the most universal and highly supported statistical relationships in the biological sciences. 
+MTE and many related studies have used this scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (*refs*). 
+The reasoning behind the 3/4 power scaling law rests on fractal branching networks responsible for the delivery of resources to cells and tissues. 
+However, scientists still argue whether a 2/3 scaling based on surface area to volume ratios is more accurate and appropriate (*refs*) and even whether a 3/4 and 2/3 scaling can arise from the same mechanism (*refs*).
+Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (0.9 < $z$ < 1) for some taxa (*ref*).
 
-
-3) FIRST IBM (PLATFORM) TO COMBINE ENERGETICS, MACROECOLOGY, NEUTRAL THEORY AND NICHE THEORY -- 
-
-
-
-4) THE FIRST IBM FOR MTE AND LOGNORMAL DYNAMICS -- 
 
 
 
