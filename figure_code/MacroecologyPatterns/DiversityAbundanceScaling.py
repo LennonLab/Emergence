@@ -12,9 +12,9 @@ mydir2 = os.path.expanduser("~/")
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
 df = df[df['ct'] > 100]
-#df = df[df['ct'] < 300]
 
-df2 = pd.DataFrame({'width' : df['width']})
+
+df2 = pd.DataFrame({'length' : df['length']})
 df2['N'] = np.log10(df['total.abundance']).groupby(df['sim']).median()
 df2['D'] = np.log10(df['N.max']).groupby(df['sim']).median()
 df2['S'] = np.log10(df['species.richness']).groupby(df['sim']).median()

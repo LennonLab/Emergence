@@ -10,33 +10,33 @@ tools = os.path.expanduser(mydir + "/tools")
 
 p = 1
 fr = 0.2
-_lw = 0.5
+_lw = 2
 w = 1
-sz = 1
+sz = 20
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
+#df = df[df['ct'] > 200]
 
-df2 = pd.DataFrame({'width' : df['width'].groupby(df['sim']).mean()})
+df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})
 df2['N'] = np.log10(df['total.abundance'].groupby(df['sim']).mean())
-df2['NS'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean())
-df2['var'] = np.log10(df['pop.var'].groupby(df['sim']).mean())
-df2['Pdens'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean()/df2['width']**3)
+df2['NS'] = np.log10(df['avg.pop.size'].groupby(df['sim']).median())
+df2['var'] = np.log10(df['pop.var'].groupby(df['sim']).median())
 
 df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
 
 #### plot figure ###############################################################
-fs = 12 # fontsize
+fs = 14
 fig = plt.figure()
 fig.add_subplot(1, 1, 1)
 
-df2 = df2[df2['N'] > 0]
+df2 = df2[df2['var'] > 1]
 Nlist = df2['NS'].tolist()
 Vlist = df2['var'].tolist()
 
-plt.scatter(Nlist, Vlist, lw=_lw, color='0.2', s = sz)
+plt.scatter(Nlist, Vlist, lw=_lw, color='0.7', s = sz)
 m, b, r, p, std_err = stats.linregress(Nlist, Vlist)
 Nlist = np.array(Nlist)
-plt.plot(Nlist, m*Nlist + b, '-', color='k', label='Taylor\'s Law, '+'$z$ = '+str(round(m,2)))
+plt.plot(Nlist, m*Nlist + b, '-', color='k', label='Taylor\'s Law, '+'$z$ = '+str(round(m,2)), lw=_lw)
 xlab = r"$log_{10}$"+'(Pop mean)'
 ylab = r"$log_{10}$"+'(variance)'
 plt.xlabel(xlab, fontsize=fs)

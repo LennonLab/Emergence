@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 def ind_disp(iD, ps):
     h, l, r, u = ps
 

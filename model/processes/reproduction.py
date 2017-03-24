@@ -10,8 +10,8 @@ def reproduce(sD, iD, ps, p = 0):
 
         if np.random.binomial(1, v['gr']) == 1:
             p += 1
-            iD[k]['q'] = (v['q'])/2.0
-            iD[k]['sz'] = (v['sz'])/2.0
+            iD[k]['q'] = v['q']/2.0
+            iD[k]['sz'] = v['sz']/2.0
 
             i = time.time()
             iD[i] = copy.copy(iD[k])
