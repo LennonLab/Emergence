@@ -7,17 +7,17 @@ import statsmodels.api as sm
 
 def figplot(x, y, xlab, ylab, fig, n):
     fig.add_subplot(3, 3, n)
-    plt.scatter(x, y, lw=0.5, color='0.2', s = 4)
+    plt.scatter(x, y, lw=0.5, color='0.7', s = 4)
     lowess = sm.nonparametric.lowess(y, x, frac=fr)
     x, y = lowess[:, 0], lowess[:, 1]
-    plt.plot(x, y, lw=_lw, color='0.3')
+    plt.plot(x, y, lw=_lw, color='k')
     plt.tick_params(axis='both', labelsize=fs)
     plt.xlabel(xlab, fontsize=fs+3)
     plt.ylabel(ylab, fontsize=fs+3)
     return fig
 
 
-p, fr, _lw, w, sz, fs = 1, 0.1, 0.5, 1, 5, 6
+p, fr, _lw, w, sz, fs = 1, 0.2, 1.5, 1, 5, 6
 mydir = os.path.expanduser('~/GitHub/simplex')
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
 df = df[df['ct'] > 100]
@@ -26,9 +26,9 @@ df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})
 df2['sim'] = df['sim'].groupby(df['sim']).mean()
 df2['flow'] = df['flow.rate'].groupby(df['sim']).mean()
 df2['tau'] = np.log10(df2['length']**p/df2['flow'])
-df2['N'] = df['total.abundance'].groupby(df['sim']).mean()
-df2['Prod'] = df['ind.production'].groupby(df['sim']).mean()
-df2['S'] = df['species.richness'].groupby(df['sim']).mean()
+df2['N'] = np.log10(df['total.abundance'].groupby(df['sim']).mean())
+df2['Prod'] = np.log10(df['ind.production'].groupby(df['sim']).mean())
+df2['S'] = np.log10(df['species.richness'].groupby(df['sim']).mean())
 df2['E'] = df['simpson.e'].groupby(df['sim']).mean()
 df2['W'] = df['Whittakers.turnover'].groupby(df['sim']).mean()
 df2['Dorm'] = df['Percent.Dormant'].groupby(df['sim']).mean()

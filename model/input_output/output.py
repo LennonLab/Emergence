@@ -167,8 +167,7 @@ def output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2):
         print>>OUT, sim, ',', ct,',',  sar
         OUT.close()
 
-        if ct > 10 and ct%10 == 0:
-            print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N,
-            print '  S:', '%4s' %  S, '  R:', '%4s' % R, ' u0:', '%4s' % round(u, 4)
+        print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N,
+        print '  S:', '%4s' %  S, '  R:', '%4s' % R, ' u0:', '%4s' % round(u, 4)
 
-    return [N, S, R, splist2]
+    return splist2

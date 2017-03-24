@@ -63,14 +63,14 @@ def run_model(procs, sim, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     print '\n'
     h = randint(1, 101)
     l = int(h)
-    r = randint(1, 101)
-    ps = h, l, r, 10**np.random.uniform(-3, 0)
-    sD, iD = immigration.immigration(sD, iD, ps, 1000)
+    r = randint(10, 10)
+    ps = h, l, r, 10**np.random.uniform(-5, 0)
+    sD, iD = immigration.immigration(sD, iD, ps, 500)
 
-    while ct < 400:
+    while ct < 600:
         iD, sD, rD, N, R, ct, prod = iter_procs(procs, iD, sD, rD, ps, ct)
-        N, S, R, splist2 = output.output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2)
+        if ct > 100 and ct%10 == 0: splist2 = output.output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2)
         if N == 0: break
 
 procs = labels.processes()
-for sim in range(10**5): run_model(procs, sim)
+for sim in range(10**4): run_model(procs, sim)

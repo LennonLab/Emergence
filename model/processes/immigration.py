@@ -13,11 +13,11 @@ def immigration(sD, iD, ps, sd=1):
 
         p = np.random.randint(1, 1000)
         if p not in sD:
-            sD[p] = {'gr' : np.random.uniform(0, 1)} # growth rate
-            sD[p]['di'] = np.random.uniform(0, 1) # active dispersal rate
-            sD[p]['rp'] = np.random.uniform(0, 1) # RPF factor
-            sD[p]['mt'] = np.random.uniform(0, 1) # maintenance
-            sD[p]['mf'] = np.random.uniform(1, 100)
+            sD[p] = {'gr' : 10**np.random.uniform(-4, 0)} # growth rate
+            sD[p]['di'] = 10**np.random.uniform(-4, 0) # active dispersal rate
+            sD[p]['rp'] = 10**np.random.uniform(-4, 0) # RPF factor
+            sD[p]['mt'] = 10**np.random.uniform(-4, 0) # maintenance
+            sD[p]['mf'] = 10**np.random.uniform(-4, 0)
             es = np.random.uniform(1, 100, 3)
             sD[p]['ef'] = es/sum(es) # growth efficiencies
 

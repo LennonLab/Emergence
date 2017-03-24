@@ -11,8 +11,8 @@ def ResIn(rD, ps):
         ID = time.time()
         if p == 1:
             rD[ID] = {'t' : randint(0, 2)}
-            rD[ID]['v'] = np.random.uniform(1, 1000)
-            rD[ID]['x'] = float(np.random.uniform(0, 0.1*h))
-            rD[ID]['y'] = float(np.random.uniform(0, 0.1*l))
+            rD[ID]['v'] = np.random.uniform(1, 10)
+            rD[ID]['x'] = float(np.random.uniform(0, h))
+            rD[ID]['y'] = float(np.random.uniform(0, l))
 
     return rD

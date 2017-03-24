@@ -15,13 +15,13 @@ def figplot(x, y, xlab, ylab, fig, n):
     plt.scatter(x, y, lw=0.5, color='0.2', s = 4)
     lowess = sm.nonparametric.lowess(y, x, frac=fr)
     x, y = lowess[:, 0], lowess[:, 1]
-    plt.plot(x, y, lw=_lw, color='0.3')
+    plt.plot(x, y, lw=_lw, color='m')
     plt.tick_params(axis='both', labelsize=6)
     plt.xlabel(xlab, fontsize=9)
     plt.ylabel(ylab, fontsize=9)
     return fig
 
-p, fr, _lw, w, sz, fs = 1, 0.1, 0.5, 1, 5, 6
+p, fr, _lw, w, sz, fs = 2, 0.2, 0.5, 1, 5, 6
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
 df2 = pd.DataFrame({'length' : df['length']})

@@ -17,7 +17,6 @@ def get_kdens_choose_kernel(_list,kernel):
     density = gaussian_kde(_list)
     n = len(_list)
     xs = np.linspace(min(_list),max(_list), n)
-    #xs = np.linspace(0.0,1.0,n)
     density.covariance_factor = lambda : kernel
     density._compute_covariance()
     D = [xs,density(xs)]
@@ -30,9 +29,8 @@ with open(data) as f:
         d = list(eval(d))
         sim = d.pop(0)
         ct = d.pop(0)
-        if max(d) < 10: continue
+        if max(d) < 1: continue
         SARs.append(d)
-        if len(SARs) > 10000: break
 
 
 z_vals = []
@@ -42,19 +40,18 @@ for sar in SARs:
     m, b, r, p, std_err = stats.linregress(np.log10(area_vector), np.log10(sar))
     if isnan(m): continue
     z_vals.append(m)
-    if len(z_vals) > 10000:
-        break
+    if len(z_vals) > 1000: break
 
-fs = 12
+fs = 14
 fig = plt.figure()
 fig.add_subplot(1, 1, 1)
-kernel = 0.2
+kernel = 0.5
 
 D = get_kdens_choose_kernel(z_vals, kernel)
-plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99, label= 'SAR '+'$z$'+'-values')
+plt.plot(D[0],D[1],color = 'm', lw=3, alpha = 0.99, label= 'SAR '+'$z$'+'-values')
 plt.legend(loc=1, fontsize=fs+1)
-plt.xlabel('$z$', fontsize=fs+5)
-plt.ylabel('density', fontsize=fs+3)
+plt.xlabel('$z$', fontsize=fs+6)
+plt.ylabel('$density$', fontsize=fs+3)
 plt.tick_params(axis='both', labelsize=fs)
 
 #### Final Format and Save #####################################################

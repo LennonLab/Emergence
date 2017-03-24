@@ -5,7 +5,7 @@ def grow(iD):
 
     for k, v in iD.items():
         if v['st'] == 'a':
-            iD[k]['sz'] += v['gr'] * v['q']
+            iD[k]['sz'] += v['gr'] * v['sz']
             iD[k]['q'] -= v['gr'] * v['q']
 
     return iD
