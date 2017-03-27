@@ -15,57 +15,50 @@ header-includes:
 
 # Introduction
 
-**P1**
-Ecology is the study of interactions and relationships between organisms and their environment.
-This broad definition encompasses a multitude of subfields, each with its own principles, processes, and theories.
-From the microscopic scales of molecular ecology and microbial ecology to the continental and global scales of macroecology, ecology spans all scales of space and abundance on Earth.
-Likewise, from the geological scales of paleoecology to the contemporary scales of urban ecology, ecology spans all scales of time within which organisms live and evolve.
-While ecologists have sometimes sought to unify the observations of their subfields under common principles, ecologists have yet to ask whether the combination of their paradigms allows otherwise disparate ecological patterns to emerge simultaneously.
+Ecology is comprised of subfields that explain and predict patterns of interaction and biodiversity at all scales relevant to living organisms.
+From the microscopic scales of microbial ecology to the global scales of macroecology, ecologists study all scales of space and abundance on Earth.
+Likewise, from the geological scales of paleoecology to the contemporary scales of urban ecology, ecologists study all scales of time within which taxa evolve.
+More than a century of ecological study across these disparate scales has revealed general patterns that have inspired new ecological theories and paradigms.
+Given enough time and resources, an army of ecologists could uncover many of these patterns in an environment of sufficient diversity and space.
+Yet historically, ecologists have focused little on how patterns that are predicted by different theories and explained by different paradigms, or studied within different subfields can emerge within a single system.
 
-**P2**
+Within a given ecological community, one could test the predictions of any number of ecological theories.
+One could test the allometric predictions of metabolic theory, the growth related predictions of resource limitation theory, growth-persistence trade-offs of life history theory, and the many predictions of commonness and rarity from any number of ecological theories of biodiversity.
+Such a grand effort would be the most comprehensive test of ecological theory ever undertaken.
+However, doing so would only mean that we have tested related groups of ecological patterns (e.g., scaling patterns, abundance patterns) as predicted by groups of ecological theories with little bearing on one another.
 
-Ecologists often argue the importance and perspectives of their own subfields and methodologies, e.g., controlled small-scale experiments vs. powerful global-scale statistical patterns.
+There, in fact, is no Grand Theory of Ecology.
+This is perhaps surprising given the number of ecological theories based on universal principles, e.g., allometry, selection, stochasticity, stoichiometry.
+Instead, most ecological theories make few predictions about phenomena that ecologists in other subfields know little about.
+Those ecological theories that make more than a few predictions are limited to a particular kind of pattern or to a fraction of patterns belonging to a particular subfield.
+For example, metabolic theory of ecology (MTE) predicts many scaling patterns related to body size.
+The most powerful of these (i.e., 3/4 scaling of metabolic rate with body size) appears to not hold for bacteria and archaea.
+This failure is concerning given that these microorganisms are the most abundant and phylogenetically, functionally, and metabolically diverse organisms on Earth.
+MTE also does not predict intensively studied patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
+Another general ecological theory, the maximum entropy theory of ecology (METE) predicts many patterns of commonness and rarity including the SAD and SAR, and uses few empirical inputs.
+However, despite their simplicity and generality, METE and MTE do not predict any of the same patterns.
+In fact, several ecological subfield do not use any of the patterns predicted by either theory.
 
+If there were a Grand Theory of Ecology, its foundation would be built on the ability to explain and predict seemingly unrelated patterns and reproduce commonly observed relationships that span ecological subfields.
+This grand theory would not explicitly include or exclude principles and mechanisms needed to study particular subfields.
+Instead, a Grand Theory of Ecology would allow for the inclusion of many principles and mechanisms without producing inherent contradictions.
+This grand theory would predict population dynamics, allometric scaling, commonness and rarity, life history traits and tradeoffs, trophic interactions and food web dynamics, as well as commonly observed biogeographical patterns and relationships.
+This is obviously a lot to ask for, but the collective ecological imagination seems to have not even considered the topic.
 
-**P3**
+At least one form of ecological modeling is amenable to simulating the simultaneous emergence of ecological patterns from many ecological subfields, i.e., individual-based modeling (IBM).
+IBMs encode rules of how individuals change and interact in response to potentially dynamic environments.
+Population to ecosystem-level dynamics are allowed to emerge as an IBM simulates over time and space.
+IBMs provide degrees of ecological realism, individual variability, and spatial heterogenetiy that are unattainable with other modeling approaches. 
+IBMs also offer the potential for realistic and unanticipated outcome to emerge from individual-level interactions.
+Finally, IBMs can allow researchers to simulate and track information a practically unlimited amount of information.
+Though ecologists have used IBMs for over two decades to examine a large number of ecological systems, IBMs are often used to examine specific questions and require consider computational complexity (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
 
-
-
-**P4**
-
-
-
-**P5**
-
-
-
-Modeling is an elementary approach to understanding ecological systems, the influence of ecological processes, and the predictability of ecological patterns and dynamics.
-Before modern computing, ecological models were almost exclusively equation-based representations of highly simplified systems (Black and McKane 2012). Since the advent of personal computing, ecological models have been increasingly constructed to handle greater complexity and to explicitly simulate ecological processes.
-
-In ecology, simulation-based models are often used to examine analytically challenging or intractable scenarios.
-Examples are markov models that simulate stochastic demographic changes and early ecological null models, both of which operate on matrices (Gotelli and Entsminger 2001, Hubbell 2001).
-Ecologists have also simulated growth and interactions among individuals for over two decades with individual-based models (IBMs) (DeAngelis and Gross 1992, Rosindell et al. 2015).
-IBMs explicitly encode rules of how individuals change and interact. 
-Once the rules are encoded, population to ecosystem-level dynamics can emerge as an IBM simulates over time and spatially explicit environments.
-
-A body of literature including original research, comprehensive reviews, and textbooks reveal the use, advantages, and challenges of ecological IBMs (Grimm and Railsback 2005).
-IBMs can provide degrees of ecological realism, individual variability, and spatial heterogenetiy that are unattainable with other models. IBMs also offer the potential for realistic and unanticipated ecological dynamics and patterns to emerge from individual-level interactions.
-However, IBMs offer challenges that include greater computational complexity, the difficulty of explicitly encoding ecological theory, and the use of ecological problem solving (Matthews et al. 2007, Grimm and Railsback 2005).
-
-Despite their frequent use, the power of ecological IBMs has yet been leveraged to the greatest advantage.
-Few, if any, include fluid dynamics or combine fluid dynamics with growth and active dispersal.
-While growth, sensing, and decision making are often modeled, few IBMs integrate physiology, evolution, community ecology, biogeography, and sampling theory. 
-Ecological IBMs are more often constructed to model a specific system than to synthesize general theories and mechanisms of ecology and evolution (but see Rosindell et al. 2015). 
-Yet, IBMs can allow researchers to simulate and track information from the level of genomes and internal physiology to the stoichiometry of resource particles and distributions of abundance among species and across space.
-
-Here, we present an IBM platform for exploring the simultaneous emergence of relationships and patterns under combined ecological paradigms. 
-We refer to the platform as Simplex, referring to the emergence of complex systems from simple conditions.
-A 'simplex' is also a geometric concept and a generalized notion of triangle abstracted to n-dimensions.
-This geometric definition is also fitting because the Simplex platform is based on the general importance of three phenomena. These are the multiplicative interaction of stochastic variables (i.e., lognormal dynamics), the ubiquitous influence of energetic constraints, and the importance of ecological selection.
-Simplex also accomplishes three primary tasks. 
+Here, we leverage the power of ecological IBMs to their greatest advantage by developing a simplistic source code intended to simulate the simultaneous emergence of an unprecedented number of ecological patterns.
+In effect, we present an IBM platform aimed at the pursuit of a Grand Theory of Ecology.
+This platform, referred to as 'Simplex' accomplishes three primary tasks. 
 First, Simplex simulates a broad range of ecological conditions.
 Second, Simplex records information from individuals to the ecosystem level.
-Third, Simplex provides computing code for analyzing simulation output.
+Third, Simplex provides computing code for analyzing simulation output in the forms of ecological patterns.
 Below, we provide detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles Simplex integrates, and the analyses that can be conducted using the code we provide.
 
 
