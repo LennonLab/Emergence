@@ -1,8 +1,8 @@
 ---
-title: Simplex: A modeling platform for the simultaneous emergence of ecological relationships via combined paradigms
+title: Simplex: A modeling platform for the simultaneous emergence of ecological relationships
 
 author(s):
-    - Kenneth J. Locey
+    - Kenneth J. Locey, Jay. T. Lennon
 date: \today{}
 geometry: margin=2cm
 output: pdf_document
@@ -14,6 +14,30 @@ header-includes:
 ---
 
 # Introduction
+
+**P1**
+Ecology is the study of interactions and relationships between organisms and their environment.
+This broad definition encompasses a multitude of subfields, each with its own principles, processes, and theories.
+From the microscopic scales of molecular ecology and microbial ecology to the continental and global scales of macroecology, ecology spans all scales of space and abundance on Earth.
+Likewise, from the geological scales of paleoecology to the contemporary scales of urban ecology, ecology spans all scales of time within which organisms live and evolve.
+While ecologists have sometimes sought to unify the observations of their subfields under common principles, ecologists have yet to ask whether the combination of their paradigms allows otherwise disparate ecological patterns to emerge simultaneously.
+
+**P2**
+
+Ecologists often argue the importance and perspectives of their own subfields and methodologies, e.g., controlled small-scale experiments vs. powerful global-scale statistical patterns.
+
+
+**P3**
+
+
+
+**P4**
+
+
+
+**P5**
+
+
 
 Modeling is an elementary approach to understanding ecological systems, the influence of ecological processes, and the predictability of ecological patterns and dynamics.
 Before modern computing, ecological models were almost exclusively equation-based representations of highly simplified systems (Black and McKane 2012). Since the advent of personal computing, ecological models have been increasingly constructed to handle greater complexity and to explicitly simulate ecological processes.
@@ -35,14 +59,14 @@ Ecological IBMs are more often constructed to model a specific system than to sy
 Yet, IBMs can allow researchers to simulate and track information from the level of genomes and internal physiology to the stoichiometry of resource particles and distributions of abundance among species and across space.
 
 Here, we present an IBM platform for exploring the simultaneous emergence of relationships and patterns under combined ecological paradigms. 
-I refer to the platform as Simplex, referring to the emergence of complex systems from simple conditions.
+We refer to the platform as Simplex, referring to the emergence of complex systems from simple conditions.
 A 'simplex' is also a geometric concept and a generalized notion of triangle abstracted to n-dimensions.
 This geometric definition is also fitting because the Simplex platform is based on the general importance of three phenomena. These are the multiplicative interaction of stochastic variables (i.e., lognormal dynamics), the ubiquitous influence of energetic constraints, and the importance of ecological selection.
 Simplex also accomplishes three primary tasks. 
 First, Simplex simulates a broad range of ecological conditions.
 Second, Simplex records information from individuals to the ecosystem level.
 Third, Simplex provides computing code for analyzing simulation output.
-Below, we provide detailed explanation of how hydrobide works, the data it quantifies and tracks, the theories and principles hydrobide integrates, and the analyses that can be conducted using the code we provide.
+Below, we provide detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles Simplex integrates, and the analyses that can be conducted using the code we provide.
 
 
 # Methods
