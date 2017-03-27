@@ -64,7 +64,7 @@ def run_model(procs, sim, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
     h = randint(1, 101)
     l = int(h)
     r = randint(10, 10)
-    ps = h, l, r, 10**np.random.uniform(-5, 0)
+    ps = h, l, r, 10**np.random.uniform(-3, 0)
     sD, iD = immigration.immigration(sD, iD, ps, 500)
 
     while ct < 600:

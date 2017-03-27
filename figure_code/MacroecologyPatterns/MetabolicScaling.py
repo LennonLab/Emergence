@@ -22,13 +22,12 @@ def figplot(x, y, xlab, ylab, fig, n):
     y2 = list(y)
     x2 = list(x)
 
-    X, Y = (np.array(t) for t in zip(*sorted(zip(x2, y2))))
-    Xi = xfrm(X, max(X)*1.05)
-    bins = np.linspace(np.min(Xi), np.max(Xi)+1, 400)
-    ii = np.digitize(Xi, bins)
-
-    y2 = np.array([np.mean(Y[ii==i]) for i in range(1, len(bins)) if len(Y[ii==i]) > 0])
-    x2 = np.array([np.mean(X[ii==i]) for i in range(1, len(bins)) if len(X[ii==i]) > 0])
+    #X, Y = (np.array(t) for t in zip(*sorted(zip(x2, y2))))
+    #Xi = xfrm(X, max(X)*1.05)
+    #bins = np.linspace(np.min(Xi), np.max(Xi)+1, 400)
+    #ii = np.digitize(Xi, bins)
+    #y2 = np.array([np.mean(Y[ii==i]) for i in range(1, len(bins)) if len(Y[ii==i]) > 0])
+    #x2 = np.array([np.mean(X[ii==i]) for i in range(1, len(bins)) if len(X[ii==i]) > 0])
 
     d = pd.DataFrame({'size': list(x2)})
     d['rate'] = list(y2)
@@ -59,37 +58,33 @@ mydir = os.path.expanduser('~/GitHub/simplex')
 tools = os.path.expanduser(mydir + "/tools")
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
-#df = df[df['ct'] > 300]
-#df = df[df['ct'] < 400]
+#df = df[df['ct'] > 200]
 
 df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})
-df2['flow'] = df['flow.rate']
-df2['R'] = df['resource.particles']
 df2['N'] = df['total.abundance'].groupby(df['sim']).mean()
 df2['NS'] = df['avg.pop.size'].groupby(df['sim']).mean()
 
 state = 'all'
 df2['Biomass'] = df[state+'.biomass'].groupby(df['sim']).median()
-df2['G'] = df[state+'.avg.per.capita.growth'].groupby(df['sim']).mean()
 df2['size'] = df[state+'.size'].groupby(df['sim']).mean()
-df2['D'] = df[state+'.avg.per.capita.active.dispersal'].groupby(df['sim']).mean()
-df2['M'] = df[state+'.avg.per.capita.maint'].groupby(df['sim']).max()
-df2['MF'] = df[state+'.avg.per.capita.mf'].groupby(df['sim']).max()
+df2['M'] = df[state+'.avg.per.capita.maint'].groupby(df['sim']).mean()
 
+df2['Na'] = df['N.active'].groupby(df['sim']).mean()
+df2['Ma'] = df['active.avg.per.capita.maint'].groupby(df['sim']).mean()
+df2['MFa'] = df['active.avg.per.capita.mf'].groupby(df['sim']).mean()
+df2['Nd'] = df['N.dormant'].groupby(df['sim']).mean()
+df2['Md'] = df['dormant.avg.per.capita.maint'].groupby(df['sim']).mean()
+df2['MFd'] = df['dormant.avg.per.capita.mf'].groupby(df['sim']).mean()
+df2['Mw'] = df2['Ma']*(df2['Na']/df2['N']) + df2['Md']*(df2['Nd']/df2['N'])
 
-df2['B'] = (df2['M']*df2['MF']) * df2['size']
-#df2['B'] = df2['M'] * df2['size']
+df2['B'] =  df2['M'] * df2['size']
 df2['MSB'] = df2['B']/df2['size']
 df2['Pdens'] = df2['Biomass']/(df2['length']**2)
 
-df2 = df2[df2['N'] > 1]
-#df2 = df2[df2['flow'] > 10**-2]
-df2 = df2[np.log10(df2['Pdens']) > -10]
-df2 = df2[np.log10(df2['size']) < 30]
-df2 = df2[np.log10(df2['size']) > 1.5]
+#df2 = df2[np.log10(df2['Pdens']) > -10]
+df2 = df2[np.log10(df2['size']) < 10]
 
 df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
-
 
 fig = plt.figure()
 xlab = r"$log_{10}$"+'(Body size)'
