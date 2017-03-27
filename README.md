@@ -4,7 +4,7 @@
 
 Source code for studying the simultaneous emergence of ecological relationships.
 
-### Purpose  
+## Purpose  
 **Simplex** performs three tasks:
 
 1. Builds and runs individual-based ecological models based on dynamics of selection, stochasticity, and energetics.
@@ -13,15 +13,26 @@ Source code for studying the simultaneous emergence of ecological relationships.
 
 3. Provides quantitative and graphical tools for analysis of ecological patterns and relationships.
 
+## The ODD protocol
+Grimm *et al* (2006) developed a protocol known as the ODD as a standard for describing individual-based models (IBMs).
+Because **simplex** is a platform for IBMs and not simply a model, we descibe **simplex** as close as reasonable according to the ODD. 
+See SimplexPrePrint.md file located in the manuscript directory.
+The user should note that the ODD was not intended for describing software.
+
+Grimm, V. *et al*. (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. **198,** 115-126. *not OA*
+
+
 ## Suggested software
-**Simplex** was developed on the free Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
+**Simplex** was developed on the Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
 
 **Simplex** implements unit testing using pytest version 2.8.1; see: http://pytest.org/latest/getting-started.html#getstarted
 
+**Simplex** output can be imported into Python and R environments as dataframes. 
+R scripts are provided in the tools/Rcode folder.
+For this reason, the R friendly user may want to install RStudio: https://www.rstudio.com/products/rstudio/download/ and/or R: https://www.r-project.org/
+
 ## Files & Directories
-Sub-directories can have python bytecode (.pyc) files.
-Python generates these files automatically when a .py file is called as a module.
-These files are not run by individual users.
+The following are general descriptions. For greater detail of the contents of various directories, see the info.md files located in each directory or the comments in the source code.
 
 **Directory: results**
 
@@ -47,35 +58,16 @@ Once run, Simplex begins assembling and running simulation models. Output for th
 * Sub-directory: diversity_metrics -- Contains code for quantifying multiple aspects of local scale diversity and temporal changes in diversity.
 
 
-**Directory: tools**  
-**Sub-directory: BIDE**  
-*bide.py*: This python file contains functions for simulating birth, immigration, dispersal, growth, consumption, maintanence, reproduction, predation, disturbance, searching, among others.
+**Directory: tools**
 
-**Sub-directory: LBM**  
-*LBM.py*: This python file contains functions for simulating a 2D fluid dynamic environment.
+* Sub-directory: DiversityTools -- Contains code for obtaining predicted species abundance distributions. This directory contains an info.md file.
 
-**Sub-directory: metrics**  
-*metrics.py*: Includes 28 metrics of species richness, diversity, and evenness.
-Also includes functions for generating kernel density curves and calculating total simulated productivity.
+* Sub-directory: Rcode -- Contains R scipts for analysis of simulation data.
 
-**Sub-directory: randparams**  
-*randparams.py*: contains just a single but large function for generating random values for state variables.
+* Sub-directory: SADfits -- Contains python code for fitting species abundance distributions to simulation data 
 
-**Sub-directory: Rbin**  
-*metrics.R*: At the moment, only contains functions for finding species richness and for calculating species turnover.
+* Sub-directory: unit_tests -- Contains python code for testing metrics of diversity, spatial statistics, the operation of simulation processes (e.g., reproduction), and the writing of data to output files.
 
-*multiplot.R*: Contains R code to generate a nice looking multi-plot with or without a black theme in ggplot2
-
-**Sub-directory: unit_tests**  
-*test_metrics.py*: Unit tests for biodiversity metrics in metrics.py
-  
-*test_bide.py*: Incomplete code for testing functions in bide.py  
-
-*test_ListToIndex.py*: Currently unimplemented code for testing that 1D vector coordinates map to and from a 2D grid.  
-
-*\_\_pycache__*: When you run a program in python, the interpreter compiles it to bytecode and stores it in the __pycache__ folder. Just ignore it as it makes your program start a little faster. When your scripts change, they will be recompiled, and if you delete the files or the whole and run your program again, they will reappear (unless you specifically suppress that behavior).
-
-see: http://stackoverflow.com/questions/16869024/what-is-pycache
 
 ## Unit tests
 Source code for unit testing, available in the **tools/unit_tests** directory.
@@ -86,15 +78,68 @@ The following unit testing is currently implemented on:
 * Generation of figures and data
 * Functions that simulate ecological processes
 
-## The ODD protocol
-The ODD protocol is an accepted standard for describing individual-based models.
-We descibe **simplex** as close as reasonable according to an ODD protocol.
+## Complete Directory Tree
+```
+Simplex
+│   README.md
+│   LICENSE    
+│
+└───figure_code
+│   │   file011.txt
+│   │   file012.txt
+│   │
+│   └───MacroecologyPatterns
+│   │      DiversityAbundanceScaling.py
+|   |      MetabolicScaling.py
+|   |      SAR.py
+|   |      TaylorsLaw.py
+|   |
+│   └───ResourcePatterns
+│   |      Res_vs_Tau.py 
+|   |
+│   └───TaxaDiversityPatterns
+│   |      Taxa_vs_Tau.py
+|   |
+|   └───TraitDiversityPatterns
+│          Trait_vs_Tau.py 
+|   
+└───model
+|   |   main.py
+|   |
+│   └───SpatialFunctions
+│   |      spatial.py 
+|   |
+│   └───Processes
+│   |      processes.py
+|   |
+|   └───InputOutput
+│   |      labels.py
+|   |      output.py
+|   |
+|   └───FluidDynamics
+│   |      lbm.py
+|   |
+|   └───DiversityMetrics
+│          metrics.py   
+|
+└───manuscript
+│   │   SimplexPrePrint.md
+│   
+└───results
+│   └───figures
+|   |   └───examples
+|   |   |       DiversityAbundanceScaling.png
+|   |   |       MetabolicScaling.png
+|   |   |       resources_tau.png
+|   |   |       SAR.png
+|   |   |       Taxa_vs_Tau.png
+|   |   |       TaylorsLaw.png
+|   |   |       Traits_vs_Tau.png
+|   |   |
+│   │   └───simulated_data
+|   |   |   └───examples
+|   |   |          SimData.csv
+|   |   |          SARData.csv
+|   |   |          RADData.csv
 
-Grimm, V. *et al*. (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. **198,** 115-126. *not OA*
-
-
-
-
-
-## Using simulated data in R
-Though coded in Python (and sometimes in Cython for speed), the output of **simplex** can be imported into Python and R environments as dataframes. R Markdown scripts are provided in the analyses folder.
+```
