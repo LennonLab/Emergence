@@ -361,7 +361,7 @@ $K$-selected organisms are suited to lives in stable environments in which they 
 
 # Results
 
-**Species abundance distribution (SAD)**
+**Species abundance distribution (SAD)** *DONE*
 The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Figure ...).
 
 **Species-area relationship (SAR)**
@@ -370,13 +370,13 @@ Simplex produced several realistic forms of the SAR according to several samplin
 **Species-spatial abundance distribution (SSAD)**
 Simplex produced realistic forms of the SSAD, which were well-fit by ... (Figure ...).
 
-**Metabolic scaling**
+**Metabolic scaling** *DONE*
 Simplex produced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size that are predicted by metabolic theory of ecology (MTE) (Figure ...).
 
-**Diversity-abundance relationships**
+**Diversity-abundance relationships** *DONE*
 Simplex produced realistic forms of diversity-abundance scaling relationships (Figure ...). 
 
-**Taylor's Law**
+**Taylor's Law** *DONE*
 Simplex produced realistic forms of Taylor's Law, with scaling exponents between 1.5 and as high as 3.0 (Figure ...).
 
 **Diversity-productivity relationship**
