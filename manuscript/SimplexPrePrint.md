@@ -1,5 +1,5 @@
 ---
-title: Simplex: A modeling platform for the simultaneous emergence of ecological relationships
+title: Simplex: A modeling platform for the simultaneous emergence of ecological patterns across ecological paradigms
 
 author(s):
     - Kenneth J. Locey, Jay. T. Lennon
@@ -23,61 +23,40 @@ Given enough time and resources, an army of ecologists could uncover many of the
 Yet historically, ecologists have focused little on how patterns that are predicted by different theories and explained by different paradigms, or studied within different subfields can emerge within a single system.
 
 Within a given ecological community, one could test the predictions of any number of ecological theories.
-One could test the allometric predictions of metabolic theory, the growth related predictions of resource limitation theory, growth-persistence trade-offs of life history theory, and the many predictions of commonness and rarity from any number of ecological theories of biodiversity.
-Such a grand effort would be the most comprehensive test of ecological theory ever undertaken.
-However, doing so would only mean that we have tested related groups of ecological patterns (e.g., scaling patterns, abundance patterns) as predicted by groups of ecological theories with little bearing on one another.
+One could test the allometric predictions of metabolic theory, the growth related predictions of resource limitation theory, trade-offs predicted by life history theory, and the many predictions of commonness and rarity from any number of ecological theories of community ecology, macroecology, and biodiversity.
+However, the field of ecology has devoted little effort to understanding of how the predictions and patterns from various ecological theories can emerge in the same system.
+For example, metabolic theory of ecology (MTE) predicts many scaling patterns related to body size, the most powerful of which is the 3/4 scaling of metabolic rate with body size (Brown *et al.* 2004).
+However, MTE does not predict intensively studied patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
+Another general ecological theory, the maximum entropy theory of ecology (METE) predicts the SAD, SAR, and several other patterns of commonness and rarity (Harte 2011).
+However, despite their generality, METE and MTE do not predict any of the same patterns and use few, if any, of the same variables.
 
-There, in fact, is no Grand Theory of Ecology.
-This is perhaps surprising given the number of ecological theories based on universal principles, e.g., allometry, selection, stochasticity, stoichiometry.
-Instead, most ecological theories make few predictions about phenomena that ecologists in other subfields know little about.
-Those ecological theories that make more than a few predictions are limited to a particular kind of pattern or to a fraction of patterns belonging to a particular subfield.
-For example, metabolic theory of ecology (MTE) predicts many scaling patterns related to body size.
-The most powerful of these (i.e., 3/4 scaling of metabolic rate with body size) appears to not hold for bacteria and archaea.
-This failure is concerning given that these microorganisms are the most abundant and phylogenetically, functionally, and metabolically diverse organisms on Earth.
-MTE also does not predict intensively studied patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
-Another general ecological theory, the maximum entropy theory of ecology (METE) predicts many patterns of commonness and rarity including the SAD and SAR, and uses few empirical inputs.
-However, despite their simplicity and generality, METE and MTE do not predict any of the same patterns.
-In fact, several ecological subfield do not use any of the patterns predicted by either theory.
+Ecologists have so far, not developed the computational tools to study the predictions of combined ecological theories and the simultaneous emergence of ecological patterns.
+However, one form of ecological modeling is amenable to this task, individual-based modeling (IBM).
+IBMs encode rules of how individual particles (e.g., organisms, resource particles) behave according to theories, principles, mechanisms, and processes (e.g., Rosindell et al. 2015).
+IBMs allow population to ecosystem-level dynamics to emerge over time and space, and 
+provide degrees of ecological realism, individual variability, and spatial complexity that are untenable with other modeling approaches (Grimm and Railsback 2005).
+IBMs allow realistic and unanticipated patterns and dynamics to emerge from otherwise simple individual-level interactions and multiple dimensions of ecological complexity (e.g., Locey *et al.* 2017).
+Finally, IBMs can allow researchers to track, record, and analyze an immense amount of information.
+However, ecological IBMs are typically used to examine highly specific questions and often require consider computational complexity (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
 
-If there were a Grand Theory of Ecology, its foundation would be built on the ability to explain and predict seemingly unrelated patterns and reproduce commonly observed relationships that span ecological subfields.
-This grand theory would not explicitly include or exclude principles and mechanisms needed to study particular subfields.
-Instead, a Grand Theory of Ecology would allow for the inclusion of many principles and mechanisms without producing inherent contradictions.
-This grand theory would predict population dynamics, allometric scaling, commonness and rarity, life history traits and tradeoffs, trophic interactions and food web dynamics, as well as commonly observed biogeographical patterns and relationships.
-This is obviously a lot to ask for, but the collective ecological imagination seems to have not even considered the topic.
-
-At least one form of ecological modeling is amenable to simulating the simultaneous emergence of ecological patterns from many ecological subfields, i.e., individual-based modeling (IBM).
-IBMs encode rules of how individuals change and interact in response to potentially dynamic environments.
-Population to ecosystem-level dynamics are allowed to emerge as an IBM simulates over time and space.
-IBMs provide degrees of ecological realism, individual variability, and spatial heterogenetiy that are unattainable with other modeling approaches. 
-IBMs also offer the potential for realistic and unanticipated outcome to emerge from individual-level interactions.
-Finally, IBMs can allow researchers to simulate and track information a practically unlimited amount of information.
-Though ecologists have used IBMs for over two decades to examine a large number of ecological systems, IBMs are often used to examine specific questions and require consider computational complexity (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
-
-Here, we leverage the power of ecological IBMs to their greatest advantage by developing a simplistic source code intended to simulate the simultaneous emergence of an unprecedented number of ecological patterns.
-In effect, we present an IBM platform aimed at the pursuit of a Grand Theory of Ecology.
-This platform, referred to as 'Simplex' accomplishes three primary tasks. 
-First, Simplex simulates a broad range of ecological conditions.
-Second, Simplex records information from individuals to the ecosystem level.
-Third, Simplex provides computing code for analyzing simulation output in the forms of ecological patterns.
-Below, we provide detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles Simplex integrates, and the analyses that can be conducted using the code we provide.
-
+Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
+This platform, called 'Simplex', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
+Below, we provide a detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles that Simplex integrates, and the analyses and tests that can be conducted using the Simplex source code.
 
 # Methods
 
 ## Platform description
-Simplex source code is written in Python, a versatile high-level programming language that has many scientific and plotting libraries.
-Here, we describe the concepts and capabilities of Simplex largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
-Because Simplex is a platform for studying the simultaneous emergence of ecological patterns and is provided with modifiable source code and analysis files, Simplex is not simply a single IBM for use with a limited set of hypotheses.
-Detailed descriptions of Simplex source files, functions, and analysis code can be found on the public GitHub source code repository (https://github.com/LennonLab/simplex).
+Here, we describe Simplex largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
+Simplex, however, is not one IBM intended for use with a specific system.
+Simplex is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
+A detailed descriptions of Simplex source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/simplex).
 
 ### Purpose
-Simplex accomplishes three primary objectives. 
-First, Simplex combines aspects of ecological paradigms of metabolic scaling, macroecology, neutral theory, resource limitation theory, ecological energetics, and chemostat theory. 
-Second, Simplex reveals how realistic trait syndromes and patterns of metabolic scaling, biodiversity, and community ecology can simultaneously emerge from ecological selection on initially random conditions.
-Third, Simplex reveals the general importance of multiplicative interactions of random variables (i.e., lognormal dynamics), energetic constraints, and ecological selection.
-Simplex also accomplishes three proximate objectives. 
+Simplex is intended to combine aspects of ecological paradigms and allow the user to study how patterns from each of these paradigms can simultaneously emerge.
+These paradigms include metabolic scaling, community ecology, life history, neutral theory, resource limitation, and ecological energetics.
+Simplex accomplishes three proximate objectives.
 First, Simplex assembles and runs IBMs from random combinations of system variables and species traits.
-Second, Simplex stores the outputs of many iterations including animations of models. 
+Second, Simplex stores the outputs of IBMs including animations. 
 Third, Simplex provides R and python code for analyzing simulation data.
 
 ### Entities & their state variables
@@ -122,7 +101,6 @@ When sampling individuals, the information about their species is gained by acce
 				   'y' = 0.2, 
 			 '2' : ...}
 	
-
 where 't' is the resource type, 'v' is the size of the particle, and 'x' and 'y' are the x and y coordinates.
 
 ### System level state variables
@@ -136,7 +114,7 @@ Each Simplex model begins with random choices for the values of:
 
 **Spatial extent**
 -- The environment of Simplex is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
-All particles move in decimal units the limit of which is determined by Python's decimal precision. 
+All particles move in decimal units, the limit of which is determined by Python's decimal precision. 
 This means that individual particles can occupy practically infinite locations.
 
 **Temporal extent**
@@ -146,134 +124,106 @@ This means that individual particles can occupy practically infinite locations.
 **Model assembly**
 -- The Simplex user runs the main python program (i.e., main.py). 
 The main program chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
-The main program also imports modules (i.e., groups of functions) for diversity metrics, spatial analysis, the initiation of output files, and for simulating ecological life history processes (immigration, maintenance, death, growth, consumption, disturbance, passive dispersal, active dispersal, resource flow, resource inflow, and metabolic state transitions).
+The main program also imports modules (i.e., groups of functions) for diversity metrics, spatial analysis, the initiation of output files, and for simulating life history processes (immigration, maintenance, death, growth, consumption, disturbance, passive dispersal, active dispersal, resource flow, resource inflow, and metabolic state transitions).
 
 **Simulating life history**
 -- Simplex models begin simulation immediately after assembly. 
-The order of life history processes is randomized at each time step.
-At each time step, each individual is given the chance to consume, grow, reproduce, starve, die, and to disperse.
-Simplex models simulate growth, reproduction, and death via weighted random sampling. 
-This approach is intended to simulate the partly probabilistic and partly deterministic nature of ecological processes.
+The order of life history processes is randomized at each time step to prevent scheduling bias.
 
-*Immigration:* 
-Individuals can be allowed to enter at any point in the environment, which can be adjusted in the 'immigration.py' file.
+*Immigration:* By default, individuals enter at any point in the environment.
+This can can be adjusted in the 'bide.py' file.
 Species identities of inflowing propagules are chosen at random from a uniform distribution rather than an ecologically realistic source pool (e.g., log-series or lognormal distribution).
 The reason for this is two-fold.
 First, pulling immigrants from a uniform distribution maximizes the starting diversity of each model.
 Second, beginning with a uniform distribution allows more realistic distributions of species abundances to emerge.
 
-*Active dispersal:* 
-Individuals can actively move against the force of flow, at random, or in specified directions.
-Preferences for particular modes of movement can be specifed in the 'active_dispersal.py' file.
+*Dispersal:* Active dispersal: Individuals can actively move against a force of flow, at random, or in specified directions.
+Preferences for particular modes of active dispersal can be specifed or modified in the 'active_dispersal.py' file. 
+Passive dispersal: Individuals can be moved passively (e.g., as planktonic organisms) through the system at rates determined by the rate of flow through. or by the combination of flow rate and active dispersal.
 
-*Passive dispersal:*
-Individuals can optionally be moved passively (e.g., as planktonic organisms) through the system at rates determined solely by the rate of flow through or by the combination of flow rate and active dispersal.
-
-*Consumption:* 
-Sampled individuals increase their levels of endogenous resources by feeding on resource particles.
+*Consumption:* Sampled individuals increase their levels of endogenous resources by feeding on resource particles.
 These endogenous resources (a.k.a. cell quotas) can be used to add structural biomass and to pay the energetic costs of life history processes. 
 Individual consume resources according to their species specific consumption rates for three resource types.
 The number of simulated resource types can be changes in the source code files (consume.py, immigration.py, and resource_inflow.py). 
 The simulation of consumption can be modified in the 'consume.py' file.
 
-*Growth:* 
-Sampled individuals grow in size by integrating endogenous resources as structural biomass.
+*Growth:* Sampled individuals grow in size by integrating endogenous resources as structural biomass.
 Individuals grow according to species specific rates of growth ranging between 0.1% and 100% increase in size per time step.
 Individuals' endogenous resources are decreased in direct proportion.
 
-*Reproduction:* 
-Individuals reproduce with a probability determined by the combination of their endogenous resources and growth rate. 
-Sampled individuals reproduce via clonal reproduction with the possibility of 
-mutation.
+*Reproduction:* Individuals reproduce clonally with a probability determined by their endogenous resources. 
 The endogenous resources of the mother individual is evenly divided between two 
 daughter individuals. 
 Unless in the case of speciation, the daughters are given a unique individual ID and the species ID of the mother.
 
-*Speciation:* 
-Speciation is simulated within Simplex occurs as a discrete event, i.e., where clonal reproduction produces a new species.
+*Speciation:* Speciation is simulated within Simplex as a discrete event, i.e., where clonal reproduction produces a new species.
 Speciation is accompanied by mutations in the values of one or more species traits. 
 This approach allows for diversity to arise within the system, which the environment can then select on.
 
 *Death:* Individuals sampled at random will die if their levels of endogenous resources or ability to draw resources from structural biomass falls below the minimum metabolic requirements.
 Dead individuals are removed from the system, i.e., scavenging and recycling do not currently occur in Simplex.
 
-*Emigration:* Individuals are considered to have left the environment when they pass beyond edges of the environment.
+*Emigration:* Individuals are considered to have emigrated when they pass beyond edges of the environment.
+That is, individuals do not reenter.
 
 **Simulating resource processes**
 
-*Supply/inflow:*
-Resource particles can be allowed to enter at any point in the environment, which can be adjusted in the 'resource_inflow.py' file.
-The size and type of each inflowing resource particle is chosen at random from a uniform distribution, and can be modified in the same 'resource_inflow.py' file.
+*Supply/inflow:* Resource particles can be allowed to enter at any point in the environment, which can be adjusted in the 'bide.py' file.
+The size and type of each inflowing resource particle is chosen at random from a uniform distribution, and can be modified in the same 'bide.py' file.
 
-*Resource dispersal:*
-Resource particles can be moved passively through the system at rates determined by the rate of flow through.
+*Resource dispersal:* Resource particles can be moved passively through the system at rates determined by the rate of flow through.
 Resource dispersal can be turned off in the 'main.py' file.
 
-*Resource depletion:*
-Resource particles are depleted through consumption, which can be partial or complete.
+*Resource depletion:* Resource particles are depleted through consumption, which can be partial or complete.
 
 ### Design concepts
 
 **Basic principles** 
-*Ecological selection on random variation:* 
-Simplex operates according to a basic principle of evolution, i.e., natural selection on random variation.
-More specifically, Simplex simulates ecological selection or environmental selection, which refers to natural selection without respect to sexual selection.
+*Ecological selection on random variation:* Simplex operates according to a basic principle of evolution, i.e., natural selection on random variation.
 Simplex assembles models from random combinations of system-level, species-level, and individual-level variables.
 Simplex then allows the environmental characteristics (e.g., flow rate, resource supply, spatial extent) to select on these random trait combinations.
 
-*Energy-limited life history:*
-All Simplex models impose energetic costs to growth and activity.
+*Energy-limited life history:* Simplex imposes energetic costs to growth and activity.
 These energetic costs are directly proportional to life history parameters.
 For example, the energetic cost of dispersal is the product of dispersal rate and dispersal distance.
-This intuitively means that the energetic cost of dispersal is multiplied (or compounded) across distance such that moving a distance of x requires half the energy as moving a distance of 2x.
+This intuitively means that the energetic cost of dispersal is multiplied (or compounded) across distance such that moving a distance of x in a specific direction requires half the energy as moving a distance of 2x in the same direction.
 In the same way, growing at a rate of x is half as costly as growing at a rate of 2x.
-Simplex does not explicitly force allometric relationships because one goal of Simplex is to allow allometric relationships to emerge from variation in measureable variables (e.g., growth rate, dispersal rate).
 
-*Lognormal dynamics:*
-Multiplicative interactions of random variables underpin one of the most successful models of complex systems, i.e., the lognormal (Crow et al. 1988).
-The lognormal was introduced to ecologists by Preston (1962) as a statistical description of how abundance varies among species.
-The lognormal has been one of the two most successful models of the species abundance distribution for macroscopic plants and animals, and was recently used to form a macroecological theory of microbial diversity.
-By "multiplicative interactions" one simply means that two or more variables or processes have multiplicative (i.e., synergistic) interactions.
-Such interactions are common in ecology (Putnam 1993) and complex systems and result in non-linear changes (e.g., multiplicative population growth, energetic costs multiplied across distance).
+*Lognormal dynamics:* Multiplicative interactions of random variables underpin one of the most successful models of complex systems, i.e., the lognormal (Crow et al. 1988).
+The lognormal was introduced to ecologists by Preston (1962) as a description of how abundance varies among species.
+The lognormal has been one of the two most successful models of species abundance for macroscopic plants and animals, and was recently used to form a macroecological theory of microbial diversity (Shoemaker et al. 2017).
+By "multiplicative interactions" one simply means that two or more variables interact in a multiplicative or synergistic way.
+Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993).
 By "random variables" one simply means two independent processes or constraints with degrees of stochastic change.
-Simplex explicitly simulates lognormal dynamics. For example, energetic costs are multiplied across dispersal distance and magnitudes of biological change (e.g., growth, consumption, transition between metabolic states). 
+Simplex explicitly simulates lognormal dynamics. 
+For example, energetic costs are multiplied across dispersal distance and magnitudes of growth and the frequency of transition between metabolic states. 
 These energetic costs are determined by the values of randomly chosen species traits (i.e., random variables).
-Finally, the occurrence of each life history process is simulated in random order to avoid systemic programmatic biases and order-dependence among processes.
 
-*Simultaneous emergence:*
-One of the most popular advantages of using IBMs is the potential to study the emergence of complex patterns and relationships from otherwise simple individual-level processes and interactions.
-Simplex is aimed at allowing emergence in two ways that IBMs are rarely employed.
-
-First, Simplex allows realism to emerge from several orders of magnitude in random variation of starting conditions. 
-Simplex is intended to run thousands of models, where each is initiated with random conditions and combinations of species traits.
-In this way, Simplex models initiate with highly unrealistic ecological communities with highly unrealistic combinations of species traits, and then allows for realism to develop over time steps as a result of appropriately modeled processes, energetic costs, and lognormal dynamics.
-This approach allows the user of Simplex to avoid one of the greatest challenges to ecological modeling, i.e., the circularity of documenting patterns, relationships, and trade-offs that are practically forced to occur.
-The code made available for the analysis of Simplex data is intended to examine the variation and central limiting behavior of thousands of models, some of which can defy ecological intuition.
-
-Second, the Simplex user can examine how multiple ecological relationships and patterns emerge together. 
-A hallmark of powerful ecological theory is the ability to predict multiple relationships and patterns, yet few ecological theories and models predict more than one or two patterns.
-In contrast, Simplex includes python code to analyze the simultaneous emergence of patterns of metabolic scaling, species abundance distributions, species-area relationships, diversity-abundance scaling relationships, Taylor's scaling law, the influence of ecosystem residence time on diversity and abundance, diversity-productivity relationships, among others.
+*Simultaneous emergence:* A popular advantage of IBMs is the potential to study the emergence of complex patterns from the individual level.
+Simplex is aimed at allowing emergence in three ways that IBMs are rarely employed.
+First, Simplex allows patterns to emerge from random combinations of traits and state variables.
+This allows realistic trait syndromes and patterns to emerge without being forced.
+Second, Simplex allows several orders of magnitude in random variation of starting conditions and species traits.
+This highly unconstrained approach allows the user of Simplex to explore a broad spectrum of trait combinations and ecological solutions.
+Third, Simplex allows for the study of simultaneous emergence across a practically unlimited number of IBMs.
+In this way, Simplex initiates with unrealistic ecological communities and unrealistic combinations of species traits, and then allows for realism to develop over time in response to environmental conditions and according to energetic costs.
+This approach allows the user of Simplex to avoid one of the greatest challenges to ecological modeling, i.e., the circularity of documenting outcomes that are obviously forced to occur.
+The code made available for the analysis of Simplex data is intended to examine the variation and central limiting behavior of ecological patterns among thousands of models.
 
 **Other design concepts**
-*Hypotheses:* 
-These are entirely up to the user to formulate and test according to the capabilities and analytical tools of Simplex source code.
+*Hypotheses:* These are entirely up to the user to formulate and test according to the capabilities and analytical tools of Simplex source code.
 
-*Learning:* 
-Currently, there is no aspect of individual-based learning in Simplex.
+*Learning:* Currently, there is no aspect of individual-based learning in Simplex.
 
-*Prediction:*
-Individuals in simplex do not have the ability to anticipate conditions.
+*Prediction:* Individuals in simplex do not have the ability to anticipate conditions.
 
-*Sensing:*
-Individuals can sense and move towards resource particles.
+*Sensing:* Individuals can sense and move towards resource particles.
 
-*Interaction:* 
-Individuals interact through excluding each other from resources, i.e., 
+*Interaction:* Individuals interact through excluding each other from resources, i.e., 
 preemption. 
 There is no explicit communication.
 
-*Observation:*
-An unlimited number of Simplex models can be run to examine trends and variation in ecological patterns.
+*Observation:* An unlimited number of Simplex models can be run to examine trends and variation in ecological patterns.
 The following is recorded for each Simplex model:
 
 * Values of randomly chosen input variables
@@ -311,21 +261,133 @@ These data are stored as comma separated value (.csv) files, the data from which
 ## Output data
 Simplex generates three files of output data. 
 Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
-The three .csv files are: 
+The three are:
 
-*SimData.csv*
+**SimData.csv**
 -- Each column of this file corresponds to a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, resource supply and diversity, rate of disturbance, etc.).
 Most analyses in Simplex source code are conducted on the data in this file.
 
-*SAR.csv*
+**SAR.csv**
 -- A file holding species-area relationships (SARs) from Simplex models.
 SARs quantify the rate at which species are encountered with increasing area of a sample, study, landscape, etc.
 The SAR is among the most intensively and long-studied patterns in ecology and is one of two patterns commonly predicted by biodiversity theories (Lomolino 2000, Hubbell 2001, Harte 2011).
 
-*RADs.csv*
+**RADs.csv**
 -- A file holding rank-abundance distributions (RADs) from Simplex models.
 Also referred to as species-abundance distributions (SADs), rank-abundance curves (RACs), and Whittaker plots, RADs are vectors of the abundances of species in a community.
 Along with the SAR, RADs are one of the most intensively studied and commonly predicted ecological patterns (Hubbell 2001, McGill et al. 2007, Harte 2011).
+
+## Patterns generated by Simplex
+
+Simplex includes python code to analyze the simultaneous emergence of ecological patterns.
+
+**Species abundance distribution (SAD)**
+The SAD is the vector of species abundance in an ecological community and is one of ecology's fundamental patterns of commonness and rarity.
+SAD's almost universally reflect that few species in ecological communities are highly abundant while most species are relatively rare (McGill *et al.* 2007).
+The SAD is predicted by more than 20 ecological models, the two most successful of which are the Poisson-lognormal and the log-series distributions (White et al. 2012, Baldridge et al. 2015, Shoemaker et al. 2017).
+
+**Species-area relationship (SAR)**
+Also referred to as the species-area curve, the SAR describes the rate at which increasing numbers of species are observed with increasing area, and is also one of ecology's most intensively studied patterns (Lomolino 2000, Rosenzweig 2000).
+There are four basic types of SARs according to Rosensweig (2000): 
+
+* SARs among tiny pieces of single biotas (e.g., mammals of a single desert basin)
+* SARs among larger pieces of single biotas (e.g., plants of the UK)
+* SARs among islands of an archipelago (e.g., ground beetles of Hawaii)
+* SARs among areas with separate evolutionary histories (e.g., birds of the Pacific Islands)
+
+There are also four sampling schemes from which to build SARs ( :
+
+* Strictly nested quadrats (Type I curves)
+* Quadrats arrayed in a contiguous grid (Type II curves)
+* Quadrats arrayed in a regular but non-contiguous grid (Type III curves)
+* Areas of varying size, often islands (Type IV curves)
+
+
+**Species-spatial abundance distribution (SSAD)**
+The SSAD is the vector of abundances of a single species across samples, space, or quadrats. 
+The SSAD is analogous the SAD in that, there are relatively few areas where a species is highly abundant and many areas where a given species is rare (Brown *et al.* 1995).
+SSADs are often well fit by a variety of models including the Poisson, lognormal, binomial, negative binomial, and simultaneous broken stick (Brown *et al.* 1995).
+The maximum entropy theory of ecology (METE) also predicts reasonable forms of the SSAD (Harte 2011).
+
+**Metabolic scaling**
+The scaling of basal metabolic rate ($B$) with body size ($M$) is one of the strongest patterns of ecology (Brown *et al.* 2004).
+Taking the form $B$ $\propto$ $B_{0}*M^{z}$, the scaling exponent $z$ is most often observed to approach 3/4.
+However, this scaling exponent has long been argued to be closer to 2/3 and in some cases can approach 1.0 (Glazier 2006).
+The metabolic theory of ecology (MTE) predicts that $z$ = 3/4 and, from this, predicts several other relationships that scale to quarter powers of body size.
+These include a -1/4 scaling of mass-specific metabolic rate and a -3/4 scaling of population density.
+
+**Diversity-abundance scaling relationships**
+Aspects of species-level diversity have been shown to scale with the total abundance  ($N$) of individuals in a sample at rates that are often similar for microorganisms and macroscopic plants and animals (Locey and Lennon 2016).
+These aspects include: 
+
+* Richness ($S$); the number of species in a community.
+* Rarity; the concentration of species at low abundances can be quantified as the a measure of the skewness of the histogram of species abundances. 
+* Absolute dominance ($N_{max}$); the greatest species abundance.
+* Evenness ($E$); the variation in abundance among species and often quantified as a transformation or reflection of the sample variance.
+
+**Taylor's Law**
+The variance ($\sigma^2$) in population abundance often scales with the average population abundance ($N/S$) across space and through time at a rate between 1 and 2, i.e., $\sigma^2$ ≈ ($N/S$)$^{1 < z < 2}$.
+Named after Taylor (1961), Taylor's Law is observed in many ecological and non-ecological systems.
+In ecology, the scaling exponent of Taylor's Law is often as high as 3.
+
+**Diversity-productivity relationship (PRR)**
+The relationship of species richness ($S$) to net primary productivity ($P$) is among the most intensively studied and variable patterns in ecology (Adler et al. 2011).
+Historically, the PRR is expected to take a humped-shaped unimodal form with low $S$ at low and high $P$.
+However, U-shaped, monotically decreasing and increasing, as well as nonsignificant forms have also been frequently documented.
+Recent studies using sophisticated integrative modeling and large compilations of ecological data have shown negative effects of total biomass on $S$, a linear feedback on $P$ by $S$, and important environment specific drivers (Adler *et al* 2011, Grace *et al* 2016).
+Overall, however, the PRR appears to have a humped-shaped upper bound when plotting many studies together (see Figure 1 of Grace *et al.* 2016).
+
+**Population growth**
+The change in population size over time is one of the oldest patterns studied in biology (1798) and one of the most commonly measured patterns in ecology.
+In cases of unrestricted growth, population size is expected to increase exponentially.
+However, growth is rarely unrestricted (resources are limited, environments have carrying capacities, competition exists), often resulting in logistic growth (i.e., initial exponential growth that eventually saturates).
+
+**Life history trade-offs**
+Life history pertains to the study of strategies used by organisms throughout their lives to maximize their chances of survival and reproduction.
+Trade-offs relate to the sacrifice of not pursuing one strategy (e.g., rapid growth) at the benefit of pursuing another (e.g., efficient growth).
+Trade-offs arise are central to the life history of organisms and occur as a consequence of being unable to invest in all potentially beneficial strategies as a consequence of energetic constraints and mutual exclusion (e.g., inability to possess mutually exclusive traits or pursue mutually exclusive strategies).
+Prime examples of life history trade-offs are:
+
+* Somatic effort (growth and maintenance) and reproductive effort (i.e., producing offspring); organisms cannot invest equally into both simultaneously.
+
+* Somatic effort and persistence; organisms cannot simultaneously seek to grow rapidly while conserving resources.
+
+* $r$ vs. $K$ selection. 
+r/K selection theory relates to the selection of combinations of life history traits that trade off between the quantity and quality of offspring. 
+Organisms that are $r$-selected have high intrinsic growth rates ($r$), high fecundity, short life spans, and tend to be semelparous, i.e., reproducing once before death. 
+Because of their rapid growth and ability to tolerate low offspring viability, $r$-selected organisms are suited to life in unstable environments.
+$K$-selected organisms subsist near the carrying capacity of their environment and tend to have low fecundity and to be iteroparous, i.e., reproducing multiple times throughout their lives. 
+$K$-selected organisms are suited to lives in stable environments in which they can rely on a long lifespan and a low mortality rate that will allow them to reproduce multiple times with high offspring survival.
+
+# Results
+
+**Species abundance distribution (SAD)**
+The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Figure ...).
+
+**Species-area relationship (SAR)**
+Simplex produced several realistic forms of the SAR according to several sampling schemes (Figure ...).
+
+**Species-spatial abundance distribution (SSAD)**
+Simplex produced realistic forms of the SSAD, which were well-fit by ... (Figure ...).
+
+**Metabolic scaling**
+Simplex produced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size that are predicted by metabolic theory of ecology (MTE) (Figure ...).
+
+**Diversity-abundance relationships**
+Simplex produced realistic forms of diversity-abundance scaling relationships (Figure ...). 
+
+**Taylor's Law**
+Simplex produced realistic forms of Taylor's Law, with scaling exponents between 1.5 and as high as 3.0 (Figure ...).
+
+**Diversity-productivity relationship**
+
+
+**Growth curves**
+
+
+**Life-history traits and trade-offs**
+
+
 
 # Discussion
 
