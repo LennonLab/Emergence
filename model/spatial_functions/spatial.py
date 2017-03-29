@@ -1,12 +1,82 @@
 from __future__ import division
-from random import choice, randint
+import  matplotlib.pyplot as plt
+from random import choice, randint, shuffle
+from scipy import stats
+from math import isnan
 import numpy as np
 import math
+import sys
 
 
 
-def SAR(Xs, Ys, SpIDs, h):
+def SARt1(X1s, Y1s, indC, SpID1s, h):
 
+    ''' strictly nested '''
+    
+    newX, newY, newS = [], [], []
+    
+    Xs, Ys, SpIDs = list(X1s), list(Y1s), list(SpID1s)
+    xh, xl, yh, yl = float(h), 0, float(h), 0
+    
+    shuffle(SpIDs)
+    species = []
+    areas = []
+    while ((xh - xl) * (yh - yl)) > 1:
+        for i, x in enumerate(Xs):
+            y = Ys[i]
+            if x >= xl and x <= xh and y >= yl and y <= yh:
+                newX.append(x)
+                newY.append(y)
+                newS.append(SpIDs[i])
+                      
+        s = len(list(set(newS)))
+        if s > 0:
+            species.append(s)
+            a = (xh - xl) * (yh - yl)
+            areas.append(a)  
+            
+        xl += 1
+        yl += 1
+        yh -= 1
+        xh -= 1
+                
+        Xs = list(newX)
+        Ys = list(newY)
+        SpIDs = list(newS)
+        newX, newY, newS = [], [], []
+        
+    areas.reverse()
+    areas = np.array(areas)
+    species.reverse()
+    species = np.array(species)
+        
+    m, b, r, p, s = stats.linregress(np.log10(areas), np.log10(species))
+    
+    '''
+    print species
+    print areas
+    print m
+    
+    fig = plt.figure()
+    fig.add_subplot(2, 2, 1)
+    plt.plot(np.log10(areas), np.log10(species), label='z = '+str(round(m,2)))
+    plt.plot(np.log10(areas), b + np.log10(areas)*m, 'r')
+    plt.legend(loc='best', fontsize=10)
+    fig.add_subplot(2, 2, 2)
+    
+    plt.scatter(X1s, Y1s, color=indC)
+    plt.show()
+    sys.exit()
+    '''
+          
+    return m
+        
+
+
+def SARt2(Xs, Ys, indC, SpIDs, h):
+
+    ''' random accumulation '''
+    
     boxes = [list([]) for _ in xrange(h**2)]
 
     index = 0
@@ -23,20 +93,39 @@ def SAR(Xs, Ys, SpIDs, h):
 
         boxes[index].append(val)
 
-
     q = []
-    sar = []
-    while boxes:
-        i = randint(0, len(boxes)-1)
-        box = boxes.pop(i)
+    species = []
+    areas = []
+    boxes2 = list(boxes)
+    while boxes2:
+        i = randint(0, len(boxes2)-1)
+        box = boxes2.pop(i)
         q.extend(box)
-        sar.append(len(list(set(q))))
+        s = len(list(set(q)))
+        if s > 0: 
+            species.append(s)
+            areas.append(len(q))
+       
+    m, b, r, p, s = stats.linregress(np.log10(areas), np.log10(species))
+        
+    '''
+    print m
+    fig = plt.figure()
+    fig.add_subplot(2, 2, 1)
+    plt.plot(np.log10(areas), np.log10(species), label='z = '+str(round(m,2)))
+    plt.plot(np.log10(areas), b + np.log10(areas)*m, 'r')
+    plt.legend(loc='best', fontsize=10)
+    fig.add_subplot(2, 2, 2)
 
-    return sar
-
-
-
-
+    plt.scatter(Xs, Ys, color=indC)
+    plt.show()
+    sys.exit()
+    '''
+        
+    return m
+        
+        
+        
 def distance(p0, p1):
 
     """ take two (x, y) tuples as parameters

@@ -8,28 +8,20 @@ from scipy import stats
 mydir = os.path.expanduser('~/GitHub/simplex')
 tools = os.path.expanduser(mydir + "/tools")
 
-p = 1
-fr = 0.2
 _lw = 2
-w = 1
 sz = 20
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
-#df = df[df['ct'] > 200]
-
 df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})
-df2['N'] = np.log10(df['total.abundance'].groupby(df['sim']).mean())
-df2['NS'] = np.log10(df['avg.pop.size'].groupby(df['sim']).median())
-df2['var'] = np.log10(df['pop.var'].groupby(df['sim']).median())
-
-df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
+df2['NS'] = np.log10(df['avg.pop.size'].groupby(df['sim']).mean())
+df2['var'] = np.log10(df['pop.var'].groupby(df['sim']).mean())
+df2 = df2[df2['var'] > 1]
 
 #### plot figure ###############################################################
 fs = 14
 fig = plt.figure()
 fig.add_subplot(1, 1, 1)
 
-df2 = df2[df2['var'] > 1]
 Nlist = df2['NS'].tolist()
 Vlist = df2['var'].tolist()
 
