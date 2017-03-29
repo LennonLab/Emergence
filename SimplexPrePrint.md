@@ -315,20 +315,55 @@ In ecology, the scaling exponent of this relationship is sometimes as high as 3 
 # Results
 
 **Species abundance distribution (SAD)**
-The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Figure 1).
+The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
+
+<figure>
+<img src="results/figures/SADs.png" align="center" width="250" height="200" />
+<figcaption>Figure 1. Species abundance distributions for 1,000 Simplex models are well-explained by species abundance models. 
+Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). 
+As commonly observed in ecological communities, both models predicted >75% variation in abundance among species. </figcaption>
+</figure>
 
 **Species-area relationship (SAR)**
-Simplex produced realistic forms of the SAR according to several sampling schemes (Figure 2).
+Simplex produced realistic forms of the SAR according to several sampling schemes (Fig 2).
+
+<figure>
+<img src="results/figures/SAR.png" align="center" width="250" height="200" />
+<figcaption>Figure 2. Species-area relationships from 1,000 Simplex models take realistic forms. 
+Kernel density curves of slopes (z-values) of the species-area relationship (SAR) for both two sampling schemes, i.e., nested and random aggregation (R.A.) </figcaption>
+</figure>
 
 **Metabolic scaling** 
-Simplex closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Figure 3).
+Simplex closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).
+
+<figure>
+<img src="results/figures/MetabolicScaling.png" align="center" width="500" height="180" />
+<figcaption>Figure 3. Patterns of metabolic scaling produced by 1,000 Simplex models. 
+Each blue data point represent the mean for values across a binned x-axis, to prevent statistical bias due to the large number of data points of intermediate body sizes. 
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.
+</figcaption>
+</figure>
 
 **Diversity-abundance relationships** 
-Simplex closely reproduced diversity-abundance scaling relationships of Locey and Lennon (2016) (Figure 4). 
+Simplex closely reproduced diversity-abundance scaling relationships (Fig 4).
+The relationships for rarity, dominance, and evenness are close to the overall results from Locey and Lennon (2016).
+The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016). 
+
+<figure>
+<img src="results/figures/DiversityAbundanceScaling.png" align="center" width="500" height="420" />
+<figcaption>Figure 4. Diversity-abundance scaling relationships produced by 1,000 Simplex models are similar to those reported by Locey and Lennon (2016). 
+Each blue data point represents the mean for values across a binned x-axis. This prevents statistical bias due to the large number of data points of high total abundance ($N$).
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.</figcaption>
+</figure>
 
 **Taylor's Law**
-Simplex reproduced Taylor's Law, with the scaling exponent just below 2.0 (Figure 5).
+Simplex reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).
 
+<figure>
+<img src="results/figures/TaylorsLaw.png" align="center" width="250" height="200" />
+<figcaption>Figure 5. 
+The population abundance variance-mean relationship from 1,000 Simplex models closely reproduces Taylor's Law.</figcaption>
+</figure>
 
 # Discussion
 
