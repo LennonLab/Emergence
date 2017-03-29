@@ -2,6 +2,7 @@ from __future__ import division
 from numpy import mean, log10
 from os.path import expanduser
 from scipy import stats
+from math import isnan
 import sys
 import numpy as np
 
@@ -19,7 +20,7 @@ def output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2):
 
     m, nN, rmax, gmax, maintmax, dmax, amp, freq, phase, pmax, dormlim = 1, 3, 1, 1, 1, 1, 0, 0, 0, 1, 1
 
-    SpIDs, IndIDs, Qs, GrowthList, MaintList, MFDList, RPFList, N_RList, DispList, DormList, ADList, SizeList, indX, indY = [list([]) for _ in xrange(14)]
+    indC, SpIDs, IndIDs, Qs, GrowthList, MaintList, MFDList, RPFList, N_RList, DispList, DormList, ADList, SizeList, indX, indY = [list([]) for _ in xrange(15)]
     RIDs, Rvals, Rtypes = [list([]) for _ in xrange(3)]
 
     N, S, R = 0, 0, 0
@@ -44,6 +45,7 @@ def output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2):
             Qs.append(v['q'])
             indX.append(v['x'])
             indY.append(v['y'])
+            indC.append(v['color'])
 
     N = len(IndIDs)
     S = len(list(set(SpIDs)))
@@ -160,12 +162,16 @@ def output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2):
         print>>OUT, sim, ',', ct,',',  rad
         OUT.close()
 
-        SAR = spatial.SAR(indX, indY, SpIDs, h)
-        sar = str(SAR).strip('[]')
-        sar = sar.replace(" ", "")
-        OUT = open(GenPath + 'SAR-Data.csv', 'a')
-        print>>OUT, sim, ',', ct,',',  sar
-        OUT.close()
+        z1 = spatial.SARt1(indX, indY, indC, SpIDs, h)
+        z2 = spatial.SARt2(indX, indY, indC, SpIDs, h)
+        
+        if isnan(z1) or isnan(z2): pass
+        else:
+            zs = str([z1, z2]).strip('[]')
+            zs = zs.replace(" ", "")
+            OUT = open(GenPath + 'SAR-Data.csv', 'a')
+            print>>OUT, sim, ',', ct,',',  zs
+            OUT.close()
 
         print 'sim:', '%3s' % sim, 'ct:', '%3s' % ct,'  N:', '%4s' %  N,
         print '  S:', '%4s' %  S, '  R:', '%4s' % R, ' u0:', '%4s' % round(u, 4)
