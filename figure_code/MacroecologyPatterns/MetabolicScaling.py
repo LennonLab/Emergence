@@ -14,9 +14,9 @@ from statsmodels.stats.outliers_influence import summary_table
 def xfrm(X, _max): return -np.log10(_max - np.array(X))
 
 def figplot(x, y, xlab, ylab, fig, n, binned = 1):
-    
+
     '''main figure plotting function'''
-    
+
     fig.add_subplot(3, 3, n)
     x = np.log10(x)
     y = np.log10(y)
@@ -56,7 +56,7 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
 
 
 
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 tools = os.path.expanduser(mydir + "/tools")
 
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')

@@ -1,15 +1,13 @@
-## Simplex: A modeling platform for the simultaneous emergence of ecological patterns
+## Emergence: A platform for modeling the simultaneous emergence of ecological patterns
 
- Kenneth J. Locey, Jay. T. Lennon
+Kenneth J. Locey, Jay. T. Lennon
  
 Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405, USA.  Correspondence to: ken@weecology.org; lennonj@indiana.edu.
 
 ### Introduction
 
-Ecology is comprised of subfields that explain and predict patterns of interaction and biodiversity at all scales relevant to living organisms.
-From the microscopic scales of microbial ecology to the global scales of macroecology, ecologists study all scales of space and abundance on Earth.
-Likewise, from the geological scales of paleoecology to the contemporary scales of urban ecology, ecologists study all scales of time within which taxa evolve.
-More than a century of ecological study across these disparate scales has revealed general patterns that have inspired new ecological theories and paradigms.
+The discovery, explanation, and prediction of patterns is foundational to the field of ecology.
+The study of ecological patterns in abundance across the tree of life has inspired ecological theories and paradigms for over a century.
 Given enough time and resources, an army of ecologists could uncover many of these patterns in an environment of sufficient diversity and space.
 Yet historically, ecologists have focused little on how patterns that are predicted by different theories and explained by different paradigms, or studied within different subfields can emerge within a single system.
 
@@ -31,27 +29,27 @@ Finally, IBMs can allow researchers to track, record, and analyze an immense amo
 However, ecological IBMs are typically used to examine highly specific questions and often require consider computational complexity (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
 
 Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
-This platform, called 'Simplex', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
-Below, we provide a detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles that Simplex integrates, and the analyses and tests that can be conducted using the Simplex source code.
+This platform, called 'Emergence', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
+Below, we provide a detailed explanation of how Emergence works, the data it quantifies and tracks, the theories and principles that Emergence integrates, and the analyses and tests that can be conducted using the Emergence source code.
 
 ### Methods
 
 #### Platform description
-Here, we describe Simplex largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
-Simplex, however, is not one IBM intended for use with a specific system.
-Simplex is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
-A detailed descriptions of Simplex source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/simplex).
+Here, we describe Emergence largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
+Emergence, however, is not one IBM intended for use with a specific system.
+Emergence is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
+A detailed descriptions of Emergence source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/Emergence).
 
 #### Purpose
-Simplex is intended to combine aspects of ecological paradigms and allow the user to study how patterns from each of these paradigms can simultaneously emerge.
+Emergence is intended to combine aspects of ecological paradigms and allow the user to study how patterns from each of these paradigms can simultaneously emerge.
 These paradigms include metabolic scaling, community ecology, life history, neutral theory, resource limitation, and ecological energetics.
-Simplex accomplishes three proximate objectives.
-First, Simplex assembles and runs IBMs from random combinations of system variables and species traits.
-Second, Simplex stores the outputs of IBMs including animations. 
-Third, Simplex provides R and python code for analyzing simulation data.
+Emergence accomplishes three proximate objectives.
+First, Emergence assembles and runs IBMs from random combinations of system variables and species traits.
+Second, Emergence stores the outputs of IBMs including animations. 
+Third, Emergence provides R and python code for analyzing simulation data.
 
 #### Entities & their state variables
-**Individual organisms** -- Simplex simulates life history processes of growth, dispersal, reproduction, and basal respiration at the individual level. 
+**Individual organisms** -- Emergence simulates life history processes of growth, dispersal, reproduction, and basal respiration at the individual level. 
 Individuals are distinguished by collections of elements within dictionaries, i.e., data objects that hold key-value pairs. 
 For example, the dictionary holding information on individual organisms is structured as follows:
 
@@ -81,7 +79,7 @@ where the species with ID of '1' has an intrinsic growth rate of 0.8, an active 
 
 When sampling individuals, the information about their species is gained by accessing the species dictionary.
 
-**Resource particles** -- Simplex simulates the movement and consumption of individual resource particles. These particles can vary over several orders of magnitude in size and belong to three resource types. As with individual organisms and species, information about individual resource particles is stored in dictionaries.  
+**Resource particles** -- Emergence simulates the movement and consumption of individual resource particles. These particles can vary over several orders of magnitude in size and belong to three resource types. As with individual organisms and species, information about individual resource particles is stored in dictionaries.  
 
 	rDict = {'1' : t = 1, 
 				   'v'  = 0.5, 
@@ -92,25 +90,25 @@ When sampling individuals, the information about their species is gained by acce
 where 't' is the resource type, 'v' is the size of the particle, and 'x' and 'y' are the x and y coordinates.
 
 #### System level state variables
-Each Simplex model begins with random choices for the values of:
+Each Emergence model begins with random choices for the values of:
 
 * width in arbitrary units
 * height in arbitrary units
 * flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
 
 #### Spatial and temporal scales
-**Spatial extent** -- The environment of Simplex is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
+**Spatial extent** -- The environment of Emergence is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
 All particles move in decimal units, the limit of which is determined by Python's decimal precision. 
 This means that individual particles can occupy practically infinite locations.
 
-**Temporal extent** -- Simplex models can run for any number of time steps and record data at any number of time steps.
+**Temporal extent** -- Emergence models can run for any number of time steps and record data at any number of time steps.
 
 #### Process overview and scheduling
-**Model assembly** -- The Simplex user runs the main python program (i.e., main.py). 
+**Model assembly** -- The Emergence user runs the main python program (i.e., main.py). 
 The main program chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
 The main program also imports modules (i.e., groups of functions) for diversity metrics, spatial analysis, the initiation of output files, and for simulating life history processes (immigration, maintenance, death, growth, consumption, disturbance, passive dispersal, active dispersal, resource flow, resource inflow, and metabolic state transitions).
 
-**Simulating life history** -- Simplex models begin simulation immediately after assembly. 
+**Simulating life history** -- Emergence models begin simulation immediately after assembly. 
 The order of life history processes is randomized at each time step to prevent scheduling bias.
 
 *Immigration:* By default, individuals enter at any point in the environment.
@@ -139,12 +137,12 @@ The endogenous resources of the mother individual is evenly divided between two
 daughter individuals. 
 Unless in the case of speciation, the daughters are given a unique individual ID and the species ID of the mother.
 
-*Speciation:* Speciation is simulated within Simplex as a discrete event, i.e., where clonal reproduction produces a new species.
+*Speciation:* Speciation is simulated within Emergence as a discrete event, i.e., where clonal reproduction produces a new species.
 Speciation is accompanied by mutations in the values of one or more species traits. 
 This approach allows for diversity to arise within the system, which the environment can then select on.
 
 *Death:* Individuals sampled at random will die if their levels of endogenous resources or ability to draw resources from structural biomass falls below the minimum metabolic requirements.
-Dead individuals are removed from the system, i.e., scavenging and recycling do not currently occur in Simplex.
+Dead individuals are removed from the system, i.e., scavenging and recycling do not currently occur in Emergence.
 
 *Emigration:* Individuals are considered to have emigrated when they pass beyond edges of the environment.
 That is, individuals do not reenter.
@@ -162,11 +160,11 @@ Resource dispersal can be turned off in the 'main.py' file.
 #### Design concepts
 
 **Basic principles** 
-*Ecological selection on random variation:* Simplex operates according to a basic principle of evolution, i.e., natural selection on random variation.
-Simplex assembles models from random combinations of system-level, species-level, and individual-level variables.
-Simplex then allows the environmental characteristics (e.g., flow rate, resource supply, spatial extent) to select on these random trait combinations.
+*Ecological selection on random variation:* Emergence operates according to a basic principle of evolution, i.e., natural selection on random variation.
+Emergence assembles models from random combinations of system-level, species-level, and individual-level variables.
+Emergence then allows the environmental characteristics (e.g., flow rate, resource supply, spatial extent) to select on these random trait combinations.
 
-*Energy-limited life history:* Simplex imposes energetic costs to growth and activity.
+*Energy-limited life history:* Emergence imposes energetic costs to growth and activity.
 These energetic costs are directly proportional to life history parameters.
 For example, the energetic cost of dispersal is the product of dispersal rate and dispersal distance.
 This intuitively means that the energetic cost of dispersal is multiplied (or compounded) across distance such that moving a distance of x in a specific direction requires half the energy as moving a distance of 2x in the same direction.
@@ -178,27 +176,27 @@ The lognormal has been one of the two most successful models of species abundanc
 By "multiplicative interactions" one simply means that two or more variables interact in a multiplicative or synergistic way.
 Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993).
 By "random variables" one simply means two independent processes or constraints with degrees of stochastic change.
-Simplex explicitly simulates lognormal dynamics. 
+Emergence explicitly simulates lognormal dynamics. 
 For example, energetic costs are multiplied across dispersal distance and magnitudes of growth and the frequency of transition between metabolic states. 
 These energetic costs are determined by the values of randomly chosen species traits (i.e., random variables).
 
 *Simultaneous emergence:* A popular advantage of IBMs is the potential to study the emergence of complex patterns from the individual level.
-Simplex is aimed at allowing emergence in three ways that IBMs are rarely employed.
-First, Simplex allows patterns to emerge from random combinations of traits and state variables.
+Emergence is aimed at allowing emergence in three ways that IBMs are rarely employed.
+First, Emergence allows patterns to emerge from random combinations of traits and state variables.
 This allows realistic trait syndromes and patterns to emerge without being forced.
-Second, Simplex allows several orders of magnitude in random variation of starting conditions and species traits.
-This highly unconstrained approach allows the user of Simplex to explore a broad spectrum of trait combinations and ecological solutions.
-Third, Simplex allows for the study of simultaneous emergence across a practically unlimited number of IBMs.
-In this way, Simplex initiates with unrealistic ecological communities and unrealistic combinations of species traits, and then allows for realism to develop over time in response to environmental conditions and according to energetic costs.
-This approach allows the user of Simplex to avoid one of the greatest challenges to ecological modeling, i.e., the circularity of documenting outcomes that are obviously forced to occur.
-The code made available for the analysis of Simplex data is intended to examine the variation and central limiting behavior of ecological patterns among thousands of models.
+Second, Emergence allows several orders of magnitude in random variation of starting conditions and species traits.
+This highly unconstrained approach allows the user of Emergence to explore a broad spectrum of trait combinations and ecological solutions.
+Third, Emergence allows for the study of simultaneous emergence across a practically unlimited number of IBMs.
+In this way, Emergence initiates with unrealistic ecological communities and unrealistic combinations of species traits, and then allows for realism to develop over time in response to environmental conditions and according to energetic costs.
+This approach allows the user of Emergence to avoid one of the greatest challenges to ecological modeling, i.e., the circularity of documenting outcomes that are obviously forced to occur.
+The code made available for the analysis of Emergence data is intended to examine the variation and central limiting behavior of ecological patterns among thousands of models.
 
 **Other design concepts**
-*Hypotheses:* These are entirely up to the user to formulate and test according to the capabilities and analytical tools of Simplex source code.
+*Hypotheses:* These are entirely up to the user to formulate and test according to the capabilities and analytical tools of Emergence source code.
 
-*Learning:* Currently, there is no aspect of individual-based learning in Simplex.
+*Learning:* Currently, there is no aspect of individual-based learning in Emergence.
 
-*Prediction:* Individuals in simplex do not have the ability to anticipate conditions.
+*Prediction:* Individuals in Emergence do not have the ability to anticipate conditions.
 
 *Sensing:* Individuals can sense and move towards resource particles.
 
@@ -206,17 +204,17 @@ The code made available for the analysis of Simplex data is intended to examine 
 preemption. 
 There is no explicit communication.
 
-*Observation:* An unlimited number of Simplex models can be run to examine trends and variation in ecological patterns.
+*Observation:* An unlimited number of Emergence models can be run to examine trends and variation in ecological patterns.
 
 ## Output data
-Simplex generates three files of output data. 
-Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
+Emergence generates three files of output data. 
+Each Emergence model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
 The three are:
 
 **SimData.csv**
 -- Each column of this file corresponds to a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, resource supply and diversity, rate of disturbance, etc.).
-Most analyses in Simplex source code are conducted on the data in this file.
-The following is recorded for each Simplex model and stored in SimData.csv:
+Most analyses in Emergence source code are conducted on the data in this file.
+The following is recorded for each Emergence model and stored in SimData.csv:
 
 * Values of randomly chosen input variables
 	* length
@@ -249,18 +247,18 @@ The following is recorded for each Simplex model and stored in SimData.csv:
 	* Biomass
 
 **SAR.csv**
--- A file holding species-area relationships (SARs) from Simplex models.
+-- A file holding species-area relationships (SARs) from Emergence models.
 SARs quantify the rate at which species are encountered with increasing area of a sample, study, landscape, etc.
 The SAR is among the most intensively and long-studied patterns in ecology and is one of two patterns commonly predicted by biodiversity theories (Lomolino 2000, Hubbell 2001, Harte 2011).
 
 **RADs.csv**
--- A file holding rank-abundance distributions (RADs) from Simplex models.
+-- A file holding rank-abundance distributions (RADs) from Emergence models.
 Also referred to as species-abundance distributions (SADs), rank-abundance curves (RACs), and Whittaker plots, RADs are vectors of the abundances of species in a community.
 Along with the SAR, RADs are one of the most intensively studied and commonly predicted ecological patterns (Hubbell 2001, McGill et al. 2007, Harte 2011).
 
-#### Patterns generated by Simplex
+#### Patterns generated by Emergence
 
-Simplex includes python code to analyze the simultaneous emergence of ecological patterns.
+Emergence includes python code to analyze the simultaneous emergence of ecological patterns.
 
 **Species abundance distribution (SAD)**
 The SAD is the vector of species abundance in an ecological community and is one of ecology's fundamental patterns of commonness and rarity.
@@ -296,94 +294,93 @@ In ecology, the scaling exponent of this relationship is sometimes as high as 3 
 ### Results
 
 **Species abundance distribution (SAD)**
-Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
+Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of Emergence are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
 
 <figure>
 <img src="results/figures/SADs.png" align="center" width="900" />
-<figcaption>Figure 1. Species abundance distributions for 1,000 Simplex models are well-explained by species abundance models. 
+<figcaption>Figure 1. Species abundance distributions for 1,000 Emergence models are well-explained by species abundance models. 
 Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). 
 As commonly observed in ecological communities, both models predicted >75% variation in abundance among species. </figcaption>
 </figure>
 
 **Species-area relationship (SAR)**
-Simplex produced realistic forms of the SAR according to several sampling schemes (Fig 2).
+Emergence produced realistic forms of the SAR according to several sampling schemes (Fig 2).
 
 <figure>
 <img src="results/figures/SAR.png" align="center" width="900" />
-<figcaption>Figure 2. Species-area relationships from 1,000 Simplex models take realistic forms. 
+<figcaption>Figure 2. Species-area relationships from 1,000 Emergence models take realistic forms. 
 Kernel density curves of slopes (z-values) of the species-area relationship (SAR) for both two sampling schemes, i.e., nested and random aggregation (R.A.) </figcaption>
 </figure>
 
 **Metabolic scaling** 
-Simplex closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).
+Emergence closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).
 
 <figure>
 <img src="results/figures/MetabolicScaling.png" align="center" width="900" />
-<figcaption>Figure 3. Patterns of metabolic scaling produced by 1,000 Simplex models. 
+<figcaption>Figure 3. Patterns of metabolic scaling produced by 1,000 Emergence models. 
 Each blue data point represent the mean for values across a binned x-axis, to prevent statistical bias due to the large number of data points of intermediate body sizes. 
 The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.
 </figcaption>
 </figure>
 
 **Diversity-abundance relationships** 
-Simplex closely reproduced diversity-abundance scaling relationships (Fig 4).
+Emergence closely reproduced diversity-abundance scaling relationships (Fig 4).
 The relationships for rarity, dominance, and evenness are close to the overall results from Locey and Lennon (2016).
 The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016). 
 
 <figure>
 <img src="results/figures/DiversityAbundanceScaling.png" align="center" width="900" />
-<figcaption>Figure 4. Diversity-abundance scaling relationships produced by 1,000 Simplex models are similar to those reported by Locey and Lennon (2016). 
+<figcaption>Figure 4. Diversity-abundance scaling relationships produced by 1,000 Emergence models are similar to those reported by Locey and Lennon (2016). 
 Each blue data point represents the mean for values across a binned x-axis. This prevents statistical bias due to the large number of data points of high total abundance ($N$).
 The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.</figcaption>
 </figure>
 
 **Taylor's Law**
-Simplex reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).
+Emergence reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).
 
 <figure>
 <img src="results/figures/TaylorsLaw.png" align="center" width="900" />
 <figcaption>Figure 5. 
-The population abundance variance-mean relationship from 1,000 Simplex models closely reproduces Taylor's Law.</figcaption>
+The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.</figcaption>
 </figure>
 
 ### Discussion
 
-The discovery, explanation, and prediction of patterns is foundational to testing hypotheses, models, and theories of ecology.
-The Simplex platform allows patterns from different ecological paradigms to emerge simultaneously across thousands of individual-based models (IBMs).
+The Emergence platform allows patterns from different ecological paradigms to emerge simultaneously across thousands of individual-based models (IBMs).
 In doing so, primary patterns of community ecology, macroecology, metabolic theory, and biodiversity science all emerge from individual-level changes, relatively few explicit constraints, and selection on initially random variation.
 
-The degree of emergence in Simplex is unique and difficult to fully appreciate.
+The degree of emergence in Emergence is unique and difficult to fully appreciate.
 For example, realistically uneven SADs resulted from initially even SADs where almost every individual belonged to a different species.
 This starting condition is contrary to the criticism that all successful theories of biodiversity begin with the assumption that the SAD is a hollow-curve (McGill 2010).
 Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism.
 Likewise, realistic SARs emerged despite no hard constraints on area and realistic diversity-abundance scaling relationships emerged despite no hard constraints on total abundance.
 Finally, all of these patterns simultaneously emerged across thousands of IBMs.
 
-The benefits of the Simplex platform are manifold.
-First, Simplex allows exploration of novel questions and patterns while ensuring realistic ecological structure and dynamics.
-Second, Simplex implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, ecological selection.
-To our knowledge, the entire set of patterns produced by Simplex have never been predicted by any single ecological theory, nor by any synthesis of theories.
-Third, many other ecological patterns could also be produced by the Simplex platform, as is.
+The benefits of the Emergence platform are manifold.
+First, Emergence allows exploration of novel questions and patterns while ensuring realistic ecological structure and dynamics.
+Second, Emergence implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, ecological selection.
+To our knowledge, the entire set of patterns produced by Emergence have never been predicted by any single ecological theory, nor by any synthesis of theories.
+Third, many other ecological patterns could also be produced by the Emergence platform, as is.
 Examples are distance decay relationships, growth curves, spatial abundance distributions, body-size distributions, and species-time relationships.
-Fourth, with additional modifications Simplex could produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
+Fourth, with additional modifications Emergence could produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
 
-To our knowledge, Simplex offers the first IBM approach for testing metabolic scaling theory (Brown et al. 2004). 
+To our knowledge, Emergence offers the first IBM approach for testing metabolic scaling theory (Brown et al. 2004). 
 Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
 Studies have used the $^3/_4$ scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (Brown et al. 2004, Hechinger et al. 2011, Schramski et al. 2015). 
 The reasoning behind the $^3/_4$ power rests on fractal geometry of tissues (West et al. 1997, West et al. 1999). 
 While this fractal-based reasoning may hold, we not aware of any mechanistic tests, and it remains unresolved whether the argument is necessary.
-In Simplex, there are no such networks and the $^3/_4$ power law appears to emerge as a central tendency.
+In Emergence, there are no such networks and the $^3/_4$ power law appears to emerge as a central tendency.
 
-Simplex is well-positioned for testing the predictions of metabolic scaling.
+Emergence is well-positioned for testing the predictions of metabolic scaling.
 Some scientists still argue whether a $^2/_3$ scaling based on surface area to volume ratios is more accurate and appropriate (White and Seymour 2003) and even whether a $^3/_4$ and $^2/_3$ scaling can arise from the same mechanism (Zhao 2015).
 Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (*z* ≈ 1) for some taxa (Glazier 2006).
-While Simplex most often produces a scaling exponent near $^3/_4$, it can produce each of these alternative outcomes by varying the constraints on the range of initial conditions of basal metabolic rate, resource inputs, and resource use efficiency.
+While Emergence most often produces a scaling exponent near $^3/_4$, it can produce each of these alternative outcomes by varying the constraints on the range of initial conditions of basal metabolic rate, resource inputs, and resource use efficiency.
 
-Simplex is unique in several ways.
-First, Simplex is built to study the simultaneous emergence of ecological patterns across paradigms.
-Second, patterns in Simplex emerge as a consequence of ecological selection on initially random conditions.
-Third, patterns of Simplex emerge as robust central tendencies across hundreds to thousands of independent IBMs.
-Fourth, Simplex is agnostic in that it does not place primary importance on stochasticity, ecological selection, or energetic constraints, and does not place any explicit constraints on body size and life history trade-offs.
-Instead, we designed Simplex with relatively few rules to allow all patterns to emerge from conditions that would have been difficult to anticipate from examining the source code.
-Finally, Simplex can be freely distributed and modified, and will continue growing to give individuals evolvable genome sequences and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of mass balance, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
+Emergence is unique in several ways.
+First, Emergence is built to study the simultaneous emergence of ecological patterns across paradigms.
+Second, patterns in Emergence emerge as a consequence of ecological selection on initially random conditions.
+Third, patterns of Emergence emerge as robust central tendencies across hundreds to thousands of independent IBMs.
+Fourth, Emergence is agnostic in that it does not place primary importance on stochasticity, ecological selection, or energetic constraints, and does not place any explicit constraints on body size and life history trade-offs.
+Instead, we designed Emergence with relatively few rules to allow all patterns to emerge from conditions that would have been difficult to anticipate from examining the source code.
+Finally, Emergence can be freely distributed and modified, and will continue growing to give individuals evolvable genome sequences and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of mass balance, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
 

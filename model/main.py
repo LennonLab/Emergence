@@ -5,7 +5,7 @@ import sys
 import numpy as np
 
 mydir = expanduser("~/")
-sys.path.append(mydir + "GitHub/simplex/model")
+sys.path.append(mydir + "GitHub/Emergence/model")
 
 from processes import *
 from diversity_metrics import *
@@ -16,7 +16,7 @@ labels.clear()
 procs = labels.processes()
 
 def iter_procs(procs, iD, sD, rD, ps, ct, pr = 0, ceil = 2000):
-    
+
     shuffle(procs)
     for p in procs:
 
@@ -59,18 +59,18 @@ def iter_procs(procs, iD, sD, rD, ps, ct, pr = 0, ceil = 2000):
 
 
 def run_model(procs, sim, rD = {}, sD = {}, iD = {}, ct = 0, splist2 = []):
-    
+
     print '\n'
     r = randint(1, 100)
     h = randint(10, 100)
     l = int(h)
-    
+
     ps = h, l, r, 10**np.random.uniform(-4, 0)
     sD, iD = bide.immigration(sD, iD, ps, 1000)
-    
+
     while ct < 600:
         iD, sD, rD, N, R, ct, prod = iter_procs(procs, iD, sD, rD, ps, ct)
         if N == 0: break
         if ct > 100 and ct%10 == 0: splist2 = output.output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2)
-        
+
 for sim in range(10**4): run_model(procs, sim)

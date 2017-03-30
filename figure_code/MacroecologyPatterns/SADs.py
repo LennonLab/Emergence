@@ -11,7 +11,7 @@ from math import isnan
 from scipy.stats.kde import gaussian_kde
 from numpy import empty
 
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 tools = os.path.expanduser(mydir + "/tools")
 data = mydir + '/results/simulated_data/SAR-Data.csv'
 

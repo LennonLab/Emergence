@@ -6,7 +6,7 @@ from scipy.stats.kde import gaussian_kde
 import sys
 
 
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 tools = os.path.expanduser(mydir + "/tools")
 data = mydir + '/results/simulated_data/SAR-Data.csv'
 

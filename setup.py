@@ -16,7 +16,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='Simplex',
+    name='Emergence',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
@@ -27,7 +27,7 @@ setup(
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://github.com/klocey/simplex',
+    url='https://github.com/klocey/emergence',
 
     # Author details
     author='Kenneth J. Locey',
@@ -45,8 +45,8 @@ setup(
         'Development Status :: 3 - Alpha',
 
         # Indicate who your project is intended for
-        'Intended Audience :: Ecologists, Modelers',
-        'Topic :: Ecological Modeling',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',

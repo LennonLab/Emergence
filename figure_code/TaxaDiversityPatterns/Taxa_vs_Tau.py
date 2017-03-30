@@ -18,7 +18,7 @@ def figplot(x, y, xlab, ylab, fig, n):
 
 
 p, fr, _lw, w, sz, fs = 1, 0.2, 1.5, 1, 5, 6
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
 
 df2 = pd.DataFrame({'length' : df['length'].groupby(df['sim']).mean()})

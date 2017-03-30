@@ -7,8 +7,8 @@ import sys
 import numpy as np
 
 mydir = expanduser("~/")
-sys.path.append(mydir + "GitHub/simplex/model")
-GenPath = mydir + "GitHub/simplex/results/simulated_data/"
+sys.path.append(mydir + "GitHub/Emergence/model")
+GenPath = mydir + "GitHub/Emergence/results/simulated_data/"
 
 from diversity_metrics import *
 from spatial_functions import *
@@ -164,7 +164,7 @@ def output(iD, sD, rD, ps, sim, N, R, ct, prod, splist2):
 
         z1 = spatial.SARt1(indX, indY, indC, SpIDs, h)
         z2 = spatial.SARt2(indX, indY, indC, SpIDs, h)
-        
+
         if isnan(z1) or isnan(z2): pass
         else:
             zs = str([z1, z2]).strip('[]')
