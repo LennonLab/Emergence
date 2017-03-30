@@ -1,8 +1,8 @@
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Tetrahedron-4-3D-balls.png" align="right" width="150" height="150" />
 
-# simplex  
+# Simplex  
 
-Source code for studying the simultaneous emergence of ecological relationships.
+Python source code for studying the simultaneous emergence of ecological patterns.
 
 ## Purpose  
 **Simplex** performs three tasks:
