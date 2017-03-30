@@ -3,7 +3,9 @@ Simplex
 
 Python source code for studying the simultaneous emergence of ecological patterns.
 
-## Purpose
+Purpose
+-------
+
 **Simplex** performs three tasks:
 
 1. Builds and runs individual-based ecological models based on dynamics of selection, stochasticity, and energetics.
@@ -21,7 +23,9 @@ The user should note that the ODD was not intended for describing software.
 Grimm, V. *et al*. (2006) A standard protocol for describing individual-based and agent-based models. Ecological Modeling. **198,** 115-126. *not OA*
 
 
-## Suggested software
+Suggested software
+------------------
+
 Simplex was developed on the Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
 
 Simplex implements unit testing using pytest version 2.8.1; see: http://pytest.org/latest/getting-started.html#getstarted
@@ -32,7 +36,9 @@ For this reason, the R friendly user may want to install RStudio: https://www.rs
 
 A free preprint version of the Simplex manuscript is generated using Pandoc version 1.15.0.6.: http://pandoc.org/installing.html
 
-## Files & Directories
+Files & Directories
+-------------------
+
 The following are general descriptions. For greater detail of the contents of various directories, see the info.md files located in each directory or the comments in the source code.
 
 **License:** An MIT license stating the conditions under which Simplex is freely provided.
@@ -44,7 +50,8 @@ This pdf is generated with Pandoc version 1.15.0.6, using the command:
 
 	~/GitHub/simplex/SimplexPrePrint.md --latex-engine=xelatex -o ~/GitHub/simplex/SimplexPrePrint.pdf
 
-**Directory: results**
+Directory: results
+------------------
 
 * Sub-directory: figures -- Contains files for figures resulting from user analyses. Also contains a folder of example figures.
 
@@ -52,7 +59,8 @@ This pdf is generated with Pandoc version 1.15.0.6, using the command:
 
 * Sub-directory: movies -- Contains example animations of Simplex models.
 
-**Directory: model**
+Directory: model
+----------------
 
 * main.py: This is the primary file for running simplex.
 Once run, Simplex begins assembling and running simulation models. Output for the numbers of models run and additional cursory data are printed to the users terminal window.
@@ -67,8 +75,8 @@ Once run, Simplex begins assembling and running simulation models. Output for th
 
 * Sub-directory: diversity_metrics -- Contains code for quantifying multiple aspects of local scale diversity and temporal changes in diversity.
 
-
-**Directory: tools**
+Directory: tools
+----------------
 
 * Sub-directory: DiversityTools -- Contains code for obtaining predicted species abundance distributions. This directory contains an info.md file.
 
@@ -79,7 +87,9 @@ Once run, Simplex begins assembling and running simulation models. Output for th
 * Sub-directory: unit_tests -- Contains python code for testing metrics of diversity, spatial statistics, the operation of simulation processes (e.g., reproduction), and the writing of data to output files.
 
 
-## Unit tests
+Unit tests
+----------
+
 Source code for unit testing, available in the **tools/unit_tests** directory.
 The following unit testing is currently implemented on:
 
@@ -87,69 +97,3 @@ The following unit testing is currently implemented on:
 * Diversity metrics
 * Generation of figures and data
 * Functions that simulate ecological processes
-
-## Complete Directory Tree
-```
-Simplex
-│   README.md
-│   LICENSE
-│
-└───figure_code
-│   │   file011.txt
-│   │   file012.txt
-│   │
-│   └───MacroecologyPatterns
-│   │      DiversityAbundanceScaling.py
-|   |      MetabolicScaling.py
-|   |      SAR.py
-|   |      TaylorsLaw.py
-|   |
-│   └───ResourcePatterns
-│   |      Res_vs_Tau.py
-|   |
-│   └───TaxaDiversityPatterns
-│   |      Taxa_vs_Tau.py
-|   |
-|   └───TraitDiversityPatterns
-│          Trait_vs_Tau.py
-|
-└───model
-|   |   main.py
-|   |
-│   └───SpatialFunctions
-│   |      spatial.py
-|   |
-│   └───Processes
-│   |      processes.py
-|   |
-|   └───InputOutput
-│   |      labels.py
-|   |      output.py
-|   |
-|   └───FluidDynamics
-│   |      lbm.py
-|   |
-|   └───DiversityMetrics
-│          metrics.py
-|
-└───manuscript
-│   │   SimplexPrePrint.md
-│
-└───results
-│   └───figures
-|   |   └───examples
-|   |   |       DiversityAbundanceScaling.png
-|   |   |       MetabolicScaling.png
-|   |   |       resources_tau.png
-|   |   |       SAR.png
-|   |   |       Taxa_vs_Tau.png
-|   |   |       TaylorsLaw.png
-|   |   |       Traits_vs_Tau.png
-|   |   |
-│   │   └───simulated_data
-|   |   |   └───examples
-|   |   |          SimData.csv
-|   |   |          SARData.csv
-|   |   |          RADData.csv
-
-```
