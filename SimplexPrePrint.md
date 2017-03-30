@@ -296,7 +296,7 @@ In ecology, the scaling exponent of this relationship is sometimes as high as 3 
 ### Results
 
 **Species abundance distribution (SAD)**
-The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
+Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
 
 <figure>
 <img src="results/figures/SADs.png" align="center" width="900" />
@@ -352,6 +352,13 @@ The discovery, explanation, and prediction of patterns is foundational to testin
 The Simplex platform allows patterns from different ecological paradigms to emerge simultaneously across thousands of individual-based models (IBMs).
 In doing so, primary patterns of community ecology, macroecology, metabolic theory, and biodiversity science all emerge from individual-level changes, relatively few explicit constraints, and selection on initially random variation.
 
+The degree of emergence in Simplex is unique and difficult to fully appreciate.
+For example, realistically uneven SADs resulted from initially even SADs where almost every individual belonged to a different species.
+This starting condition is contrary to the criticism that all successful theories of biodiversity begin with the assumption that the SAD is a hollow-curve (McGill 2010).
+Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism.
+Likewise, realistic SARs emerged despite no hard constraints on area and realistic diversity-abundance scaling relationships emerged despite no hard constraints on total abundance.
+Finally, all of these patterns simultaneously emerged across thousands of IBMs.
+
 The benefits of the Simplex platform are manifold.
 First, Simplex allows exploration of novel questions and patterns while ensuring realistic ecological structure and dynamics.
 Second, Simplex implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, ecological selection.
@@ -359,11 +366,6 @@ To our knowledge, the entire set of patterns produced by Simplex have never been
 Third, many other ecological patterns could also be produced by the Simplex platform, as is.
 Examples are distance decay relationships, growth curves, spatial abundance distributions, body-size distributions, and species-time relationships.
 Fourth, with additional modifications Simplex could produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
-
-Simplex has been designed to combine concepts from several ecological paradigms into a single platform with source code that is readily modifiable. 
-By default, Simplex includes the stochastic dynamics inherent to some ecological theories (e.g., neutral theory, stochastic geometry, stochastic resource limitation theory). 
-Likewise, Simplex includes the resource-limited growth dynamics of resource limitation theory and chemostat theory, and the inherent species sorting and environmental filtering (i.e., ecological selection) of (meta)community ecology. 
-Finally, Simplex includes the lognormal dynamics of a recent macroecological theory, i.e., multiplicative interactions of stochastic variables, in addition to energetic constraints that underpin trade-offs of life history theory (e.g., r vs. K selection).
 
 To our knowledge, Simplex offers the first IBM approach for testing metabolic scaling theory (Brown et al. 2004). 
 Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
@@ -377,7 +379,11 @@ Some scientists still argue whether a $^2/_3$ scaling based on surface area to v
 Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (*z* ≈ 1) for some taxa (Glazier 2006).
 While Simplex most often produces a scaling exponent near $^3/_4$, it can produce each of these alternative outcomes by varying the constraints on the range of initial conditions of basal metabolic rate, resource inputs, and resource use efficiency.
 
-Future developments to Simplex will include additional ecological dynamics such as predator-prey, mutualisms, and parasitism. 
-Improvements to Simplex will also include an accounting of nutrient stoichiometry as well as dimensions of complexity included in sister platforms (i.e., Locey et al. 2017). 
-Likewise, improvements and future versions of Simplex will provide increasing numbers of files for statistical analysis of simulated outputs.
+Simplex is unique in several ways.
+First, Simplex is built to study the simultaneous emergence of ecological patterns across paradigms.
+Second, patterns in Simplex emerge as a consequence of ecological selection on initially random conditions.
+Third, patterns of Simplex emerge as robust central tendencies across hundreds to thousands of independent IBMs.
+Fourth, Simplex is agnostic in that it does not place primary importance on stochasticity, ecological selection, or energetic constraints, and does not place any explicit constraints on body size and life history trade-offs.
+Instead, we designed Simplex with relatively few rules to allow all patterns to emerge from conditions that would have been difficult to anticipate from examining the source code.
+Finally, Simplex can be freely distributed and modified, and will continue growing to give individuals evolvable genome sequences and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of mass balance, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
 
