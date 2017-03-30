@@ -11,7 +11,7 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from statsmodels.stats.outliers_influence import summary_table
 
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 sys.path.append(mydir+'/tools')
 mydir2 = os.path.expanduser("~/")
 
@@ -19,9 +19,9 @@ mydir2 = os.path.expanduser("~/")
 def xfrm(X, _max): return -np.log10(_max - np.array(X))
 
 def figplot(x, y, xlab, ylab, fig, n, binned = 1):
-    
+
     '''main figure plotting function'''
-    
+
     fig.add_subplot(2, 2, n)
     y2 = list(y)
     x2 = list(x)
@@ -39,7 +39,7 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
     f = smf.ols('y ~ x', d).fit()
 
     m, b, r, p, std_err = stats.linregress(x2, y2)
-    
+
     st, data, ss2 = summary_table(f, alpha=0.05)
     fitted = data[:,2]
     mean_ci_low, mean_ci_upp = data[:,4:6].T
@@ -53,7 +53,7 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
     elif n == 4: lbl = r'$S$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +   str(round(r**2,2))
     plt.scatter(x2, y2, color = 'SkyBlue', alpha= 1 , s = 12, linewidths=0.5, edgecolor='Steelblue', label=lbl)
     plt.legend(loc='best', fontsize=6)
-    
+
     plt.fill_between(x2, ci_upp, ci_low, color='b', lw=0.1, alpha=0.15)
     plt.plot(x2, fitted,  color='b', ls='--', lw=1.0, alpha=0.9)
     plt.xlabel(xlab, fontsize=9)
@@ -62,8 +62,8 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
     plt.xlim(0.9*min(x2), 1.1*max(x2))
     plt.ylim(min(ci_low), max(ci_upp))
     return fig
-    
-    
+
+
 df = pd.read_csv(mydir + '/results/simulated_data/SimData.csv')
 
 df2 = pd.DataFrame({'length' : df['length']})

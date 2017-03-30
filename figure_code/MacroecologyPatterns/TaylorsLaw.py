@@ -5,7 +5,7 @@ import numpy as np
 import os
 from scipy import stats
 
-mydir = os.path.expanduser('~/GitHub/simplex')
+mydir = os.path.expanduser('~/GitHub/Emergence')
 tools = os.path.expanduser(mydir + "/tools")
 
 _lw = 2

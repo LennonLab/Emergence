@@ -1,0 +1,7 @@
+README.rst
+setup.py
+Emergence.egg-info/PKG-INFO
+Emergence.egg-info/SOURCES.txt
+Emergence.egg-info/dependency_links.txt
+Emergence.egg-info/entry_points.txt
+Emergence.egg-info/top_level.txt
