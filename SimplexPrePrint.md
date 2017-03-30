@@ -348,36 +348,36 @@ The population abundance variance-mean relationship from 1,000 Simplex models cl
 
 ### Discussion
 
-The Simplex platform combines ecological paradigms and general mechanisms to allow many ecological patterns and relationships to emerge simultaneously. 
-In this way, the relatively simple source code of Simplex allows patterns of community ecology, macroecology, and biodiversity science to emerge from individual-level changes and relatively few explicit constraints. 
-Simplex assembles individual-based models from random combinations of system-level variables, species traits, and process-related rates. 
-This large degree of initially random conditions allows users to explore a large degree of variation in ecological conditions and to avoid the circularity of building overly-informed models. 
-In this way, Simplex allows the user to examine the simultaneous emergence of ecological relationships under wide-ranging conditions and combinations of ecological paradigms.
+The discovery, explanation, and prediction of patterns is foundational to testing hypotheses, models, and theories of ecology.
+The Simplex platform allows patterns from different ecological paradigms to emerge simultaneously across thousands of individual-based models (IBMs).
+In doing so, primary patterns of community ecology, macroecology, metabolic theory, and biodiversity science all emerge from individual-level changes, relatively few explicit constraints, and selection on initially random variation.
 
-Simplex is designed to explore and test the simultaneous emergence of ecological relationships and other patterns. 
-The usefulness of this is manifold. 
-First, ecologists often have little knowledge of how ecological patterns are related or either interdependent or even perhaps mutually exclusive. 
-Simplex is perhaps ecology's first tool for targeting such questions. The ability to examine simultaneous emergence can also be used to great effect when testing or developing ecological theory. While many  ecological theories predict only one or a few patterns, strong theories should unify and predict multiple patterns (McGill et al. 2007). 
-Likewise, strong tests should evaluate the ability of ecological theories to explain and predict multiple patterns (e.g., Xiao et al. 2015).
+The benefits of the Simplex platform are manifold.
+First, Simplex allows exploration of novel questions and patterns while ensuring realistic ecological structure and dynamics.
+Second, Simplex implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, ecological selection.
+To our knowledge, the entire set of patterns produced by Simplex have never been predicted by any single ecological theory, nor by any synthesis of theories.
+Third, many other ecological patterns could also be produced by the Simplex platform, as is.
+Examples are distance decay relationships, growth curves, spatial abundance distributions, body-size distributions, and species-time relationships.
+Fourth, with additional modifications Simplex could produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
 
-Simplex has also been designed to combine concepts from several ecological paradigms into a single platform that offers source code that is easy to read, use, and modify. 
+Simplex has been designed to combine concepts from several ecological paradigms into a single platform with source code that is readily modifiable. 
 By default, Simplex includes the stochastic dynamics inherent to some ecological theories (e.g., neutral theory, stochastic geometry, stochastic resource limitation theory). 
-Likewise, Simplex includes the resource-limited growth dynamics of resource limitation theory and chemostat theory, and the inherent species sorting and environmental filtering (i.e., ecological selection) of community ecology. 
+Likewise, Simplex includes the resource-limited growth dynamics of resource limitation theory and chemostat theory, and the inherent species sorting and environmental filtering (i.e., ecological selection) of (meta)community ecology. 
 Finally, Simplex includes the lognormal dynamics of a recent macroecological theory, i.e., multiplicative interactions of stochastic variables, in addition to energetic constraints that underpin trade-offs of life history theory (e.g., r vs. K selection).
 
-Simplex offers the first individual-based modeling platform for metabolic scaling theory. 
-Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases to a fractional power of body mass ($M$), i.e., $B$ = $M^{z}$. 
-This relationship is most often observed to follow a 3/4 power scaling, i.e., $z$ = 3/4. 
-The 3/4 scaling law has become one of the most universal and highly supported statistical relationships in the biological sciences. 
-MTE and many related studies have used this scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (*refs*). 
-The reasoning behind the 3/4 power scaling law rests on fractal branching networks responsible for the delivery of resources to cells and tissues. 
-However, scientists still argue whether a 2/3 scaling based on surface area to volume ratios is more accurate and appropriate (*refs*) and even whether a 3/4 and 2/3 scaling can arise from the same mechanism (*refs*).
-Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (0.9 < $z$ < 1) for some taxa (*ref*).
+To our knowledge, Simplex offers the first IBM approach for testing metabolic scaling theory (Brown et al. 2004). 
+Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
+Studies have used the $^3/_4$ scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (Brown et al. 2004, Hechinger et al. 2011, Schramski et al. 2015). 
+The reasoning behind the $^3/_4$ power rests on fractal geometry of tissues (West et al. 1997, West et al. 1999). 
+While this fractal-based reasoning may hold, we not aware of any mechanistic tests, and it remains unresolved whether the argument is necessary.
+In Simplex, there are no such networks and the $^3/_4$ power law appears to emerge as a central tendency.
 
+Simplex is well-positioned for testing the predictions of metabolic scaling.
+Some scientists still argue whether a $^2/_3$ scaling based on surface area to volume ratios is more accurate and appropriate (White and Seymour 2003) and even whether a $^3/_4$ and $^2/_3$ scaling can arise from the same mechanism (Zhao 2015).
+Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (*z* ≈ 1) for some taxa (Glazier 2006).
+While Simplex most often produces a scaling exponent near $^3/_4$, it can produce each of these alternative outcomes by varying the constraints on the range of initial conditions of basal metabolic rate, resource inputs, and resource use efficiency.
 
-
-
-5) LOOKING TO THE FUTURE -- Future developments will include additional ecological dynamcis such as predator-prey, mutualism, and parasitism. 
-Improvements to Simplex will also include an accounting of nutrient stoichiometry, and Phosphorus, as well as degrees of biocomplexity. For example, given the chemical structure of phosphate and the size of a resource particle, the particle could be assigned $x$ units of phosphorus as well as the biocomplexity value of phosphate (estimated as a form of Shannon's entropy). 
+Future developments to Simplex will include additional ecological dynamics such as predator-prey, mutualisms, and parasitism. 
+Improvements to Simplex will also include an accounting of nutrient stoichiometry as well as dimensions of complexity included in sister platforms (i.e., Locey et al. 2017). 
 Likewise, improvements and future versions of Simplex will provide increasing numbers of files for statistical analysis of simulated outputs.
 
