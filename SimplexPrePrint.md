@@ -1,19 +1,8 @@
----
-title: Simplex: A modeling platform for the simultaneous emergence of ecological patterns across ecological paradigms
+## Simplex: A modeling platform for the simultaneous emergence of ecological patterns across ecological paradigms
 
-author(s):
-    - Kenneth J. Locey, Jay. T. Lennon
-date: \today{}
-geometry: margin=2cm
-output: pdf_document
-header-includes:
-    - \usepackage{setspace}
-    - \doublespacing
-    - \usepackage{lineno}
-    - \linenumbers
----
+#### Kenneth J. Locey, Jay. T. Lennon
 
-# Introduction
+### Introduction
 
 Ecology is comprised of subfields that explain and predict patterns of interaction and biodiversity at all scales relevant to living organisms.
 From the microscopic scales of microbial ecology to the global scales of macroecology, ecologists study all scales of space and abundance on Earth.
@@ -43,15 +32,15 @@ Here, we leverage the power of ecological IBMs with a relatively simple platform
 This platform, called 'Simplex', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
 Below, we provide a detailed explanation of how Simplex works, the data it quantifies and tracks, the theories and principles that Simplex integrates, and the analyses and tests that can be conducted using the Simplex source code.
 
-# Methods
+### Methods
 
-## Platform description
+#### Platform description
 Here, we describe Simplex largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
 Simplex, however, is not one IBM intended for use with a specific system.
 Simplex is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
 A detailed descriptions of Simplex source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/simplex).
 
-### Purpose
+#### Purpose
 Simplex is intended to combine aspects of ecological paradigms and allow the user to study how patterns from each of these paradigms can simultaneously emerge.
 These paradigms include metabolic scaling, community ecology, life history, neutral theory, resource limitation, and ecological energetics.
 Simplex accomplishes three proximate objectives.
@@ -59,9 +48,8 @@ First, Simplex assembles and runs IBMs from random combinations of system variab
 Second, Simplex stores the outputs of IBMs including animations. 
 Third, Simplex provides R and python code for analyzing simulation data.
 
-### Entities & their state variables
-**Individual organisms**
--- Simplex simulates life history processes of growth, dispersal, reproduction, and basal respiration at the individual level. 
+#### Entities & their state variables
+**Individual organisms** -- Simplex simulates life history processes of growth, dispersal, reproduction, and basal respiration at the individual level. 
 Individuals are distinguished by collections of elements within dictionaries, i.e., data objects that hold key-value pairs. 
 For example, the dictionary holding information on individual organisms is structured as follows:
 
@@ -76,8 +64,7 @@ For example, the dictionary holding information on individual organisms is struc
 where 'ind1' is the key and the variables following the colon are the values for the species ID, x-coordinate, y-coordinate, body size, amount of endogenous resources, and metabolic state (active or dormant).
 Individuals undergo changes when randomly sampled from the dictionary.
 
-**Species**
--- Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, metabolic maintenance cost. 
+**Species** -- Each species is characterized by the individuals that share a common set of traits, such as maximum growth rate, metabolic maintenance cost. 
 Species information is stored in dictionaries, again as key-value pairs. 
 
 	spDict = {'1' : 'gr' = 0.8, 
@@ -92,8 +79,7 @@ where the species with ID of '1' has an intrinsic growth rate of 0.8, an active 
 
 When sampling individuals, the information about their species is gained by accessing the species dictionary.
 
-**Resource particles**
--- Simplex simulates the movement and consumption of individual resource particles. These particles can vary over several orders of magnitude in size and belong to three resource types. As with individual organisms and species, information about individual resource particles is stored in dictionaries.  
+**Resource particles** -- Simplex simulates the movement and consumption of individual resource particles. These particles can vary over several orders of magnitude in size and belong to three resource types. As with individual organisms and species, information about individual resource particles is stored in dictionaries.  
 
 	rDict = {'1' : t = 1, 
 				   'v'  = 0.5, 
@@ -103,31 +89,26 @@ When sampling individuals, the information about their species is gained by acce
 	
 where 't' is the resource type, 'v' is the size of the particle, and 'x' and 'y' are the x and y coordinates.
 
-### System level state variables
+#### System level state variables
 Each Simplex model begins with random choices for the values of:
 
 * width in arbitrary units
 * height in arbitrary units
 * flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
 
-### Spatial and temporal scales
-
-**Spatial extent**
--- The environment of Simplex is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
+#### Spatial and temporal scales
+**Spatial extent** -- The environment of Simplex is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
 All particles move in decimal units, the limit of which is determined by Python's decimal precision. 
 This means that individual particles can occupy practically infinite locations.
 
-**Temporal extent**
--- Simplex models can run for any number of time steps and record data at any number of time steps.
+**Temporal extent** -- Simplex models can run for any number of time steps and record data at any number of time steps.
 
-### Process overview and scheduling
-**Model assembly**
--- The Simplex user runs the main python program (i.e., main.py). 
+#### Process overview and scheduling
+**Model assembly** -- The Simplex user runs the main python program (i.e., main.py). 
 The main program chooses random values for system-level state variables including whether disturbance, immigration, speciation, fluid dynamics, etc. will occur and at what rates.
 The main program also imports modules (i.e., groups of functions) for diversity metrics, spatial analysis, the initiation of output files, and for simulating life history processes (immigration, maintenance, death, growth, consumption, disturbance, passive dispersal, active dispersal, resource flow, resource inflow, and metabolic state transitions).
 
-**Simulating life history**
--- Simplex models begin simulation immediately after assembly. 
+**Simulating life history** -- Simplex models begin simulation immediately after assembly. 
 The order of life history processes is randomized at each time step to prevent scheduling bias.
 
 *Immigration:* By default, individuals enter at any point in the environment.
@@ -176,7 +157,7 @@ Resource dispersal can be turned off in the 'main.py' file.
 
 *Resource depletion:* Resource particles are depleted through consumption, which can be partial or complete.
 
-### Design concepts
+#### Design concepts
 
 **Basic principles** 
 *Ecological selection on random variation:* Simplex operates according to a basic principle of evolution, i.e., natural selection on random variation.
@@ -224,7 +205,16 @@ preemption.
 There is no explicit communication.
 
 *Observation:* An unlimited number of Simplex models can be run to examine trends and variation in ecological patterns.
-The following is recorded for each Simplex model:
+
+## Output data
+Simplex generates three files of output data. 
+Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
+The three are:
+
+**SimData.csv**
+-- Each column of this file corresponds to a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, resource supply and diversity, rate of disturbance, etc.).
+Most analyses in Simplex source code are conducted on the data in this file.
+The following is recorded for each Simplex model and stored in SimData.csv:
 
 * Values of randomly chosen input variables
 	* length
@@ -256,17 +246,6 @@ The following is recorded for each Simplex model:
 	* Individuals
 	* Biomass
 
-These data are stored as comma separated value (.csv) files, the data from which can be directly imported into an R or Python environment.
-
-## Output data
-Simplex generates three files of output data. 
-Each Simplex model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
-The three are:
-
-**SimData.csv**
--- Each column of this file corresponds to a piece of data about the system that was modeled (e.g., flow rate, total abundance, species richness, species turnover, resource supply and diversity, rate of disturbance, etc.).
-Most analyses in Simplex source code are conducted on the data in this file.
-
 **SAR.csv**
 -- A file holding species-area relationships (SARs) from Simplex models.
 SARs quantify the rate at which species are encountered with increasing area of a sample, study, landscape, etc.
@@ -277,7 +256,7 @@ The SAR is among the most intensively and long-studied patterns in ecology and i
 Also referred to as species-abundance distributions (SADs), rank-abundance curves (RACs), and Whittaker plots, RADs are vectors of the abundances of species in a community.
 Along with the SAR, RADs are one of the most intensively studied and commonly predicted ecological patterns (Hubbell 2001, McGill et al. 2007, Harte 2011).
 
-## Patterns generated by Simplex
+#### Patterns generated by Simplex
 
 Simplex includes python code to analyze the simultaneous emergence of ecological patterns.
 
@@ -312,7 +291,7 @@ The variance ($\sigma^2$) in population abundance often scales with the average 
 Named after Taylor (1961), Taylor's Law is observed in many ecological and non-ecological systems.
 In ecology, the scaling exponent of this relationship is sometimes as high as 3 (*ref*).
 
-# Results
+### Results
 
 **Species abundance distribution (SAD)**
 The SADs of Simplex are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
@@ -365,9 +344,7 @@ Simplex reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5
 The population abundance variance-mean relationship from 1,000 Simplex models closely reproduces Taylor's Law.</figcaption>
 </figure>
 
-# Discussion
-
-## UNDER CONSTRUCTION
+### Discussion
 
 The Simplex platform combines ecological paradigms and general mechanisms to allow many ecological patterns and relationships to emerge simultaneously. 
 In this way, the relatively simple source code of Simplex allows patterns of community ecology, macroecology, and biodiversity science to emerge from individual-level changes and relatively few explicit constraints. 

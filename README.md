@@ -23,16 +23,27 @@ Grimm, V. *et al*. (2006) A standard protocol for describing individual-based an
 
 
 ## Suggested software
-**Simplex** was developed on the Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
+Simplex was developed on the Enthought Canopy Python distribution (version 1.5.5) available here: https://store.enthought.com/
 
-**Simplex** implements unit testing using pytest version 2.8.1; see: http://pytest.org/latest/getting-started.html#getstarted
+Simplex implements unit testing using pytest version 2.8.1; see: http://pytest.org/latest/getting-started.html#getstarted
 
-**Simplex** output can be imported into Python and R environments as dataframes. 
+Simplex output can be imported into Python and R environments as dataframes.
 R scripts are provided in the tools/Rcode folder.
 For this reason, the R friendly user may want to install RStudio: https://www.rstudio.com/products/rstudio/download/ and/or R: https://www.r-project.org/
 
+A free preprint version of the Simplex manuscript is generated using Pandoc version 1.15.0.6.: http://pandoc.org/installing.html
+
 ## Files & Directories
 The following are general descriptions. For greater detail of the contents of various directories, see the info.md files located in each directory or the comments in the source code.
+
+**License:** An MIT license stating the conditions under which Simplex is freely provided.
+
+**SimplexPrePrint.md:** A markdown version of the Simplex manuscript.
+
+**SimplexPrePrint.pdf:** A pdf version of the Simplex manuscript.
+This pdf is generated with Pandoc version 1.15.0.6, using the command:  
+
+	~/GitHub/simplex/SimplexPrePrint.md --latex-engine=xelatex -o ~/GitHub/simplex/SimplexPrePrint.pdf
 
 **Directory: results**
 
