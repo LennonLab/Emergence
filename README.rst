@@ -14,7 +14,9 @@ Purpose
 
 3. Provides quantitative and graphical tools for analysis of ecological patterns and relationships.
 
-## The ODD protocol
+The ODD protocol
+----------------
+
 Grimm *et al* (2006) developed a protocol known as the ODD as a standard for describing individual-based models (IBMs).
 Because **simplex** is a platform for IBMs and not simply a model, we descibe **simplex** as close as reasonable according to the ODD.
 See SimplexPrePrint.md file located in the manuscript directory.
