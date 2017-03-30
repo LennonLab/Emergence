@@ -1,6 +1,8 @@
-## Simplex: A modeling platform for the simultaneous emergence of ecological patterns across ecological paradigms
+## Simplex: A modeling platform for the simultaneous emergence of ecological patterns
 
-#### Kenneth J. Locey, Jay. T. Lennon
+ Kenneth J. Locey, Jay. T. Lennon
+ 
+Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405, USA.  Correspondence to: ken@weecology.org; lennonj@indiana.edu.
 
 ### Introduction
 
