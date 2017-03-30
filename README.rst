@@ -1,10 +1,9 @@
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Tetrahedron-4-3D-balls.png" align="right" width="150" height="150" />
-
-# Simplex  
+Simplex
+=======
 
 Python source code for studying the simultaneous emergence of ecological patterns.
 
-## Purpose  
+## Purpose
 **Simplex** performs three tasks:
 
 1. Builds and runs individual-based ecological models based on dynamics of selection, stochasticity, and energetics.
@@ -15,7 +14,7 @@ Python source code for studying the simultaneous emergence of ecological pattern
 
 ## The ODD protocol
 Grimm *et al* (2006) developed a protocol known as the ODD as a standard for describing individual-based models (IBMs).
-Because **simplex** is a platform for IBMs and not simply a model, we descibe **simplex** as close as reasonable according to the ODD. 
+Because **simplex** is a platform for IBMs and not simply a model, we descibe **simplex** as close as reasonable according to the ODD.
 See SimplexPrePrint.md file located in the manuscript directory.
 The user should note that the ODD was not intended for describing software.
 
@@ -41,7 +40,7 @@ The following are general descriptions. For greater detail of the contents of va
 **SimplexPrePrint.md:** A markdown version of the Simplex manuscript.
 
 **SimplexPrePrint.pdf:** A pdf version of the Simplex manuscript.
-This pdf is generated with Pandoc version 1.15.0.6, using the command:  
+This pdf is generated with Pandoc version 1.15.0.6, using the command:
 
 	~/GitHub/simplex/SimplexPrePrint.md --latex-engine=xelatex -o ~/GitHub/simplex/SimplexPrePrint.pdf
 
@@ -55,7 +54,7 @@ This pdf is generated with Pandoc version 1.15.0.6, using the command:
 
 **Directory: model**
 
-* main.py: This is the primary file for running simplex. 
+* main.py: This is the primary file for running simplex.
 Once run, Simplex begins assembling and running simulation models. Output for the numbers of models run and additional cursory data are printed to the users terminal window.
 
 * Sub-directory: spatial_functions -- Contains a file for calculating distances and examining species-area relationships.
@@ -75,7 +74,7 @@ Once run, Simplex begins assembling and running simulation models. Output for th
 
 * Sub-directory: Rcode -- Contains R scipts for analysis of simulation data.
 
-* Sub-directory: SADfits -- Contains python code for fitting species abundance distributions to simulation data 
+* Sub-directory: SADfits -- Contains python code for fitting species abundance distributions to simulation data
 
 * Sub-directory: unit_tests -- Contains python code for testing metrics of diversity, spatial statistics, the operation of simulation processes (e.g., reproduction), and the writing of data to output files.
 
@@ -93,7 +92,7 @@ The following unit testing is currently implemented on:
 ```
 Simplex
 │   README.md
-│   LICENSE    
+│   LICENSE
 │
 └───figure_code
 │   │   file011.txt
@@ -106,19 +105,19 @@ Simplex
 |   |      TaylorsLaw.py
 |   |
 │   └───ResourcePatterns
-│   |      Res_vs_Tau.py 
+│   |      Res_vs_Tau.py
 |   |
 │   └───TaxaDiversityPatterns
 │   |      Taxa_vs_Tau.py
 |   |
 |   └───TraitDiversityPatterns
-│          Trait_vs_Tau.py 
-|   
+│          Trait_vs_Tau.py
+|
 └───model
 |   |   main.py
 |   |
 │   └───SpatialFunctions
-│   |      spatial.py 
+│   |      spatial.py
 |   |
 │   └───Processes
 │   |      processes.py
@@ -131,11 +130,11 @@ Simplex
 │   |      lbm.py
 |   |
 |   └───DiversityMetrics
-│          metrics.py   
+│          metrics.py
 |
 └───manuscript
 │   │   SimplexPrePrint.md
-│   
+│
 └───results
 │   └───figures
 |   |   └───examples
