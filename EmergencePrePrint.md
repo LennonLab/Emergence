@@ -9,23 +9,24 @@ Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405,
 The discovery, explanation, and prediction of patterns is foundational to the field of ecology.
 The study of ecological patterns across the tree of life has inspired ecological theories and paradigms for over a century (e.g., Watson 1859).
 Given enough time and resources, an army of ecologists could uncover many of these patterns in an environment of sufficient diversity and space.
-Yet historically, ecologists have focused little on how patterns that are predicted by different theories and explained by different paradigms, or studied within different subfields can emerge within a single system.
+Yet historically, ecologists have focused little on how patterns that are predicted by different theories ~~~and explained by different paradigms, or studied within different subfields can (perhaps remove to make sentence less clunky; not needed?)~~~ emerge within a single system.
+
 
 Within a given ecological community, one could test the predictions of any number of ecological theories.
-One could test the allometric predictions of metabolic theory, the growth related predictions of resource limitation theory, trade-offs predicted by life history theory, and the many predictions of commonness and rarity from any number of ecological theories of community ecology, macroecology, and biodiversity.
-However, the field of ecology has devoted little effort to understanding of how the predictions and patterns from various ecological theories can emerge in the same system.
+~~For example~~~One could test the allometric predictions of metabolic theory, ~~~competition?~~~the growth related predictions of resource ~~ratio?~~~ limitation theory, trade-offs predicted by life history theory, and ~~the~~ many predictions ~~related to the~~~of commonness and rarity from ~~any number of ecological theories of~~~ ~~derived from~~~ community ecology, macroecology, and biodiversity.
+However, the field of ecology has devoted little effort to understanding of how the predictions and patterns from various ecological theories can emerge in the same system. ~~ seems redundant with last sentence of first paragraph~~
 For example, metabolic theory of ecology (MTE) predicts many scaling patterns related to body size, the most powerful of which is the 3/4 scaling of metabolic rate with body size (Brown *et al.* 2004).
 However, MTE does not predict intensively studied patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
 Another general ecological theory, the maximum entropy theory of ecology (METE) predicts the SAD, SAR, and several other patterns of commonness and rarity (Harte 2011).
-However, despite their generality, METE and MTE do not predict any of the same patterns and use few, if any, of the same variables.
+However, despite their generality, METE and MTE do not predict any of the same patterns and use few, if any, of the same variables. ~~~ So the queston arises: are there connections between these theories? Must there be? And if there are, then that would be cool, but what are the essential features?~~~
 
-Ecologists have so far, not developed the computational tools to study the predictions of combined ecological theories and the simultaneous emergence of ecological patterns.
+Ecologists have so far, not developed the computational tools to study the predictions of combined ecological theories and the simultaneous emergence of ecological patterns. ~~~ Not sure I entirely follow with this transition; why would emergences *necessarily* require computation? For example in the examples above, METE can predict a handful of patterns; was this an example where computaton was holding things back~~~
 However, one form of ecological modeling is amenable to this task, individual-based modeling (IBM).
 IBMs encode rules of how individual particles (e.g., organisms, resource particles) behave according to theories, principles, mechanisms, and processes (e.g., Rosindell et al. 2015).
 IBMs allow population to ecosystem-level dynamics to emerge over time and space, and provide degrees of ecological realism, individual variability, and spatial complexity that are untenable with other modeling approaches (Grimm and Railsback 2005).
 IBMs allow realistic and unanticipated patterns and dynamics to emerge from otherwise simple individual-level interactions and multiple dimensions of ecological complexity (e.g., Locey *et al.* 2017).
-Finally, IBMs can allow researchers to track, record, and analyze an immense amount of information.
-However, ecological IBMs are typically used to examine highly specific questions and often require consider computational complexity (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
+Finally, IBMs ~~can~~ allow researchers to track, record, and analyze an immense amount of information.
+However, ecological IBMs are typically used to examine highly specific questions and often require consider~~able~~ computational ~~complexity~~ (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
 
 Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
 This platform, called 'Emergence', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
@@ -35,7 +36,7 @@ Below, we provide a detailed explanation of how Emergence works, the data it qua
 
 #### Platform description
 Here, we describe Emergence largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
-Emergence, however, is not one IBM intended for use with a specific system.
+Emergence, however, ~~is not one IBM??~~~ intended for use with a specific system.
 Emergence is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
 A detailed descriptions of Emergence source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/Emergence).
 
@@ -95,6 +96,9 @@ Each Emergence model begins with random choices for the values of:
 * height in arbitrary units
 * flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
 
+~~ I guess I thought width and heigh were "saptial", but you introduce those next ~~~
+
+
 #### Spatial and temporal scales
 **Spatial extent** -- The environment of Emergence is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
 All particles move in decimal units, the limit of which is determined by Python's decimal precision. 
@@ -119,22 +123,24 @@ Second, beginning with a uniform distribution allows more realistic distribution
 
 *Dispersal:* Active dispersal: Individuals can actively move against a force of flow, at random, or in specified directions.
 Preferences for particular modes of active dispersal can be specifed or modified in the 'active_dispersal.py' file. 
-Passive dispersal: Individuals can be moved passively (e.g., as planktonic organisms) through the system at rates determined by the rate of flow through. or by the combination of flow rate and active dispersal.
+Passive dispersal: Individuals can be moved passively (e.g., as planktonic organisms) through the system at rates determined by the rate of ~~flow through. or ~~~by the combination of flow rate and active dispersal.
 
 *Consumption:* Sampled individuals increase their levels of endogenous resources by feeding on resource particles.
-These endogenous resources (a.k.a. cell quotas) can be used to add structural biomass and to pay the energetic costs of life history processes. 
+These endogenous resources (a.k.a., cell quotas) can be used to add structural biomass and to pay the energetic costs of life history processes. 
 Individual consume resources according to their species specific consumption rates for three resource types.
-The number of simulated resource types can be changes in the source code files (consume.py, immigration.py, and resource_inflow.py). 
+The number of simulated resource ~~types can be changes in the~~ source code files (consume.py, immigration.py, and resource_inflow.py). 
 The simulation of consumption can be modified in the 'consume.py' file.
 
 *Growth:* Sampled individuals grow in size by integrating endogenous resources as structural biomass.
-Individuals grow according to species specific rates of growth ranging between 0.1% and 100% increase in size per time step.
-Individuals' endogenous resources are decreased in direct proportion.
+Individuals grow according to species-specific rates of growth ranging between ~~0.1% and 100% increase in size~~ per time step.
+Individuals' endogenous resources are decreased in direct proportion. ~~to...?~~
 
 *Reproduction:* Individuals reproduce clonally with a probability determined by their endogenous resources. 
 The endogenous resources of the mother individual is evenly divided between two 
 daughter individuals. 
 Unless in the case of speciation, the daughters are given a unique individual ID and the species ID of the mother.
+
+~~In thinking about "generality", what about sexual reproduction? Not saying we should do this, just thinking...is it typical with IBMs to just simulate clonality?~~~
 
 *Speciation:* Speciation is simulated within Emergence as a discrete event, i.e., where clonal reproduction produces a new species.
 Speciation is accompanied by mutations in the values of one or more species traits. 
