@@ -6,27 +6,34 @@ Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405,
 
 ### Introduction
 
-The discovery, explanation, and prediction of patterns is foundational to the field of ecology.
-The study of ecological patterns across the tree of life has inspired ecological theories and paradigms for over a century (e.g., Watson 1859).
-Given enough time and resources, an army of ecologists could uncover many of these patterns in an environment of sufficient diversity and space.
-Yet historically, ecologists have focused little on how patterns that are predicted by different theories ~~~and explained by different paradigms, or studied within different subfields can (perhaps remove to make sentence less clunky; not needed?)~~~ emerge within a single system.
+The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., patterns.
+As the signatures of mechanisms that shape the structure and dynamics of populations, species, communities, and ecosystems, patterns have inspired ecological paradigms for over a century (Table 1).
+Some of these patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or earlier (e.g., Malthus 1798).
+Today, ecologists seek unified theories for the common explanation of patterns (e.g., Hubbell 2001, McGill 2010, Harte 2011), and continue to uncover patterns using increasingly large and diverse datasets (e.g., Locey and Lennon 2016).
+However, the many common patterns of ecology are largely understood in isolation, divided among subfields that rarely communicate and theories with little overlap.
 
+Given enough time and resources, an army of ecologists could document many commonly studied patterns in an environment of sufficient diversity and space.
+Macroecologists could document the many allometric relationships of metabolic theory (Brown et al. 2004). Population ecologists could reveal patterns of growth while life historians could measure trade-offs in reproductive strategies (Begon et al. 2009).
+Community ecologists and biodiversity scientists could test their many models and theories of biodiversity against empirical patterns of commonness and rarity (McGill 2010). 
+Ecologists that specialize on taxa (e.g., microbial ecologists, mammalogists, plant ecologists) or different scales (e.g., molecular ecologists, macroecologists) could document these and many other patterns in their respective systems.
+Yet despite their united effort, this army of ecologists would splinter when it comes to analyzing their patterns with theory and models.
 
-Within a given ecological community, one could test the predictions of any number of ecological theories.
-~~For example~~~One could test the allometric predictions of metabolic theory, ~~~competition?~~~the growth related predictions of resource ~~ratio?~~~ limitation theory, trade-offs predicted by life history theory, and ~~the~~ many predictions ~~related to the~~~of commonness and rarity from ~~any number of ecological theories of~~~ ~~derived from~~~ community ecology, macroecology, and biodiversity.
-However, the field of ecology has devoted little effort to understanding of how the predictions and patterns from various ecological theories can emerge in the same system. ~~ seems redundant with last sentence of first paragraph~~
-For example, metabolic theory of ecology (MTE) predicts many scaling patterns related to body size, the most powerful of which is the 3/4 scaling of metabolic rate with body size (Brown *et al.* 2004).
-However, MTE does not predict intensively studied patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
-Another general ecological theory, the maximum entropy theory of ecology (METE) predicts the SAD, SAR, and several other patterns of commonness and rarity (Harte 2011).
-However, despite their generality, METE and MTE do not predict any of the same patterns and use few, if any, of the same variables. ~~~ So the queston arises: are there connections between these theories? Must there be? And if there are, then that would be cool, but what are the essential features?~~~
+Most ecological models only generate one pattern and few ecological theories make more than one or two predictions (McGill et al. 2007).
+Even within the same subfield, different theories can have little-to-no overlap.
+For example, metabolic theory of ecology (MTE) and the maximum entropy of theory of ecology (METE) are both macroecological theories.
+MTE predicts scaling patterns related to body size, the most powerful of which is the 3/4 scaling of metabolic rate (Brown *et al.* 2004).
+However, MTE does not predict patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
+In contrast, METE predicts several patterns of commonness and rarity, including the SAD and SAR (Harte 2011).
+However, METE makes no predictions of metabolic scaling.
+Despite their shared subfield and generality, METE and MTE do not make predictions about any of the same patterns and use few, if any, of the same inputs.
 
-Ecologists have so far, not developed the computational tools to study the predictions of combined ecological theories and the simultaneous emergence of ecological patterns. ~~~ Not sure I entirely follow with this transition; why would emergences *necessarily* require computation? For example in the examples above, METE can predict a handful of patterns; was this an example where computaton was holding things back~~~
-However, one form of ecological modeling is amenable to this task, individual-based modeling (IBM).
-IBMs encode rules of how individual particles (e.g., organisms, resource particles) behave according to theories, principles, mechanisms, and processes (e.g., Rosindell et al. 2015).
+Ecologists have rarely considered how patterns from across subfields and theories can simultaneously emerge.
+This is perhaps due to the difficulties of empirical study and the challenges of deriving elegant models that are capable of producing multiple patterns.
+However, one form of ecological modeling is amenable to this task, i.e., individual-based modeling (IBM).
+IBMs encode rules of how individual particles (e.g., organisms, resource particles) behave according to theories, principles, mechanisms, and processes (e.g., Rosindell et al. 2015, Hellweger *et al.* 2016).
 IBMs allow population to ecosystem-level dynamics to emerge over time and space, and provide degrees of ecological realism, individual variability, and spatial complexity that are untenable with other modeling approaches (Grimm and Railsback 2005).
-IBMs allow realistic and unanticipated patterns and dynamics to emerge from otherwise simple individual-level interactions and multiple dimensions of ecological complexity (e.g., Locey *et al.* 2017).
-Finally, IBMs ~~can~~ allow researchers to track, record, and analyze an immense amount of information.
-However, ecological IBMs are typically used to examine highly specific questions and often require consider~~able~~ computational ~~complexity~~ (DeAngelis and Gross 1992, Rosindell et al. 2015, Grimm and Raidlsback 2005).
+IBMs also allow realistic and unanticipated patterns and dynamics to emerge from otherwise simple individual-level interactions and multiple dimensions of ecological complexity (e.g., Locey *et al.* 2017).
+Finally, IBMs allow researchers to track, record, and analyze an immense amount of information.
 
 Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
 This platform, called 'Emergence', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
@@ -36,8 +43,7 @@ Below, we provide a detailed explanation of how Emergence works, the data it qua
 
 #### Platform description
 Here, we describe Emergence largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
-Emergence, however, ~~is not one IBM??~~~ intended for use with a specific system.
-Emergence is distributable software and a platform for simulating unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns predicted by multiple theories.
+Unlike most ecological IBMs, which are used to simulate specific systems (DeAngelis and Gross 1992, Grimm and Railsback 2005), Emergence is a distributed software platform for running unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns from across subdisciplines and theories.
 A detailed descriptions of Emergence source files, functions, and analysis code can be found on the public GitHub repository (https://github.com/LennonLab/Emergence).
 
 #### Purpose
@@ -92,12 +98,9 @@ where 't' is the resource type, 'v' is the size of the particle, and 'x' and 'y'
 #### System level state variables
 Each Emergence model begins with random choices for the values of:
 
-* width in arbitrary units
-* height in arbitrary units
-* flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
-
-~~ I guess I thought width and heigh were "saptial", but you introduce those next ~~~
-
+* Width, in arbitrary units
+* Height, in arbitrary units
+* Flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
 
 #### Spatial and temporal scales
 **Spatial extent** -- The environment of Emergence is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
@@ -123,27 +126,25 @@ Second, beginning with a uniform distribution allows more realistic distribution
 
 *Dispersal:* Active dispersal: Individuals can actively move against a force of flow, at random, or in specified directions.
 Preferences for particular modes of active dispersal can be specifed or modified in the 'active_dispersal.py' file. 
-Passive dispersal: Individuals can be moved passively (e.g., as planktonic organisms) through the system at rates determined by the rate of ~~flow through. or ~~~by the combination of flow rate and active dispersal.
+Passive dispersal: Individuals can be moved passively (e.g., as planktonic organisms) through the system at rates determined by the environmental rate of flow.
 
 *Consumption:* Sampled individuals increase their levels of endogenous resources by feeding on resource particles.
-These endogenous resources (a.k.a., cell quotas) can be used to add structural biomass and to pay the energetic costs of life history processes. 
+These endogenous resources can be used to add structural biomass and to pay the energetic costs of life history processes. 
 Individual consume resources according to their species specific consumption rates for three resource types.
-The number of simulated resource ~~types can be changes in the~~ source code files (consume.py, immigration.py, and resource_inflow.py). 
-The simulation of consumption can be modified in the 'consume.py' file.
+The number of simulated resource types can be changed in the source code files (bide.py, resource_inflow.py). 
+The simulation of consumption can be modified in the 'bide.py' file.
 
 *Growth:* Sampled individuals grow in size by integrating endogenous resources as structural biomass.
-Individuals grow according to species-specific rates of growth ranging between ~~0.1% and 100% increase in size~~ per time step.
-Individuals' endogenous resources are decreased in direct proportion. ~~to...?~~
+Individuals grow according to species-specific rates of growth ranging between 0.1% and 100% increase in size per time step.
+Individuals' endogenous resources are decreased in direct proportion to their growth.
 
-*Reproduction:* Individuals reproduce clonally with a probability determined by their endogenous resources. 
-The endogenous resources of the mother individual is evenly divided between two 
-daughter individuals. 
+*Reproduction:* Individuals reproduce clonally, similar to that of many ecological IBMs and models (e.g., Hubbell 2001, Tilman 2004, Rosindell et al. 2015).
+Reproduction occurs with a probability determined by individuals' endogenous resources. 
+The endogenous resources of the mother individual is evenly divided between two daughters. 
 Unless in the case of speciation, the daughters are given a unique individual ID and the species ID of the mother.
 
-~~In thinking about "generality", what about sexual reproduction? Not saying we should do this, just thinking...is it typical with IBMs to just simulate clonality?~~~
-
-*Speciation:* Speciation is simulated within Emergence as a discrete event, i.e., where clonal reproduction produces a new species.
-Speciation is accompanied by mutations in the values of one or more species traits. 
+*Speciation:* Speciation is simulated within Emergence as a discrete event, similar to models of ecological neutral theory (e.g., Hubbell 2001), i.e., where clonal reproduction produces a new species.
+However, speciation in Emergence is accompanied by mutations in the values of one or more species traits. 
 This approach allows for diversity to arise within the system, which the environment can then select on.
 
 *Death:* Individuals sampled at random will die if their levels of endogenous resources or ability to draw resources from structural biomass falls below the minimum metabolic requirements.
@@ -252,7 +253,7 @@ The following is recorded for each Emergence model and stored in SimData.csv:
 	* Biomass
 
 **SAR.csv**
--- A file holding species-area relationships (SARs) from Emergence models.
+-- A file holding results for species-area relationships (SARs) from Emergence models.
 SARs quantify the rate at which species are encountered with increasing area of a sample, study, landscape, etc.
 The SAR is among the most intensively and long-studied patterns in ecology and is one of two patterns commonly predicted by biodiversity theories (Lomolino 2000, Hubbell 2001, Harte 2011).
 
@@ -271,8 +272,8 @@ SAD's almost universally reflect that few species in ecological communities are 
 The SAD is predicted by more than 20 ecological models, the two most successful of which are the Poisson-lognormal and the log-series distributions (White et al. 2012, Baldridge et al. 2015, Shoemaker et al. 2017).
 
 **Species-area relationship (SAR)**
-Also referred to as the species-area curve, the SAR describes the rate at which increasing numbers of species are observed with increasing area, and is also one of ecology's most intensively studied patterns (Lomolino 2000, Rosenzweig 2000).
-There four basic types of SARs pertaining to types of biotas and four general sampling schemes (Rosensweig 2000).
+Also referred to as the species-area curve, the SAR describes the rate at which increasing numbers of species are observed with increasing area, and is also one of ecology's most intensively studied patterns (Rosenzweig 1995, Lomolino 2000).
+There four basic types of SARs pertaining to types of biotas and four general sampling schemes (Rosensweig 1995).
 Here, we consider SARs for single biotas (i.e., not crossing ecoregions or biogeographical provinces) and generate them using two sampling schemes (i.e., nested design, random aggregation of subplots).
 
 **Metabolic scaling**
@@ -393,5 +394,34 @@ Finally, Emergence can be freely distributed and modified, and will continue gro
 
 ### References
 
-2. Baldridge E., Harris D. J., Xiao X., and E. P. White. 2016. An extensive comparison of	species-abundance distribution models. PeerJ, 4:e2823.5. Brown, J. H., Gillooly, J. F., Allen, A. P., Savage, V. M., and G. B. West. 2004. Toward a 	metabolic theory of ecology. Ecology, 85:1771-1789.11. Droop, M. R. 1983. 25 years of algal growth kinetics a personal view. Botanica marina,	26:99-112.15. Grimm, V., Revilla, E., Berger, U., Jeltsch, F., Mooij, W. M., Railsback, S. F., Thulke, H., 	Weiner, J., Wiegand, T., and D. L., DeAngelis. 2005. Pattern-oriented modeling of 	agent-based complex systems: lessons from ecology. Science, 310:987-991.16. Haegeman, B. and M. Loreau 2014. General relationships between consumer dispersal, 	resource dispersal and metacommunity diversity. Ecology letters, 17:175-184.17. Hellweger, F. L., Clegg, R. J., Clark, J. R., Plugge, C. M., and J. Kreft. 2016. Advancing 	microbial sciences by individual-based modeling. Nature Reviews Microbiology, 14:461-	471.19. Hubbell, S. P. 2001. The unified neutral theory of biodiversity and biogeography. Princeton 	University Press.22. Leibold M. A., Holyoak M., Mouquet N., Amarasekare P., Chase J. M., Hoopes M. F., Holt 	R. D., Shurin J. B., Law R., Tilman D., Loreau M., and A. Gonzalez. 2004. The 	metacommunity concept: a framework for multi-scale community ecology. Ecology 	letters, 7:601-613.23. Locey, K. J., Fisk, M. C., and J. T. Lennon. 2017. Microscale Insight into Microbial Seed 	Banks. Frontiers in Microbiology, 7:2040.24. Locey, K. J., and J. T., Lennon. 2016. Scaling laws predict global microbial diversity. 	Proceedings of the National Academy of Sciences of the United States of America, 	113:5970-5975.25. Locey, K. J., and E. P. White. 2013. How species richness and total abundance constrain the 	distribution of abundance. Ecology letters, 16:1177-1185.26. Magurran, A. E., and B. J. McGill. 2011. Biological diversity: Frontiers in measurement and 	assessment. Oxford University Press.27. McGill, B. J., Etienne, R. S., Gray, J. S., Alonso, D., Anderson, M. J., Benecha, H. K., 	Dornelas, M., Enquist, B. J., Green, J. L., He, F., Hurlbert, A. H., Magurran, A. E., 	Marquet, P. A., Maurer, B. A., Ostling, A., Soykan, C. U., Ugland, K. I., and E. P. White. 	2007. Species abundance distributions: moving beyond single prediction theories to 	integration within an ecological framework. Ecology letters, 10:995-1015.28. Molla, A., Molla, A. M., Sarker, S. A., and M. Khatun. 1983. Whole-gut transit time and its 	relationship to absorption of macronutrients during diarrhoea and after recovery. 	Scandinavian journal of gastroenterology, 18:537-543.32. Putnam, R. Community Ecology. 1993. Chapman & Hall, London, United Kingdom.34. Schramski, J. R., Dell, A. I., Grady, J. M., Sibly, R. M., and J. H. Brown. (2015). Metabolic 	theory predicts whole-ecosystem properties. Proceedings of the National Academy of 	Sciences of the United States of America, 112:2617-2622.36. Smith, B., and J. B. Wilson, J. B. 1996. A consumer's guide to evenness indices. Oikos, 	1996:70-82.39. White, E. P., Thibault, K. M., and X. Xiao. 2012. Characterizing species abundance 	distributions across taxa and ecosystems using a simple maximum entropy model. 	Ecology, 93:1772-1778.40. Wu, G. D., Chen, J., Hoffmann, C., Bittinger, K., Chen, Y. Y., Keilbaugh, S. A., Bewtra, M., 	Knights, D., Walters, W. A., Knight, R. and R. Sinha. 2011. Linking long-term dietary 	patterns with gut microbial enterotypes. Science, 334:105-108.41. Yoshida, T., Jones, L. E., Ellner, S. P., Fussmann, G. F., and N. G. Hairston. 2003. Rapid 	evolution drives ecological dynamics in a predator–prey system. Nature, 424:303-	306.
+* Baldridge E, Harris DJ, Xiao X, White EP. 2016. An extensive comparison of species-abundance distribution models. PeerJ, 4:e2823.
+* Begon M, Mortimer M, Thompson DJ. 2009. Population ecology: a unified study of animals and plants. John Wiley & Sons.
 
+* Brown JH, Gillooly JF, Allen AP, Savage VM, West GB. 2004. Toward a metabolic theory of ecology. Ecology, 85:1771-1789.* Crow EL, K Shimizu. (Eds). 1988. Lognormal distributions: Theory and applications. New York: M. Dekker.
+
+* DeAngelis DL, Gross LJ. 1992. Individual-based models and approaches in ecology. Chapman & Hall.* Glazier DS. 2006. The 3/4-power law is not universal: evolution of isometric, ontogenetic metabolic scaling in pelagic animals. BioScience, 56:325-332.
+
+* Grimm V, Berger U, Bastiansen F, Eliassen S, Ginot V, Giske J, Goss-Custard J, Grand T, Heinz SK, Huse G, Huth A, Jepsen JU, Jørgensen C, Mooij WM, Müller B, Pe’er G, Piou C, Railsback SF, Robbins AM, Robbins MM, Rossmanith E, Rüger N, Strand E, Souissi S, Stillman RA, Vabø R, Visser U, DeAngelis DL. 2006. A standard protocol for describing individual-based and agent-based models. Ecological modelling, 198:115-126.
+
+* Grimm V, Railsback SF. 2005. Individual-based modeling and ecology (Vol. 2005). Princeton: Princeton university press.
+* Grimm, V, Revilla E, Berger U, Jeltsch F, Mooij WM, Railsback SF, Thulke H, Weiner J, Wiegand T, DeAngelis DL. 2005. Pattern-oriented modeling of agent-based complex systems: lessons from ecology. Science, 310:987-991.* Haegeman B, Loreau M. 2014. General relationships between consumer dispersal, resource dispersal and metacommunity diversity. Ecology letters, 17:175-184.* Harte J. 2011. Maximum entropy and ecology: a theory of abundance, distribution, and energetics. Oxford University Press.
+* Hellweger FL, Clegg RJ, Clark JR, Plugge CM, Kreft J. 2016. Advancing microbial sciences by individual-based modeling. Nature Reviews Microbiology, 14:461-471.* Hechinger RF, Lafferty KD, Dobson AP, Brown JH, Kuris AM. A common scaling rule for abundance, energetics, and production of parasitic and free-living species. Science 333:445-448.
+
+* Hubbell SP. 2001. The unified neutral theory of biodiversity and biogeography. Princeton University Press.* Leibold MA, Holyoak M, Mouquet N, Amarasekare P, Chase JM, Hoopes MF, Holt RD, Shurin JB, Law R, Tilman D, Loreau M, Gonzalez A. 2004. The metacommunity concept: a framework for multi-scale community ecology. Ecology letters, 7:601-613.* Locey KJ, Fisk MC, Lennon JT. 2017. Microscale Insight into Microbial Seed Banks. Frontiers in Microbiology, 7:2040.* Locey KJ, Lennon JT. 2016. Scaling laws predict global microbial diversity. Proceedings of the National Academy of Sciences of the United States of America, 113:5970-5975.* Lomolino MV. 2000. Ecology’s most general, yet protean pattern: The species‐area relationship. Journal of Biogeography, 27:17-26.
+* Magurran AE, McGill BJ. 2011. Biological diversity: Frontiers in measurement and assessment. Oxford University Press.* Malthus TR. 1798. An Essay on the Principle of Population. Oxford World Classics reprint.
+* McGill BJ, Etienne RS, Gray JS, Alonso D, Anderson MJ, Benecha HK, Dornelas M, Enquist BJ, Green JL, He F, Hurlbert AH, Magurran AE, Marquet PA, Maurer BA, Ostling A, Soykan CU, Ugland KI, White EP. 2007. Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework. Ecology letters, 10:995-1015.* McGill BJ. 2010. Towards a unification of unified theories of biodiversity. Ecology Letters, 13:627-642.	* Preston FW. 1962. The canonical distribution of commonness and rarity: Part I. Ecology, 43:185-215.
+* Putnam R. Community Ecology. 1993. Chapman & Hall, London, United Kingdom.* Rosenzweig ML. 1995. Species diversity in space and time. Cambridge University Press.
+* Rosindell J, Harmon LJ, Etienne RS. 2015. Unifying ecology and macroevolution with individual‐based theory. Ecology letters, 18:472-482.
+* Schramski JR, Dell AI, Grady JM, Sibly RM, Brown JH. 2015. Metabolic theory predicts whole-ecosystem properties. Proceedings of the National Academy of Sciences of the United States of America, 112:2617-2622.* Shoemaker WR, Locey KJ, Lennon JT. 2016. A macroecological theory of microbial biodiversity. PeerJ Preprints, 4:e1450v4
+* Smith B, Wilson JB. 1996. A consumer's guide to evenness indices. Oikos, 1996:70-82.* Taylor LR. 1961. Aggregation, variance and the mean. Nature. 189: 732–735.
+
+* Tilman D. 2004. Niche tradeoffs, neutrality, and community structure: a stochastic theory of resource competition, invasion, and community assembly. Proceedings of the National academy of Sciences of the United States of America, 101:10854-10861.
+* Watson HC. 1859. Cybele Britannica, or British plants and their geographical relations. London, Longman & Company.
+
+* West GB, Brown JH, Enquist BJ. 1999. The fourth dimension of life: fractal geometry and allometric scaling of organisms. Science, 284(5420), 1677-1679.
+
+* West GB, Brown JH, Enquist BJ. 1997. A general model for the origin of allometric scaling laws in biology. Science, 276:122-126.
+
+* White CR, Seymour RS. 2003. Mammalian basal metabolic rate is proportional to body mass $^{2/3}$. Proceedings of the National Academy of Sciences, 100:4046-4049.* White EP, Thibault KM, Xiao X. 2012. Characterizing species abundance distributions across taxa and ecosystems using a simple maximum entropy model. Ecology, 93:1772-1778.
+
+* Zhao J. 2015. A common origin for 3/4- and 2/3-power rules in metabolic scaling. arXiv:1509.08912.
