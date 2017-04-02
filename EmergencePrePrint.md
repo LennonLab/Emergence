@@ -4,9 +4,20 @@ Kenneth J. Locey, Jay. T. Lennon
  
 Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405, USA.  Correspondence to: ken@weecology.org; lennonj@indiana.edu.
 
+### Abstract
+Patterns underpin ecological theories and paradigms.
+While over a dozen ecological patterns are considered to be classic or even law-like, most are divided among non-overlapping theories and subfields.
+As a result, ecology lacks a holistic understanding for how primary patterns can emerge in unison.
+We developed a simulation-based platform for this purpose.
+The Emergence platform encodes energetic constraints, ecological selection, process stochasticity, and multiplicative interactions.
+These phenomena capture the basis of life history trade-offs and resource limited growth, the importance of stochasticity and determinism, and the nonlinear nature of ecological dynamics.
+Emergence builds individual-based models (IBMs) from random starting conditions and allows ecological selection to operate on random variation in species traits.
+Emergence reproduces established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity, growth and abundance patterns of population ecology, and trade-offs in life history strategies.
+Prior to Emergence, it was unknown whether most of these patterns could emerge in unison or whether some could emerge within IBMs.
+
 ### Introduction
 
-The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., patterns.
+The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., patterns (MacArthur 1972, Lawton 1996).
 As the signatures of mechanisms that shape the structure and dynamics of populations, species, communities, and ecosystems, patterns have inspired ecological paradigms for over a century (Table 1).
 Some of these patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or earlier (e.g., Malthus 1798).
 Today, ecologists seek unified theories for the common explanation of patterns (e.g., Hubbell 2001, McGill 2010, Harte 2011), and continue to uncover patterns using increasingly large and diverse datasets (e.g., Locey and Lennon 2016).
@@ -407,9 +418,12 @@ Finally, Emergence can be freely distributed and modified, and will continue gro
 * Grimm, V, Revilla E, Berger U, Jeltsch F, Mooij WM, Railsback SF, Thulke H, Weiner J, Wiegand T, DeAngelis DL. 2005. Pattern-oriented modeling of agent-based complex systems: lessons from ecology. Science, 310:987-991.* Haegeman B, Loreau M. 2014. General relationships between consumer dispersal, resource dispersal and metacommunity diversity. Ecology letters, 17:175-184.* Harte J. 2011. Maximum entropy and ecology: a theory of abundance, distribution, and energetics. Oxford University Press.
 * Hellweger FL, Clegg RJ, Clark JR, Plugge CM, Kreft J. 2016. Advancing microbial sciences by individual-based modeling. Nature Reviews Microbiology, 14:461-471.* Hechinger RF, Lafferty KD, Dobson AP, Brown JH, Kuris AM. A common scaling rule for abundance, energetics, and production of parasitic and free-living species. Science 333:445-448.
 
-* Hubbell SP. 2001. The unified neutral theory of biodiversity and biogeography. Princeton University Press.* Leibold MA, Holyoak M, Mouquet N, Amarasekare P, Chase JM, Hoopes MF, Holt RD, Shurin JB, Law R, Tilman D, Loreau M, Gonzalez A. 2004. The metacommunity concept: a framework for multi-scale community ecology. Ecology letters, 7:601-613.* Locey KJ, Fisk MC, Lennon JT. 2017. Microscale Insight into Microbial Seed Banks. Frontiers in Microbiology, 7:2040.* Locey KJ, Lennon JT. 2016. Scaling laws predict global microbial diversity. Proceedings of the National Academy of Sciences of the United States of America, 113:5970-5975.* Lomolino MV. 2000. Ecology’s most general, yet protean pattern: The species‐area relationship. Journal of Biogeography, 27:17-26.
-* Magurran AE, McGill BJ. 2011. Biological diversity: Frontiers in measurement and assessment. Oxford University Press.* Malthus TR. 1798. An Essay on the Principle of Population. Oxford World Classics reprint.
-* McGill BJ, Etienne RS, Gray JS, Alonso D, Anderson MJ, Benecha HK, Dornelas M, Enquist BJ, Green JL, He F, Hurlbert AH, Magurran AE, Marquet PA, Maurer BA, Ostling A, Soykan CU, Ugland KI, White EP. 2007. Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework. Ecology letters, 10:995-1015.* McGill BJ. 2010. Towards a unification of unified theories of biodiversity. Ecology Letters, 13:627-642.	* Preston FW. 1962. The canonical distribution of commonness and rarity: Part I. Ecology, 43:185-215.
+* Hubbell SP. 2001. The unified neutral theory of biodiversity and biogeography. Princeton University Press.* Lawton JH. 1996. Patterns in ecology. Oikos, 75:145-147.
+* Leibold MA, Holyoak M, Mouquet N, Amarasekare P, Chase JM, Hoopes MF, Holt RD, Shurin JB, Law R, Tilman D, Loreau M, Gonzalez A. 2004. The metacommunity concept: a framework for multi-scale community ecology. Ecology letters, 7:601-613.* Locey KJ, Fisk MC, Lennon JT. 2017. Microscale Insight into Microbial Seed Banks. Frontiers in Microbiology, 7:2040.* Locey KJ, Lennon JT. 2016. Scaling laws predict global microbial diversity. Proceedings of the National Academy of Sciences of the United States of America, 113:5970-5975.* Lomolino MV. 2000. Ecology’s most general, yet protean pattern: The species‐area relationship. Journal of Biogeography, 27:17-26.
+
+* MacArthur RH. 1972. Geographical ecology: patterns in the distribution of species. Princeton University Press. Chicago	
+* Magurran AE, McGill BJ. 2011. Biological diversity: Frontiers in measurement and assessment. Oxford University Press.* Malthus TR. 1798. An Essay on the Principle of Population. Oxford World Classics reprint.
+* McGill BJ, Etienne RS, Gray JS, Alonso D, Anderson MJ, Benecha HK, Dornelas M, Enquist BJ, Green JL, He F, Hurlbert AH, Magurran AE, Marquet PA, Maurer BA, Ostling A, Soykan CU, Ugland KI, White EP. 2007. Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework. Ecology letters, 10:995-1015.* McGill BJ. 2010. Towards a unification of unified theories of biodiversity. Ecology Letters, 13:627-642.	* Preston FW. 1962. The canonical distribution of commonness and rarity: Part I. Ecology, 43:185-215.
 * Putnam R. Community Ecology. 1993. Chapman & Hall, London, United Kingdom.* Rosenzweig ML. 1995. Species diversity in space and time. Cambridge University Press.
 * Rosindell J, Harmon LJ, Etienne RS. 2015. Unifying ecology and macroevolution with individual‐based theory. Ecology letters, 18:472-482.
 * Schramski JR, Dell AI, Grady JM, Sibly RM, Brown JH. 2015. Metabolic theory predicts whole-ecosystem properties. Proceedings of the National Academy of Sciences of the United States of America, 112:2617-2622.* Shoemaker WR, Locey KJ, Lennon JT. 2016. A macroecological theory of microbial biodiversity. PeerJ Preprints, 4:e1450v4
