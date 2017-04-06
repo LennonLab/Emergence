@@ -10,24 +10,28 @@ While over a dozen ecological patterns are considered to be classic or even law-
 As a result, ecology lacks a holistic understanding for how primary patterns can emerge in unison.
 We developed a simulation-based platform for this purpose.
 The Emergence platform encodes energetic constraints, ecological selection, process stochasticity, and multiplicative interactions.
-These phenomena capture the basis of life history trade-offs and resource limited growth, the importance of stochasticity and determinism, and the nonlinear nature of ecological dynamics.
+These phenomena capture the basis of life history trade-offs, resource-limited growth, the importance of stochasticity and determinism, and the nonlinear nature of ecological dynamics.
 Emergence builds individual-based models (IBMs) from random starting conditions and allows ecological selection to operate on random variation in species traits.
 Emergence reproduces established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity, growth and abundance patterns of population ecology, and trade-offs in life history strategies.
+~~Our modeling platform reveals that the most iconic patterns of ecology can emerge in unision suggesting a unifying theory of biodiversity~~
+
 Prior to Emergence, it was unknown whether most of these patterns could emerge in unison or whether some could emerge within IBMs.
 
 ### Introduction
 
 The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., patterns (MacArthur 1972, Lawton 1996).
-As the signatures of mechanisms that shape the structure and dynamics of populations, species, communities, and ecosystems, patterns have inspired ecological paradigms for over a century (Table 1).
-Some of these patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or earlier (e.g., Malthus 1798).
-Today, ecologists seek unified theories for the common explanation of patterns (e.g., Hubbell 2001, McGill 2010, Harte 2011), and continue to uncover patterns using increasingly large and diverse datasets (e.g., Locey and Lennon 2016).
-However, the many common patterns of ecology are largely understood in isolation, divided among subfields that rarely communicate and theories with little overlap.
+As the signatures of mechanisms that shape the structure and dynamics of populations, species, communities, and ecosystems, patterns have inspired ecological paradigms for over a century (Table 1). ~~ sort of passive~~  Patterns have inspired ecological paradigms for over a centurty because they serve as signature of the mechanisms. that...
+
+
+Some of these ~~ecological~~ patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or earlier (e.g., Malthus 1798).
+~~To this day~~~ Today, ecologists seek unified theories for the common explanation of patterns (e.g., Hubbell 2001, McGill 2010, Harte 2011), and continue to uncover patterns using increasingly large and diverse datasets (e.g., Locey and Lennon 2016).
+However, the many common patterns of ecology are largely understood ~~examined~~ in isolation, divided among subfields ~~subdisciplines?~~ that ~~rarely communicate; too strong~~ and theories with little overlap.
 
 Given enough time and resources, an army of ecologists could document many commonly studied patterns in an environment of sufficient diversity and space.
 Macroecologists could document the many allometric relationships of metabolic theory (Brown et al. 2004). Population ecologists could reveal patterns of growth while life historians could measure trade-offs in reproductive strategies (Begon et al. 2009).
 Community ecologists and biodiversity scientists could test their many models and theories of biodiversity against empirical patterns of commonness and rarity (McGill 2010). 
-Ecologists that specialize on taxa (e.g., microbial ecologists, mammalogists, plant ecologists) or different scales (e.g., molecular ecologists, macroecologists) could document these and many other patterns in their respective systems.
-Yet despite their united effort, this army of ecologists would splinter when it comes to analyzing their patterns with theory and models.
+Ecologists that specialize on ~certain~ taxa (e.g., microbial ecologists, mammalogists, plant ecologists) or different scales (e.g., molecular ecologists, macroecologists) could document these and many other patterns in their respective systems.
+Yet despite their united effort, this army of ecologists would ~~likely~~ splinter when it comes ~~came~~ to analyzing their patterns with theory and models.
 
 Most ecological models only generate one pattern and few ecological theories make more than one or two predictions (McGill et al. 2007).
 Even within the same subfield, different theories can have little-to-no overlap.
@@ -36,9 +40,9 @@ MTE predicts scaling patterns related to body size, the most powerful of which i
 However, MTE does not predict patterns of commonness and rarity such as the species abundance distribution (SAD) and species-area relationship (SAR).
 In contrast, METE predicts several patterns of commonness and rarity, including the SAD and SAR (Harte 2011).
 However, METE makes no predictions of metabolic scaling.
-Despite their shared subfield and generality, METE and MTE do not make predictions about any of the same patterns and use few, if any, of the same inputs.
+Despite their shared subfield and generality, METE and MTE do not make predictions about any of the same patterns and use few, if any, of the same inputs (~~i.e., ???).
 
-Ecologists have rarely considered how patterns from across subfields and theories can simultaneously emerge.
+Ecologists have rarely considered how patterns from across subfields ~~disciplines~~? and theories can simultaneously emerge.
 This is perhaps due to the difficulties of empirical study and the challenges of deriving elegant models that are capable of producing multiple patterns.
 However, one form of ecological modeling is amenable to this task, i.e., individual-based modeling (IBM).
 IBMs encode rules of how individual particles (e.g., organisms, resource particles) behave according to theories, principles, mechanisms, and processes (e.g., Rosindell et al. 2015, Hellweger *et al.* 2016).
@@ -47,7 +51,7 @@ IBMs also allow realistic and unanticipated patterns and dynamics to emerge from
 Finally, IBMs allow researchers to track, record, and analyze an immense amount of information.
 
 Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
-This platform, called 'Emergence', allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
+This platform, called 'Emergence' ~~ should this be italicized throught so as not to be confusing with our other use of emergece~~, allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
 Below, we provide a detailed explanation of how Emergence works, the data it quantifies and tracks, the theories and principles that Emergence integrates, and the analyses and tests that can be conducted using the Emergence source code.
 
 ### Methods
