@@ -143,9 +143,9 @@ Passive dispersal: Individuals can be moved passively (e.g., as planktonic organ
 
 *Consumption:* Sampled individuals increase their levels of endogenous resources by feeding on resource particles.
 These endogenous resources can be used to add structural biomass and to pay the energetic costs of life history processes. 
-Individual consume resources according to their species specific consumption rates for three resource types.
+Individual*s* consume resources according to their species*-*specific consumption rates for three resource types.
 The number of simulated resource types can be changed in the source code files (bide.py, resource_inflow.py). 
-The simulation of consumption can be modified in the 'bide.py' file.
+The simulation of consumption can be modified in the 'bide.py' file. *Interesting to think how resource number may or may not affect things given prediction from niche-based competition theory. Not sure we need to address here, but are patterns sensitive to this feature?**
 
 *Growth:* Sampled individuals grow in size by integrating endogenous resources as structural biomass.
 Individuals grow according to species-specific rates of growth ranging between 0.1% and 100% increase in size per time step.
@@ -161,7 +161,7 @@ However, speciation in *Emergence* is accompanied by mutations in the values of 
 This approach allows for diversity to arise within the system, which the environment can then select on.
 
 *Death:* Individuals sampled at random will die if their levels of endogenous resources or ability to draw resources from structural biomass falls below the minimum metabolic requirements.
-Dead individuals are removed from the system, i.e., scavenging and recycling do not currently occur in Emergence.
+Dead individuals are removed from the system, i.e., scavenging and recycling ~~do~~ are not currently ~~occur~~ implemented in *Emergence*.
 
 *Emigration:* Individuals are considered to have emigrated when they pass beyond edges of the environment.
 That is, individuals do not reenter.
@@ -171,7 +171,7 @@ That is, individuals do not reenter.
 *Supply/inflow:* Resource particles can be allowed to enter at any point in the environment, which can be adjusted in the 'bide.py' file.
 The size and type of each inflowing resource particle is chosen at random from a uniform distribution, and can be modified in the same 'bide.py' file.
 
-*Resource dispersal:* Resource particles can be moved passively through the system at rates determined by the rate of flow through.
+*Resource dispersal:* Resource particles can be moved passively through the system at rates determined by the rate of flow*-*through.
 Resource dispersal can be turned off in the 'main.py' file.
 
 *Resource depletion:* Resource particles are depleted through consumption, which can be partial or complete.
@@ -180,8 +180,8 @@ Resource dispersal can be turned off in the 'main.py' file.
 
 **Basic principles** 
 *Ecological selection on random variation:* *Emergence* operates according to a basic principle of evolution, i.e., natural selection on random variation.
-Emergence assembles models from random combinations of system-level, species-level, and individual-level variables.
-Emergence then allows the environmental characteristics (e.g., flow rate, resource supply, spatial extent) to select on these random trait combinations.
+*Emergence* assembles models from random combinations of system-level, species-level, and individual-level variables.
+*Emergence* then allows the environmental characteristics (e.g., flow rate, resource supply, spatial extent) to select on these random trait combinations.
 
 *Energy-limited life history:* *Emergence* imposes energetic costs to growth and activity.
 These energetic costs are directly proportional to life history parameters.
@@ -193,7 +193,7 @@ In the same way, growing at a rate of x is half as costly as growing at a rate o
 The lognormal was introduced to ecologists by Preston (1962) as a description of how abundance varies among species.
 The lognormal has been one of the two most successful models of species abundance for macroscopic plants and animals, and was recently used to form a macroecological theory of microbial diversity (Shoemaker et al. 2017).
 By "multiplicative interactions" one simply means that two or more variables interact in a multiplicative or synergistic way.
-Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993).
+Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993). **as described above?**
 By "random variables" one simply means two independent processes or constraints with degrees of stochastic change.
 *Emergence* explicitly simulates lognormal dynamics. 
 For example, energetic costs are multiplied across dispersal distance and magnitudes of growth and the frequency of transition between metabolic states. 
@@ -224,6 +224,8 @@ preemption.
 There is no explicit communication.
 
 *Observation:* An unlimited number of *Emergence* models can be run to examine trends and variation in ecological patterns.
+
+**Food web or "trohphic" complexity and architecture?--parsitism, predation, mutualisms, intraguild predation, food chains, etc. **
 
 ## Output data
 *Emergence* generates three files of output data. 
@@ -368,27 +370,29 @@ The population abundance variance-mean relationship from 1,000 Emergence models 
 The *Emergence* platform allows patterns from different ecological paradigms to emerge simultaneously across thousands of individual-based models (IBMs).
 In doing so, primary patterns of community ecology, macroecology, metabolic theory, and biodiversity science all emerge from individual-level changes, relatively few explicit constraints, and selection on initially random variation.
 
-The degree of emergence in *Emergence* is unique and difficult to fully appreciate.
-For example, realistically uneven SADs resulted from initially even SADs where almost every individual belonged to a different species.
-This starting condition is contrary to the criticism that all successful theories of biodiversity begin with the assumption that the SAD is a hollow-curve (McGill 2010).
-Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism.
-Likewise, realistic SARs emerged despite no hard constraints on area and realistic diversity-abundance scaling relationships emerged despite no hard constraints on total abundance.
+**The degree of emergence in *Emergence* is unique and difficult to fully appreciate**...**perhaps we can reword this; our job as writers shuld be to show folks why they should apprecaite it. The simultaneous emergences of ecological patterns via the Emergence platform is unprecedented; perhaps in parts this is because few people have attempted to unify such seemingly disparate patterns** For example, realistically uneven SADs resulted from initially even SADs where almost every individual belonged to a different species.
+This starting condition is contrary to the **"criticism"?** that all successful theories of biodiversity begin with the assumption that the SAD is a hollow-curve (McGill 2010).
+Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism **related to metabolism?**.
+Likewise, realistic **species area relationships (SARs)** emerged despite no hard constraints on area **while** ~~and~~ realistic diversity-abundance scaling relationships emerged despite no hard constraints on total abundance.
 Finally, all of these patterns simultaneously emerged across thousands of IBMs.
 
 The benefits of the *Emergence* platform are manifold.
 First, *Emergence* allows exploration of novel questions and patterns while ensuring realistic ecological structure and dynamics.
-Second, *Emergence* implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, ecological selection.
+Second, *Emergence* implicitly unifies major ecological patterns under three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, **and** ecological selection.
 To our knowledge, the entire set of patterns produced by *Emergence* have never been predicted by any single ecological theory, nor by any synthesis of theories.
-Third, many other ecological patterns could also be produced by the *Emergence* platform, as is.
+Third, many other ecological patterns could **should?** also be produced by the *Emergence* platform, as is.
 Examples are distance decay relationships, growth curves, spatial abundance distributions, body-size distributions, and species-time relationships.
-Fourth, with additional modifications *Emergence* could produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
+Fourth, with additional modifications *Emergence* could**should?** produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
 
+**Seems like the MTE paragraph below could come before the simultaneous emergence pargargph preceding this**
 To our knowledge, *Emergence* offers the first IBM approach for testing metabolic scaling theory (Brown et al. 2004). 
 Metabolic scaling predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
 Studies have used the $^3/_4$ scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (Brown et al. 2004, Hechinger et al. 2011, Schramski et al. 2015). 
 The reasoning behind the $^3/_4$ power rests on fractal geometry of tissues (West et al. 1997, West et al. 1999). 
 While this fractal-based reasoning may hold, we not aware of any mechanistic tests, and it remains unresolved whether the argument is necessary.
 In Emergence, there are no such networks and the $^3/_4$ power law appears to emerge as a central tendency.
+
+*seems like formatting for italics and superscripts are not displaying properly. And do you want this formatting for Results too?**
 
 *Emergence* is well-positioned for testing the predictions of metabolic scaling.
 Some scientists still argue whether a $^2/_3$ scaling based on surface area to volume ratios is more accurate and appropriate (White and Seymour 2003) and even whether a $^3/_4$ and $^2/_3$ scaling can arise from the same mechanism (Zhao 2015).
