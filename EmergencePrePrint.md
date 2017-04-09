@@ -314,55 +314,56 @@ Named after Taylor (1961), Taylor's Law is observed in many ecological and non-e
 ## Results
 
 **Species abundance distribution (SAD)**
-Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of *Emergence* are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
+Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of *Emergence* are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).  
 
-<figure>
-<img src="results/figures/SADs.png" align="center" width="900" />
-<figcaption>Figure 1. Species abundance distributions for 1,000 IBMs are well-explained by species abundance models. 
-Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). 
-As commonly observed in ecological communities, both models predicted >75% variation in abundance among species. </figcaption>
-</figure>
+![](results/figures/SADs.png)\  
+
+Figure 1. Species abundance distributions for 1,000 IBMs are well-explained by species abundance models. Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). As commonly observed in ecological communities, both models predicted >75% variation in abundance among species.  
+<br/>  
+<br/>  
 
 **Species-area relationship (SAR)**
-*Emergence* produced realistic forms of the SAR according to several sampling schemes (Fig 2).
+*Emergence* produced realistic forms of the SAR according to several sampling schemes (Fig 2).  
 
-<figure>
-<img src="results/figures/SAR.png" align="center" width="900" />
-<figcaption>Figure 2. Species-area relationships from 1,000 IBMs take realistic forms. 
-Kernel density curves of slopes (z-values) of the species-area relationship (SAR) for both two sampling schemes, i.e., nested and random aggregation (R.A.) </figcaption>
-</figure>
+![](results/figures/SAR.png)\  
+
+Figure 2. Species-area relationships from 1,000 IBMs take realistic forms. 
+Kernel density curves of slopes (z-values) of the species-area relationship (SAR) for both two sampling schemes, i.e., nested and random aggregation (R.A.).  
+<br/>  
+<br/>  
 
 **Metabolic scaling** 
-*Emergence* closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).
+*Emergence* closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).  
 
-<figure>
-<img src="results/figures/MetabolicScaling.png" align="center" width="900" />
-<figcaption>Figure 3. Patterns of metabolic scaling produced by 1,000 Emergence models. 
+![](results/figures/MetabolicScaling.png)\  
+
+Figure 3. Patterns of metabolic scaling produced by 1,000 Emergence models. 
 Each blue data point represent the mean for values across a binned x-axis, to prevent statistical bias due to the large number of data points of intermediate body sizes. 
-The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.
-</figcaption>
-</figure>
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.  
+<br/>  
+<br/>  
 
 **Diversity-abundance relationships** 
 *Emergence* closely reproduced diversity-abundance scaling relationships (Fig 4).
 The relationships for rarity, dominance, and evenness are close to the overall results from Locey and Lennon (2016).
-The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016). 
+The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016).  
 
-<figure>
-<img src="results/figures/DiversityAbundanceScaling.png" align="center" width="900" />
-<figcaption>Figure 4. Diversity-abundance scaling relationships produced by 1,000 Emergence models are similar to those reported by Locey and Lennon (2016). 
+![](results/figures/DiversityAbundanceScaling.png){ width=100% }\  
+
+Figure 4. Diversity-abundance scaling relationships produced by 1,000 Emergence models are similar to those reported by Locey and Lennon (2016). 
 Each blue data point represents the mean for values across a binned x-axis. This prevents statistical bias due to the large number of data points of high total abundance ($N$).
-The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.</figcaption>
-</figure>
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.  
+<br/>  
+<br/>  
 
 **Taylor's Law**
-*Emergence* reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).
+*Emergence* reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).  
 
-<figure>
-<img src="results/figures/TaylorsLaw.png" align="center" width="900" />
-<figcaption>Figure 5. 
-The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.</figcaption>
-</figure>
+![](results/figures/TaylorsLaw.png)\  
+
+Figure 5. The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.  
+<br/>  
+<br/>  
 
 ## Discussion
 
