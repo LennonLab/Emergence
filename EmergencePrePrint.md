@@ -4,27 +4,27 @@ Kenneth J. Locey, Jay. T. Lennon
 
 Affiliations:Department of Biology, Indiana University, Bloomington, IN, 47405, USA.  Correspondence to: ken@weecology.org; lennonj@indiana.edu.
 
-### Abstract
+## Abstract
 Patterns underpin ecological theories and paradigms.
 While over a dozen ecological patterns are considered to be classic or even law-like, most are divided among non-overlapping theories and subfields.
 As a result, ecology lacks a holistic understanding for how primary patterns can emerge in unison.
 We developed a simulation-based platform for this purpose.
 The *Emergence* platform encodes energetic costs, ecological selection, stochasticity, and multiplicative interactions.
 These phenomena capture the basis of life history trade-offs, resource-limited growth, the importance of stochasticity and determinism, and the nonlinear nature of ecological dynamics.
-*Emergence* builds individual-based models (IBMs) from random starting conditions and allows ecological selection to operate on random variation in species traits.
-*Emergence* reproduces established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity theory, growth and abundance patterns of population ecology, and trade-offs in life history strategies.
+*Emergence* builds individual-based models from random starting conditions and allows ecological selection to operate on random variation in species traits.
+*Emergence* generates established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity theory, growth and abundance patterns of population ecology, and trade-offs in life history strategies.
 Our platform reveals that iconic ecological patterns that span paradigms, theories, and subdisciplines can simultaneously emerge from random starting conditions when basic principles are observed.
 
-### Introduction
-
-The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., patterns (MacArthur 1972, Lawton 1996).
-Patterns have inspired ecological paradigms for over a century and are the signatures of ecological mechanisms (Table 1).
-Some ecological patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or earlier (e.g., Malthus 1798).
+## Introduction
+The foundations of ecology are built on the discovery, explanation, and prediction of relationships between organisms and their environment, i.e., ecological patterns (MacArthur 1972, Lawton 1996).
+Such patterns have inspired ecological paradigms for over a century and are the signatures of ecological mechanisms (Table 1).
+Some ecological patterns have been documented since the time of Darwin's publications (e.g., Watson 1859) or even earlier (e.g., Malthus 1798).
 To this day, ecologists seek unified theories for the common explanation of patterns (e.g., Hubbell 2001, McGill 2010, Harte 2011) and continue to uncover patterns using increasingly large and diverse datasets (e.g., Locey and Lennon 2016).
 However, the many common patterns of ecology are largely studied in isolation, divided among subdisciplines and theories with little overlap.
 
 Given enough time and resources, an army of ecologists could document many commonly studied patterns in an environment of sufficient diversity and space.
-Physiological ecologists and macroecologists could document the many allometric relationships of metabolic theory (Brown et al. 2004). Population ecologists could reveal patterns of growth while life historians could measure trade-offs in reproductive strategies (Begon et al. 2009).
+Physiological ecologists and macroecologists could document the many allometric relationships of metabolic theory (Brown et al. 2004). 
+Population ecologists could reveal patterns of growth while life historians could measure trade-offs in reproductive strategies (Begon et al. 2009).
 Community ecologists and biodiversity scientists could test their many models and theories of biodiversity against empirical patterns of commonness and rarity (McGill 2010).
 Ecologists that specialize on particular taxa (e.g., microbial ecologists, mammalogists, plant ecologists) or different scales (e.g., molecular ecologists, macroecologists) could document these and many other patterns in their respective systems.
 Yet despite their united effort, this army of ecologists would likely splinter when analyzing their patterns with theory and models.
@@ -49,26 +49,26 @@ IBMs can also allow realistic and unanticipated patterns and dynamics to emerge 
 Finally, IBMs allow researchers to track, record, and analyze an immense amount of information.
 
 Here, we leverage the power of ecological IBMs with a relatively simple platform that encodes the first principles of several ecological theories.
-This platform, called *Emergence*, allows the user to run thousands of IBMs to study the simultaneous emergence of no less than 20 ecological patterns. 
+This platform, called *Emergence*, allows the user to run thousands of IBMs to study the simultaneous emergence of iconic ecological patterns. 
 Below, we provide a detailed explanation of how *Emergence* works, the data it quantifies and tracks, the theories and principles that *Emergence* integrates, and the analyses and tests that can be conducted using the *Emergence* source code.
 
-### Methods
+## Methods
 
-#### Platform description
+### Platform description
 Here, we describe *Emergence* largely according to the ODD protocol (Overview, Design concepts, Details), which is standard for describing IBMs (Grimm et al. 2006). 
 Unlike most ecological IBMs, which are used to simulate specific systems (DeAngelis and Gross 1992, Grimm and Railsback 2005), *Emergence* is a distributed software platform for running unlimited numbers of IBMs and for studying the simultaneous emergence of ecological patterns from across subdisciplines and theories.
 A detailed description of *Emergence*'s source files, functions, and analysis code can be found on the public GitHub source code and data repository (https://github.com/LennonLab/Emergence).
 The *Emergence* software can also be downloaded and installed from the Python Package Index: https://pypi.python.org/pypi/Emergence.
 
-#### Purpose
-*Emergence* is intended to allow the user to study how patterns from multiple ecological theories and paradigms can simultaneously emerge.
-These paradigms include metabolic scaling and physiological ecology, community ecology, biogeography, life history, neutral theory, resource limitation, population ecology, and ecological energetics.
+### Purpose
+*Emergence* is intended to allow the user to study how patterns from multiple ecological theories, subdisciplines, and paradigms can simultaneously emerge.
+These paradigms include metabolic scaling and physiological ecology, community ecology and biogeography, life history, neutral theory, resource limitation, and population ecology.
 *Emergence* accomplishes three proximate objectives.
 First, *Emergence* assembles and runs IBMs from random combinations of system variables and species traits.
 Second, *Emergence* stores the outputs of IBMs including animations. 
 Third, *Emergence* provides python code for analyzing simulation data.
 
-#### Entities & their state variables
+### Entities & their state variables
 **Individual organisms** -- *Emergence* simulates life history processes of growth, dispersal, reproduction, and basal respiration at the individual level. 
 Individuals are distinguished by collections of elements within dictionaries, i.e., data objects that hold key-value pairs. 
 For example, the dictionary holding information on individual organisms is structured as follows:
@@ -109,21 +109,21 @@ When sampling individuals, the information about their species is gained by acce
 	
 where 't' is the resource type, 'v' is the size of the particle, and 'x' and 'y' are the x and y coordinates.
 
-#### System level state variables
+### System level state variables
 Each *Emergence* model begins with random choices for the values of:
 
 * Width, in arbitrary units
 * Height, in arbitrary units
 * Flow through rate in units of distance moved per time step by the environmental matrix; a minimum of 0.
 
-#### Spatial and temporal scales
+### Spatial and temporal scales
 **Spatial extent** -- The environment of *Emergence* is square and two dimensional, and can vary along each axis from 1 to any number of arbitrary units. 
 All particles move in decimal units, the limit of which is determined by Python's decimal precision. 
 This means that individual particles can occupy practically infinite locations.
 
 **Temporal extent** -- *Emergence* models can run for any number of discrete time steps and record data at any number of time steps.
 
-#### Process overview and scheduling
+### Process overview and scheduling
 **Model assembly** -- The *Emergence* user runs the main python program (i.e., main.py). 
 The main program chooses random values for system-level state variables including whether disturbance, immigration, speciation, etc. will occur and at what rates.
 The main program also imports modules (i.e., groups of functions) for diversity metrics, spatial analysis, the initiation of output files, and for simulating life history processes (immigration, maintenance, death, growth, consumption, disturbance, passive dispersal, active dispersal, resource flow, resource inflow, and metabolic state transitions).
@@ -172,12 +172,12 @@ That is, individuals do not reenter.
 *Supply/inflow:* Resource particles can be allowed to enter at any point in the environment, which can be adjusted in the 'bide.py' file.
 The size and type of each inflowing resource particle is chosen at random from a uniform distribution, and can be modified in the same 'bide.py' file.
 
-*Resource dispersal:* Resource particles can be moved passively through the system at rates determined by the rate of flow*-*through.
+*Resource dispersal:* Resource particles can be moved passively through the system at rates determined by the rate of flow.
 Resource dispersal can be turned off in the 'main.py' file.
 
 *Resource depletion:* Resource particles are depleted through consumption, which can be partial or complete.
 
-#### Design concepts
+### Design concepts
 
 **Basic principles** 
 *Ecological selection on random variation:* *Emergence* operates according to a basic principle of evolution, i.e., natural selection on random variation.
@@ -187,14 +187,14 @@ Resource dispersal can be turned off in the 'main.py' file.
 *Energy-limited life history:* *Emergence* imposes energetic costs to growth and activity.
 These energetic costs are directly proportional to life history parameters.
 For example, the energetic cost of dispersal is the product of dispersal rate and dispersal distance.
-This intuitively means that the energetic cost of dispersal is multiplied (or compounded) across distance such that moving a distance of x in a specific direction requires half the energy as moving a distance of 2x in the same direction.
-In the same way, growing at a rate of x is half as costly as growing at a rate of 2x.
+This intuitively means that the energetic cost of dispersal is multiplied (or compounded) across distance such that moving a distance of $x$ in a specific direction requires half the energy as moving a distance of 2$x$ in the same direction.
+In the same way, growing at a rate of $x$ is half as costly as growing at a rate of 2$x$.
 
 *Lognormal dynamics:* Multiplicative interactions of random variables underpin one of the most successful models of complex systems, i.e., the lognormal (Crow et al. 1988).
 The lognormal was introduced to ecologists by Preston (1962) as a description of how abundance varies among species.
 The lognormal has been one of the two most successful models of species abundance for macroscopic plants and animals, and was recently used to form a macroecological theory of microbial diversity (Shoemaker et al. 2017).
 By "multiplicative interactions" one simply means that two or more variables interact in a multiplicative or synergistic way.
-Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993). **as described above?**
+Such interactions are common in ecology and include population growth and energetic costs multiplied across distance and time (Putnam 1993).
 By "random variables" one simply means two independent processes or constraints with degrees of stochastic change.
 *Emergence* explicitly simulates lognormal dynamics. 
 For example, energetic costs are multiplied across dispersal distance and magnitudes of growth and the frequency of transition between metabolic states. 
@@ -212,23 +212,21 @@ In this way, *Emergence* initiates with unrealistic ecological communities and u
 This approach allows the user of *Emergence* to avoid one of the greatest challenges to ecological modeling, i.e., the circularity of documenting outcomes that are otherwise forced to occur or are excluded from occurring.
 The code made available for the analysis of *Emergence* data is intended to examine the variation and central limiting behavior of ecological patterns among thousands of models.
 
-**Other design concepts**
+**Other design concepts of the ODD protocol**
 *Hypotheses:* These are entirely up to the user to formulate and test according to the capabilities and tools of *Emergence* source code.
 
 *Learning:* Currently, there is no aspect of individual-based learning in Emergence.
 
-*Prediction:* Individuals in *Emergence* do not have the ability to anticipate conditions.
+*Prediction:* Individuals in *Emergence* do not presently have the ability to anticipate conditions.
 
 *Sensing:* Individuals can sense and move towards resource particles.
 
 *Interaction:* Individuals interact through excluding each other from resources, i.e., preemption. 
-There is no explicit communication.
+There is no explicit communication and because there is presently no trophic structure, there are no trophic interactions.
 
 *Observation:* An unlimited number of *Emergence* models can be run to examine trends and variation in ecological patterns.
 
-**Food web or "trohphic" complexity and architecture?--parsitism, predation, mutualisms, intraguild predation, food chains, etc. **
-
-## Output data
+### Output data
 *Emergence* generates three files of output data. 
 Each *Emergence* model quantifies and writes output data for every $n^{th}$ time step, where $n$ can be designated by the user. 
 The three are:
@@ -279,13 +277,13 @@ The SAR file holds z-values for two types of SARs: SARs based on a nested design
 Also referred to as species-abundance distributions (SADs), rank-abundance curves (RACs), and Whittaker plots, RADs are vectors of the abundances of species in a community.
 Along with the SAR, RADs are one of the most intensively studied and commonly predicted ecological patterns (Hubbell 2001, McGill et al. 2007, Harte 2011).
 
-#### Patterns generated by Emergence
+### Patterns generated by Emergence
 
 *Emergence* includes python code to analyze the simultaneous emergence of ecological patterns.
 
 **Species abundance distribution (SAD)**
 The SAD is the vector of species abundance in an ecological community and is one of ecology's fundamental patterns of commonness and rarity.
-SAD's almost universally reflect that few species in ecological communities are highly abundant while most species are relatively rare (McGill *et al.* 2007).
+SAD's almost universally reflect that few species in ecological communities are highly abundant while most species are relatively rare (McGill et al. 2007).
 The SAD is predicted by more than 20 ecological models, the two most successful of which are the Poisson-lognormal and the log-series distributions (White et al. 2012, Baldridge et al. 2015, Shoemaker et al. 2017).
 
 **Species-area relationship (SAR)**
@@ -294,7 +292,7 @@ There four basic types of SARs pertaining to types of biotas and four general sa
 Here, we consider SARs for single biotas (i.e., not crossing ecoregions or biogeographical provinces) and generate them using two sampling schemes (i.e., nested design, random aggregation of subplots).
 
 **Metabolic scaling**
-The scaling of basal metabolic rate ($B$) with body size ($M$) is one of the strongest patterns of ecology (Brown *et al.* 2004).
+The scaling of basal metabolic rate ($B$) with body size ($M$) is one of the strongest patterns of ecology (Brown et al. 2004).
 Taking the form $B$ $\propto$ $B_{0}*M^{z}$, the scaling exponent $z$ is most often observed to approach 3/4.
 However, this scaling exponent has long been argued to be closer to 2/3 and in some cases can approach 1.0 (Glazier 2006).
 The metabolic theory of ecology (MTE) predicts that $z$ = 3/4 and, from this, predicts several other relationships that scale to quarter powers of body size.
@@ -312,9 +310,8 @@ These aspects include:
 **Taylor's Law**
 The variance ($\sigma^2$) in population abundance often scales with the average population abundance ($N/S$) across space and through time at a rate between 1 and 2, i.e., $\sigma^2$ ≈ ($N/S$)$^{1 < z < 2}$.
 Named after Taylor (1961), Taylor's Law is observed in many ecological and non-ecological systems.
-In ecology, the scaling exponent of this relationship is sometimes as high as 3 (*ref*).
 
-### Results
+## Results
 
 **Species abundance distribution (SAD)**
 Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of *Emergence* are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
@@ -367,36 +364,22 @@ The dashed blue line is the regression line and the light blue hull is the 95% p
 The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.</figcaption>
 </figure>
 
-### Discussion
+## Discussion
 
 The *Emergence* platform represents a holistic approach to the study and unification of ecological patterns and processes.
 *Emergence* allows patterns from different ecological paradigms, theories, and subdisciplines to emerge simultaneously across thousands of individual-based models (IBMs).
 These IBMs encode general life history processes, few explicit constraints, and allow several orders of magnitude of variation in species traits and environmental variables.
 In doing so, primary patterns of community ecology, macroecology, population ecology, life history, metabolic theory, and biodiversity science emerge from the simulation of first principles: energetic costs, ecological selection, multiplicative interactions, and stochasticity.
-*Emergence* is agnostic and inclusive in that it does not place primary importance on any of its encoded principles and is not meant to exclude the future addition of others (e.g., mass balance, stoichiometry). 
+*Emergence* is agnostic and inclusive in that it does not place primary importance on any of its encoded principles and is not meant to exclude the future addition of others (e.g., energy budgets, stoichiometry). 
 *Emergence* does not place explicit constraints on body size or life history trade-offs.
 Instead, we designed *Emergence* to allow all patterns to emerge from randomized conditions in ways that would have been difficult to anticipate from examining the source code.
-
-**It's unclear to me whether this next section on MTE is necessary; it's seems to veer off from main Emergence message. In ths subsequent section you talk about MTE, so perhaps that's sufficient? There's also some strange formatting with regard ($^ and italics)**
-
-*Emergence* offers an IBM-based approach for not only testing metabolic theory of ecology (MTE) (Brown et al. 2004) but for testing MTE alongside the patterns of other theories.
-MTE predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
-Studies have used the $^3/_4$ scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (Brown et al. 2004, Hechinger et al. 2011, Schramski et al. 2015). 
-The reasoning behind the $^3/_4$ power rests on fractal geometry of tissues (West et al. 1997, West et al. 1999). 
-While this fractal-based reasoning may hold, we are not aware of any mechanistic or experimental tests, and it remains unresolved whether the argument is necessary.
-In Emergence, there are no such networks and yet the $^3/_4$ power law emerges as a central tendency.
-Additionally, some argue whether a $^2/_3$ scaling based on surface area-to-volume ratio is more accurate and appropriate (White and Seymour 2003) and even whether a $^3/_4$ and $^2/_3$ scaling can arise from the same mechanism (Zhao 2015).
-Finally, some have shown that the scaling of metabolic rate to body size is nearly isometric (*z* ≈ 1) in some cases (e.g., ontogeny) and for some taxa (Glazier 2006).
-While *Emergence* often produces a scaling exponent near $^3/_4$, it can produce each of these alternative outcomes by varying the range of initial conditions for basal metabolic rate, resource inputs, and resource use efficiency.
 
 The simultaneous emergences of ecological patterns via the *Emergence* platform is unprecedented.
 Realistically uneven SADs with few dominant species and many rare species, resulted from initial even SADs where almost every individual belonged to a different species.
 This starting condition was intended to allow realistic SADs to emerge and also to avoid the circularity whereby theories of biodiversity almost universally begin with the assumption that the SAD is a hollow-curve (McGill 2010).
-Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism related to metabolism.
-Likewise, realistic species area relationships (SARs) emerged despite **no hard constraints** on area and realistic diversity-abundance scaling relationships emerged despite **no hard constraints)) on total abundance.
-Finally, all of these patterns emerged simultaneously. 
-Ecology has always implicitly rested on the assumption that its most general and common patterns should not be mutually exclusive.
-Until now, this assumption has gone largely or entirely untested.
+Additionally, metabolic scaling relationships emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism related to metabolism.
+Likewise, realistic species area relationships (SARs) and realistic diversity-abundance scaling relationships emerged despite having no hard constraints on either total abundance or species richness.
+Finally, all of these patterns emerged simultaneously.
 
 *Emergence* implicitly unifies major ecological patterns under the importance of life history processes and three general mechanisms: lognormal dynamics (i.e., multiplicative interactions of stochastic variables), energetic constraints, and ecological selection.
 To our knowledge, the entire set of patterns produced by *Emergence* have never been predicted by any single ecological theory, nor by any synthesis of theories.
@@ -407,14 +390,12 @@ For example, one could explore interrelated changes in the SAR and SAD while ens
 One can modify the *Emergence* source code to include any additional number of processes, reproductive modes, etc., while ensuring that ecological realism is maintained in other respects.
 With additional modifications *Emergence* should produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
 
-*Emergence* can be freely distributed and modified, and will continue growing to give simulated individuals evolvable traits and genomes and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of **mass balance - you mention this above, too; not entirely sure what you mean; does it suggest mass balance is not maintained in Emergence, or are you referring to captial M mass balance?**
-
-, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
+*Emergence* can be freely distributed and modified, and will continue growing to give simulated individuals evolvable traits and genomes and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) as well as the aspects of strict mass balance and stoichiometry expected with a more explicit accounting of all mass and energy within a system.
 Developments to *Emergence* will also include greater spatial complexity (e.g., habitat islands, archipelagos, corridors, etc.).
-Because *Emergence* is open source and hosted on a public repository, any interested scientist can either contribute to evolution of the *Emergence* platform or even use the *Emergence* platform as the foundation for their own study in emergence modeling.
+Because *Emergence* is open source and hosted on a public repository, any interested scientist can either contribute to evolution of the *Emergence* platform or even use our platform as a foundation for their own study in emergence modeling.
 
 
-### References
+## References
 
 * Baldridge E, Harris DJ, Xiao X, White EP. 2016. An extensive comparison of species-abundance distribution models. PeerJ, 4:e2823.
 * Begon M, Mortimer M, Thompson DJ. 2009. Population ecology: a unified study of animals and plants. John Wiley & Sons.
@@ -443,9 +424,9 @@ Because *Emergence* is open source and hosted on a public repository, any intere
 * Tilman D. 2004. Niche tradeoffs, neutrality, and community structure: a stochastic theory of resource competition, invasion, and community assembly. Proceedings of the National academy of Sciences of the United States of America, 101:10854-10861.
 * Watson HC. 1859. Cybele Britannica, or British plants and their geographical relations. London, Longman & Company.
 
-* West GB, Brown JH, Enquist BJ. 1999. The fourth dimension of life: fractal geometry and allometric scaling of organisms. Science, 284(5420), 1677-1679.
-
 * West GB, Brown JH, Enquist BJ. 1997. A general model for the origin of allometric scaling laws in biology. Science, 276:122-126.
+
+* West GB, Brown JH, Enquist BJ. 1999. The fourth dimension of life: fractal geometry and allometric scaling of organisms. Science, 284(5420), 1677-1679.
 
 * White CR, Seymour RS. 2003. Mammalian basal metabolic rate is proportional to body mass $^{2/3}$. Proceedings of the National Academy of Sciences, 100:4046-4049.* White EP, Thibault KM, Xiao X. 2012. Characterizing species abundance distributions across taxa and ecosystems using a simple maximum entropy model. Ecology, 93:1772-1778.
 
