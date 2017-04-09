@@ -377,6 +377,8 @@ In doing so, primary patterns of community ecology, macroecology, population eco
 *Emergence* does not place explicit constraints on body size or life history trade-offs.
 Instead, we designed *Emergence* to allow all patterns to emerge from randomized conditions in ways that would have been difficult to anticipate from examining the source code.
 
+**It's unclear to me whether this next section on MTE is necessary; it's seems to veer off from main Emergence message. In ths subsequent section you talk about MTE, so perhaps that's sufficient? There's also some strange formatting with regard ($^ and italics)**
+
 *Emergence* offers an IBM-based approach for not only testing metabolic theory of ecology (MTE) (Brown et al. 2004) but for testing MTE alongside the patterns of other theories.
 MTE predicts that the magnitude of basal metabolic rate ($B$) increases with the $^3/_4$ power of body mass ($M$), i.e., $B$ = $M^{3/4}$.
 Studies have used the $^3/_4$ scaling law to predict aspects of metabolic power, population dynamics, community ecology, ecosystem function, and trophic interactions (Brown et al. 2004, Hechinger et al. 2011, Schramski et al. 2015). 
@@ -391,7 +393,7 @@ The simultaneous emergences of ecological patterns via the *Emergence* platform 
 Realistically uneven SADs with few dominant species and many rare species, resulted from initial even SADs where almost every individual belonged to a different species.
 This starting condition was intended to allow realistic SADs to emerge and also to avoid the circularity whereby theories of biodiversity almost universally begin with the assumption that the SAD is a hollow-curve (McGill 2010).
 Additionally, the 3/4 scaling of metabolic rate to body size emerged despite the lack of any explicit constraints on body size and without enforcing any power-law mechanism related to metabolism.
-Likewise, realistic species area relationships (SARs) emerged despite no hard constraints on area and realistic diversity-abundance scaling relationships emerged despite no hard constraints on total abundance.
+Likewise, realistic species area relationships (SARs) emerged despite **no hard constraints** on area and realistic diversity-abundance scaling relationships emerged despite **no hard constraints)) on total abundance.
 Finally, all of these patterns emerged simultaneously. 
 Ecology has always implicitly rested on the assumption that its most general and common patterns should not be mutually exclusive.
 Until now, this assumption has gone largely or entirely untested.
@@ -405,7 +407,9 @@ For example, one could explore interrelated changes in the SAR and SAD while ens
 One can modify the *Emergence* source code to include any additional number of processes, reproductive modes, etc., while ensuring that ecological realism is maintained in other respects.
 With additional modifications *Emergence* should produce countless other ecological patterns or even patterns that transcend biological fields, i.e., by simulating evolutionary processes, landscape dynamics, and by attributing genome sequences to individuals.
 
-*Emergence* can be freely distributed and modified, and will continue growing to give simulated individuals evolvable traits and genomes and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of mass balance, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
+*Emergence* can be freely distributed and modified, and will continue growing to give simulated individuals evolvable traits and genomes and to include new ecological dynamics (e.g., predator-prey, mutualism, parasitism) and the aspects of **mass balance - you mention this above, too; not entirely sure what you mean; does it suggest mass balance is not maintained in Emergence, or are you referring to captial M mass balance?**
+
+, stoichiometry, biocomplexity included in sister platforms (i.e., Locey et al. 2017).
 Developments to *Emergence* will also include greater spatial complexity (e.g., habitat islands, archipelagos, corridors, etc.).
 Because *Emergence* is open source and hosted on a public repository, any interested scientist can either contribute to evolution of the *Emergence* platform or even use the *Emergence* platform as the foundation for their own study in emergence modeling.
 
