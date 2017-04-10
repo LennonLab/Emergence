@@ -46,8 +46,8 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
     plt.scatter(x2, y2, color = 'SkyBlue', alpha= 1 , s = 12, linewidths=0.5, edgecolor='Steelblue')
     plt.fill_between(x2, ci_upp, ci_low, color='b', lw=0.1, alpha=0.15)
     plt.plot(x2, fitted,  color='b', ls='--', lw=1.0, alpha=0.9)
-    plt.xlabel(xlab, fontsize=9)
-    plt.ylabel(ylab, fontsize=9)
+    plt.xlabel(xlab, fontsize=10)
+    plt.ylabel(ylab, fontsize=10)
     plt.tick_params(axis='both', labelsize=6)
     plt.xlim(0.9*min(x2), 1.1*max(x2))
     plt.ylim(min(ci_low), max(ci_upp))
@@ -74,7 +74,7 @@ df2['MSB'] = df2['B']/df2['size']
 df2['Pdens'] = (df2['Biomass'])/(df2['length']**2)
 
 #df2 = df2[np.log10(df2['size']) > 1]
-fig = plt.figure()
+fig = plt.figure(figsize=(8, 7))
 
 xlab = r"$log_{10}$"+'(Body size)'
 ylab = r"$log_{10}$"+'(Metabolic rate)'
@@ -89,4 +89,4 @@ ylab = r"$log_{10}$"+'(Pop. density)'
 fig = figplot(df2['size'], df2['Pdens'], xlab, ylab, fig, 3)
 
 plt.subplots_adjust(wspace=0.4, hspace=0.4)
-plt.savefig(mydir + '/results/figures/MetabolicScaling.png', dpi=200, bbox_inches = "tight")
+plt.savefig(mydir + '/results/figures/MTE.png', dpi=200, bbox_inches = "tight")
