@@ -1,4 +1,4 @@
-## Emergence: A platform for modeling the simultaneous emergence of ecological patterns
+## A modeling platform for the simultaneous emergence of ecological patterns
 
 Kenneth J. Locey, Jay. T. Lennon
 
@@ -12,7 +12,7 @@ We developed a simulation-based platform for this purpose.
 The *Emergence* platform encodes energetic costs, ecological selection, stochasticity, and multiplicative interactions.
 These phenomena capture the basis of life history trade-offs, resource-limited growth, the importance of stochasticity and determinism, and the nonlinear nature of ecological dynamics.
 *Emergence* builds individual-based models from random starting conditions and allows ecological selection to operate on random variation in species traits.
-*Emergence* generates established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity theory, growth and abundance patterns of population ecology, and trade-offs in life history strategies.
+*Emergence* generates established patterns of commonness and rarity, scaling patterns from metabolic theory and biodiversity theory, growth and abundance patterns of population ecology.
 Our platform reveals that iconic ecological patterns that span paradigms, theories, and subdisciplines can simultaneously emerge from random starting conditions when basic principles are observed.
 
 ## Introduction
@@ -237,22 +237,19 @@ Most analyses in *Emergence* source code are conducted on the data in this file.
 The following is recorded for each *Emergence* model and stored in SimData.csv:
 
 * Values of randomly chosen input variables
-	* length
-	* width
-	* flow rate
+	* length, width, flow rate
 	* maximum resource particle size
 	* maximum number of inflowing resource particles
 	* number of inflowing resource types
 	* initial community size 
-* Total individual abundance ($N$) of the dormant and active fractions of ecological communities
-* Species richness ($S$) of the dormant and active fractions of ecological communities
-* Mean abundance-weighted specific growth rate for the dormant and active fractions of ecological communities
-* Mean abundance-weighted species-specific dispersal rate for the dormant and active fractions of ecological communities
-* Mean abundance-weighted species-specific resource consumption rates for the dormant and active fractions of ecological communities
-* Mean abundance-weighted species-specific rate of random metabolic state transitions (dormant to active) for the dormant and active fractions of ecological communities
-* Mean abundance-weighted species-specific rate of decrease in basal metabolic rate accomplished by transitioning to a dormant state, for the dormant and active fractions of ecological communities
-* Species turnover
-	* Whittaker's $\beta$ 
+* Total individual abundance ($N$) of dormant and active fractions
+* Species richness ($S$) of the dormant and active fractions
+* Mean per capita specific growth rate for the dormant and active fractions
+* Mean per capita specific dispersal rate for the dormant and active fractions
+* Mean per capita specific resource consumption rates for the dormant and active fractions
+* Mean per capita specific rate of random metabolic state transitions (dormant to active) for the dormant and active fractions
+* Mean per capita specific rate of decrease in basal metabolic rate accomplished by transitioning to a dormant state, for the dormant and active fractions
+* Species turnover: Whittaker's $\beta$ 
 * Species evenness
 	* Smith and Wilson's evenness, $E_{var}$
 	* Simpson's evenness, $E_{1/D}$ 
@@ -262,9 +259,7 @@ The following is recorded for each *Emergence* model and stored in SimData.csv:
 * Dominance
 	* Absolute, $N_{max}$
 	* Relative, $N_{max}/N$
-* Productivity of
-	* Individuals
-	* Biomass
+* Productivity of individuals and biomass
 
 **SAR.csv**
 -- A file holding results for species-area relationships (SARs) from *Emergence* models.
@@ -314,55 +309,52 @@ Named after Taylor (1961), Taylor's Law is observed in many ecological and non-e
 ## Results
 
 **Species abundance distribution (SAD)**
-Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of *Emergence* are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).
+Despite the IBMs being initialized with random samples from uniform distributions, the resulting SADs of *Emergence* are well-fit by the Poisson-lognormal and the log-series distributions (Fig 1).  
 
-<figure>
-<img src="results/figures/SADs.png" align="center" width="900" />
-<figcaption>Figure 1. Species abundance distributions for 1,000 IBMs are well-explained by species abundance models. 
-Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). 
-As commonly observed in ecological communities, both models predicted >75% variation in abundance among species. </figcaption>
-</figure>
+![](results/figures/SADs.png)\  
+
+**Figure 1.** Species abundance distributions for 1,000 IBMs are well-explained by species abundance models. Kernel density curves of r-square values for the Poisson lognormal (PLN) distribution and the log-series predicted by the Maximum Entropy Theory of Ecology (METE). As commonly observed in ecological communities, both models predicted >75% variation in abundance among species.  
+<br/>  
 
 **Species-area relationship (SAR)**
-*Emergence* produced realistic forms of the SAR according to several sampling schemes (Fig 2).
+*Emergence* produced realistic forms of the SAR according to several sampling schemes (Fig 2).  
 
-<figure>
-<img src="results/figures/SAR.png" align="center" width="900" />
-<figcaption>Figure 2. Species-area relationships from 1,000 IBMs take realistic forms. 
-Kernel density curves of slopes (z-values) of the species-area relationship (SAR) for both two sampling schemes, i.e., nested and random aggregation (R.A.) </figcaption>
-</figure>
+![](results/figures/SAR.png)\  
+
+**Figure 2.** Species-area relationships (SAR) from 1,000 IBMs take realistic forms. 
+Kernel density curves of slopes (z-values) of the SAR for two sampling schemes: nested and random aggregation (R.A.).  
+<br/>  
+\pagebreak
 
 **Metabolic scaling** 
-*Emergence* closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).
+*Emergence* closely reproduced the 3/4 power scaling of basal metabolic rate to body size, the -1/4 power scaling of mass-specific basal metabolic rate to body size, and the -3/4 scaling of population density to body size (Fig 3).  
 
-<figure>
-<img src="results/figures/MetabolicScaling.png" align="center" width="900" />
-<figcaption>Figure 3. Patterns of metabolic scaling produced by 1,000 Emergence models. 
+![](results/figures/MTE.png)\  
+
+**Figure 3.** Patterns of metabolic scaling produced by 1,000 Emergence models. 
 Each blue data point represent the mean for values across a binned x-axis, to prevent statistical bias due to the large number of data points of intermediate body sizes. 
-The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.
-</figcaption>
-</figure>
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.  
+<br/>  
 
 **Diversity-abundance relationships** 
 *Emergence* closely reproduced diversity-abundance scaling relationships (Fig 4).
 The relationships for rarity, dominance, and evenness are close to the overall results from Locey and Lennon (2016).
-The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016). 
+The relationship of richness to total abundance was similar to that for some microbial and animal datasets analyzed by Locey and Lennon (2016).  
 
-<figure>
-<img src="results/figures/DiversityAbundanceScaling.png" align="center" width="900" />
-<figcaption>Figure 4. Diversity-abundance scaling relationships produced by 1,000 Emergence models are similar to those reported by Locey and Lennon (2016). 
+![](results/figures/DiversityAbundanceScaling.png)\  
+
+**Figure 4.** Diversity-abundance scaling relationships produced by 1,000 Emergence models are similar to those reported by Locey and Lennon (2016). 
 Each blue data point represents the mean for values across a binned x-axis. This prevents statistical bias due to the large number of data points of high total abundance ($N$).
-The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.</figcaption>
-</figure>
+The dashed blue line is the regression line and the light blue hull is the 95% prediction interval.  
+<br/>  
 
 **Taylor's Law**
-*Emergence* reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).
+*Emergence* reproduced Taylor's Law, with the scaling exponent just below 2.0 (Fig 5).  
 
-<figure>
-<img src="results/figures/TaylorsLaw.png" align="center" width="900" />
-<figcaption>Figure 5. 
-The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.</figcaption>
-</figure>
+![](results/figures/TaylorsLaw.png)\  
+
+**Figure 5.** The population abundance variance-mean relationship from 1,000 Emergence models closely reproduces Taylor's Law.  
+<br/>  
 
 ## Discussion
 
@@ -415,7 +407,8 @@ Because *Emergence* is open source and hosted on a public repository, any intere
 
 * MacArthur RH. 1972. Geographical ecology: patterns in the distribution of species. Princeton University Press. Chicago	
 * Magurran AE, McGill BJ. 2011. Biological diversity: Frontiers in measurement and assessment. Oxford University Press.* Malthus TR. 1798. An Essay on the Principle of Population. Oxford World Classics reprint.
-* McGill BJ, Etienne RS, Gray JS, Alonso D, Anderson MJ, Benecha HK, Dornelas M, Enquist BJ, Green JL, He F, Hurlbert AH, Magurran AE, Marquet PA, Maurer BA, Ostling A, Soykan CU, Ugland KI, White EP. 2007. Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework. Ecology letters, 10:995-1015.* McGill BJ. 2010. Towards a unification of unified theories of biodiversity. Ecology Letters, 13:627-642.	* Preston FW. 1962. The canonical distribution of commonness and rarity: Part I. Ecology, 43:185-215.
+* McGill BJ, Etienne RS, Gray JS, Alonso D, Anderson MJ, Benecha HK, Dornelas M, Enquist BJ, Green JL, He F, Hurlbert AH, Magurran AE, Marquet PA, Maurer BA, Ostling A, Soykan CU, Ugland KI, White EP. 2007. Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework. Ecology letters, 10:995-1015.* McGill BJ. 2010. Towards a unification of unified theories of biodiversity. Ecology Letters, 13:627-642.
+* Preston FW. 1962. The canonical distribution of commonness and rarity: Part I. Ecology, 43:185-215.
 * Putnam R. Community Ecology. 1993. Chapman & Hall, London, United Kingdom.* Rosenzweig ML. 1995. Species diversity in space and time. Cambridge University Press.
 * Rosindell J, Harmon LJ, Etienne RS. 2015. Unifying ecology and macroevolution with individual‐based theory. Ecology letters, 18:472-482.
 * Schramski JR, Dell AI, Grady JM, Sibly RM, Brown JH. 2015. Metabolic theory predicts whole-ecosystem properties. Proceedings of the National Academy of Sciences of the United States of America, 112:2617-2622.* Shoemaker WR, Locey KJ, Lennon JT. 2016. A macroecological theory of microbial biodiversity. PeerJ Preprints, 4:e1450v4

@@ -67,12 +67,10 @@ fr = 0.2
 _lw = 0.5
 w = 1
 sz = 5
-
+fs = 14 # fontsize
 
 #### plot figure ###############################################################
-fs = 8 # fontsize
-fig = plt.figure()
-
+fig = plt.figure(figsize=(3, 2))
 fig.add_subplot(1, 1, 1)
 
 data = mydir + '/results/simulated_data/RAD-Data.csv'
@@ -114,21 +112,21 @@ for i, obs in enumerate(RADs):
 
         print i, 'N:', N, ' S:', S, ' n:', len(pln_r2s), ' |  mete:', mete_r2, '  pln:', pln_r2
 
-    if len(pln_r2s) > 100: break
+    if len(pln_r2s) > 20: break
 
 
 kernel = 0.5
-
 D = get_kdens_choose_kernel(mete_r2s, kernel)
-plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99,label= 'METE')
+plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99,label= 'log-series')
 
 D = get_kdens_choose_kernel(pln_r2s, kernel)
-plt.plot(D[0],D[1],color = '0.1', lw=3, alpha = 0.99, label= 'PLN')
+plt.plot(D[0],D[1],color = '0.1', lw=3, alpha = 0.99, label= 'lognormal')
 
-plt.xlim(0.0, 1)
-plt.legend(loc=2, fontsize=fs+1)
+plt.xlim(0.5, 1)
+plt.legend(loc='best', fontsize=fs-5, frameon=False)
 plt.xlabel('$r$'+r'$^{2}$', fontsize=fs+3)
 plt.ylabel('$density$', fontsize=fs+3)
+plt.tick_params(axis='both', labelsize=fs-3)
 
 #### Final Format and Save #####################################################
 plt.subplots_adjust(wspace=0.4, hspace=0.4)

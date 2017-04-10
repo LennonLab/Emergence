@@ -35,7 +35,7 @@ with open(data) as f:
             z_rand.append(z2)
 
 fs = 14
-fig = plt.figure()
+fig = plt.figure(figsize=(3, 2))
 fig.add_subplot(1, 1, 1)
 kernel = 0.1
 
@@ -44,10 +44,10 @@ plt.plot(D[0],D[1],color = 'k', lw=3, alpha = 0.99, label= 'Nested SAR '+'$z$'+'
 D = get_kdens_choose_kernel(z_rand, kernel)
 plt.plot(D[0],D[1],color = '0.5', lw=3, alpha = 0.99, label= 'R.A. SAR '+'$z$'+'-values')
 
-plt.legend(loc='best', fontsize=fs-1)
+plt.legend(loc='best', fontsize=fs-5, frameon=False)
 plt.xlabel('$z$', fontsize=fs+6)
 plt.ylabel('$density$', fontsize=fs+3)
-plt.tick_params(axis='both', labelsize=fs)
+plt.tick_params(axis='both', labelsize=fs-3)
 
 #### Final Format and Save #####################################################
 plt.subplots_adjust(wspace=0.4, hspace=0.4)

@@ -47,17 +47,26 @@ def figplot(x, y, xlab, ylab, fig, n, binned = 1):
 
     x2, y2, fitted, ci_low, ci_upp = zip(*sorted(zip(x2, y2, fitted, ci_low, ci_upp)))
 
-    if n == 1: lbl = r'$rarity$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +str(round(r**2,2))
-    elif n == 2: lbl = r'$Nmax$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +str(round(r**2,2))
-    elif n == 3: lbl = r'$Ev$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+ r'$r^2$' + '=' + str(round(r**2,2))
-    elif n == 4: lbl = r'$S$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +   str(round(r**2,2))
+    if n == 1:
+        lbl = r'$rarity$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +str(round(r**2,2))
+    elif n == 2:
+        lbl = r'$Nmax$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +str(round(r**2,2))
+    elif n == 3:
+        lbl = r'$Ev$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+ r'$r^2$' + '=' + str(round(r**2,2))
+    elif n == 4:
+        lbl = r'$S$'+ ' = '+str(round(10**b,2))+'*'+r'$N$'+'$^{'+str(round(m,2))+'}$'+'\n'+r'$r^2$' + '=' +   str(round(r**2,2))
+
     plt.scatter(x2, y2, color = 'SkyBlue', alpha= 1 , s = 12, linewidths=0.5, edgecolor='Steelblue', label=lbl)
-    plt.legend(loc='best', fontsize=6)
+
+    if n == 3:
+        plt.legend(loc='best', fontsize=6, frameon=False)
+    else:
+        plt.legend(loc=2, fontsize=6, frameon=False)
 
     plt.fill_between(x2, ci_upp, ci_low, color='b', lw=0.1, alpha=0.15)
     plt.plot(x2, fitted,  color='b', ls='--', lw=1.0, alpha=0.9)
-    plt.xlabel(xlab, fontsize=9)
-    plt.ylabel(ylab, fontsize=9)
+    plt.xlabel(xlab, fontsize=11)
+    plt.ylabel(ylab, fontsize=11)
     plt.tick_params(axis='both', labelsize=6)
     plt.xlim(0.9*min(x2), 1.1*max(x2))
     plt.ylim(min(ci_low), max(ci_upp))
@@ -74,7 +83,7 @@ df2['E'] = np.log10(df['simpson.e'].groupby(df['sim']).min())
 df2['R'] = np.log10(df['logmod.skew'].groupby(df['sim']).max())
 
 df2 = df2.replace([np.inf, -np.inf], np.nan).dropna()
-fig = plt.figure()
+fig = plt.figure(figsize=(5, 4))
 
 xlab = '$log$'+r'$_{10}$'+'($N$)'
 ylab = 'Rarity, '+r'$log_{10}$'
